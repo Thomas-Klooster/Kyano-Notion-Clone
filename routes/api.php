@@ -21,5 +21,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
-Route::post('/articles', [AuthController::class,'store']);
+Route::post('/articles', [ArticleController::class,'store']);
     
