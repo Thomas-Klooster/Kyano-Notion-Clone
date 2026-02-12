@@ -2,6 +2,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ArticleController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Resetpasswordcontroller;
 use Illuminate\Support\Facades\Route;
 
 
@@ -10,13 +11,14 @@ Route::post('/login', [AuthController::class,"login"])->name('login');
 // Register endpoint voor het registreren van een nieuw account
 Route::post('/register', [AuthController::class,"register"])->name('register');
 // Password request endpoint voor het aanvragen van een wachtwoord reset
-Route::post('/resetpassword', [AuthController::class, 'resetpassword'])->name('resetpassword');
+
 // Wachtwoord reset endpoint voor het resetten van een wachtwoord met een token
-Route::post('/resettoken', [AuthController::class, 'resettoken'])->name('resettoken');
+Route::post('/password/request', [Resetpasswordcontroller::class,'request']);
+Route::post('/password/reset', [Resetpasswordcontroller::class,'reset']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // /me endpoint voor het ophalen van de huidige ingelogde gebruiker
-
+    
     // Logout endpoint voor het uitloggen van een ingelogde gebruiker
 
 });
