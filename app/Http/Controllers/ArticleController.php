@@ -12,8 +12,8 @@ class ArticleController extends Controller
         $article = Article::create($request->validated());
         return response()->json([
             'message' => 'Article Added',
-            'article'=> $article
+            'article'=> $article,
         ],201);
-    }
 
+}
 }

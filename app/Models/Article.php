@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-
 use Carbon\Traits\Timestamp;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,11 +11,19 @@ class Article extends Model
      *
      * @var list<string>
      */
-    public const CREATED_AT = 'creation_date';
     protected $fillable = [
         'title',
         'content',
+        'summary',
+        'status',
+        'visibility',
+        'category_id',
+
     ];
-    public $timestamps = false;
-    public const UPDATED_AT = 'updated_date';
+
+       public function category() {
+        return $this->belongsTo(Category::class);
+        
+    }
+    public $timestamps = true;
 }

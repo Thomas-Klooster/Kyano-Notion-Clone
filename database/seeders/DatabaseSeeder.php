@@ -19,7 +19,33 @@ class DatabaseSeeder extends Seeder
             'name' => 'Vincent Bakker',
             'email' => 'test@gmail.com',
             'password' => Hash::make('password'),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
         
-    }
+
+
+        DB::table('articles')->insert([
+    [
+        'title' => 'First test article',
+        'content' => 'This is test content for article one.',
+        'summary' => 'Project summary in short',
+        'created_at' => now(),
+        'updated_at' => now(),
+        'status' => false,
+        'visibility' => true,
+        'category_id' => 'web',
+    ],
+    [
+        'title' => 'Second test article',
+        'content' => 'This is test content for article one.',
+        'summary' => 'Project summary in short',
+        'created_at' => now(),
+        'updated_at' => now(),
+        'status' => false,
+        'visibility' => true,
+        'category_id'=> 'app',
+    ],
+]);
+}
 }

@@ -26,6 +26,7 @@ class Register extends Controller
 
         Auth::login($user);
 
-        return redirect('/')->with('success', 'Account created.');
+        // return redirect('/')->with('success', 'Account created.');
     }
+    
 }

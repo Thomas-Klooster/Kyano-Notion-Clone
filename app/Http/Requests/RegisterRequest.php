@@ -24,7 +24,7 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|name',
+            'name' => 'required|string',
             'email' => 'required|email',
             'password' => 'required',        
         ];
@@ -34,7 +34,7 @@ class RegisterRequest extends FormRequest
             return [
                 'name.required'=> 'Het invullen van je naam is verplicht.',
                 'email.required'=> 'Je email invullen is verplicht',
-                'password.required'=> 'Vul een wachtwoord in!',
+                'password'=> 'Vul een wachtwoord in!',
                 ];
         }
     

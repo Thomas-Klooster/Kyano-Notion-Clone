@@ -12,7 +12,8 @@ class ArticleRequest extends FormRequest
     {
         return true;
     }
-    
+
+  
     /**
      * Get the validation rules that apply to the request.
      *
@@ -23,6 +24,8 @@ class ArticleRequest extends FormRequest
         return [
             'title'=> 'required|string',
             'content'=> 'required|string',
+            'summary'=> 'string',
+            'category_id' => 'string',
         ];
     }
 
@@ -30,8 +33,10 @@ class ArticleRequest extends FormRequest
     public function messages(): array
     {
         return [
-    'required.title'=> 'Vul een titelnaam in!',
-    'content'=> '',
+    'title'=> 'Vul een titelnaam in.',
+    'content'=> 'Descriptie in hier.',
+    'summary'=> 'Kort descriptie',
+    'category_id'=> 'Wat voor categorie?'
         ];
 }
     }

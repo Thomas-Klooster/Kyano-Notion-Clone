@@ -11,7 +11,6 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    public const CREATED_AT = 'creation_date';
     /**
      * The attributes that are mass assignable.
      *
@@ -45,6 +44,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public $timestamps = true;
 
     
 }

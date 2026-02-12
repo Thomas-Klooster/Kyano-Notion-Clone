@@ -10,45 +10,50 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     public function register(RegisterRequest $request) {
+        $validated = $request->validated();
 
     $request->validate([
-        'name'> 'required|string',
+        'name' => 'required|string',
         'email' => 'required|email|unique:users',
         'password'=> 'required',
         ]);
 
         $user = User::create([
-            'name'=> $request->name,
-            'email'=> $request->email,
-            'password'=> Hash::make($request->password),
+            'name'=> $validated['name'],
+            'email'=> $validated['email'],
+            'password'=> Hash::make($validated['password']),
         ]);
+
         $token = $user->createToken('api-token')->plainTextToken;
         
         return response()->json([
             'message' => 'User Registered',
-         'token'=> $token,
-         'user'=> $user,
+            'token'=> $token,
+            'user'=> $user,
         ]);
     }
-    public function login(LoginRequest $request)
+   public function login(LoginRequest $request)
 {
-    // Validating the credentials
-    $credentials = $request->validated();
-
+    $validated = $request->validated();
+    
+    // Extract only email and password for authentication
+    $credentials = [
+        'email' => $validated['email'],
+        'password' => $validated['password'],
+    ];
+    
     if (!Auth::attempt($credentials)) {
         return response()->json(['message' => 'Invalid credentials'], 401);
     }
-
-    $user = Auth::user();
     
+    $user = Auth::user();
     $token = $user->createToken('token-name', ['server:update'])->plainTextToken;
-
+    
     return response()->json([
-        'message'=> 'User Logged in',
+        'message' => 'User Logged in',
         'token' => $token,
         'user' => $user,
-    
     ]);
-    }
+}
 
     }
