@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
+use Carbon\Traits\Timestamp;
 use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-
- public function articles() {
-    return $this->hasMany(Article::class);
-
- }
-
- public $timestamps = true;
+    protected $fillable = [
+        'name',
+        'slug',
+    ];
+    public $timestamps = true;
 }

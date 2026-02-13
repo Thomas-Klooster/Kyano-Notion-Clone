@@ -1,9 +1,11 @@
 <?php
+
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ArticleController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Resetpasswordcontroller;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CategoryController;
 
 // Login endpoint om te kunnen inloggen met een bestaand account
 Route::post('/login', [AuthController::class,"login"])->name('login');
@@ -29,6 +31,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     
     });
+
+    Route::resource('categories', CategoryController::class);
+
+
 
 Route::post('/articles', [ArticleController::class,'store']);
     

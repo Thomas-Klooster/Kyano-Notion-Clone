@@ -27,24 +27,24 @@ class DatabaseSeeder extends Seeder
 
         DB::table('articles')->insert([
     [
-        'title' => 'First test article',
+        'name' => 'First test article',
         'content' => 'This is test content for article one.',
         'summary' => 'Project summary in short',
         'created_at' => now(),
         'updated_at' => now(),
         'status' => false,
         'visibility' => true,
-        'category_id' => 'web',
+        
     ],
     [
-        'title' => 'Second test article',
+        'name' => 'Second test article',
         'content' => 'This is test content for article one.',
         'summary' => 'Project summary in short',
         'created_at' => now(),
         'updated_at' => now(),
         'status' => false,
         'visibility' => true,
-        'category_id'=> 'app',
+        
     ],
 ]);
 }

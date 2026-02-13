@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamp('updated_at')->nullable();
             $table->boolean('status')->default(false);
             $table->boolean('visibility')->default(true);
-            $table->string('category_id')->nullable();
+            
         });
     }
 

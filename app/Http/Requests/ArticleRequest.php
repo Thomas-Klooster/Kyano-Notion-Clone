@@ -25,7 +25,7 @@ class ArticleRequest extends FormRequest
             'title'=> 'required|string',
             'content'=> 'required|string',
             'summary'=> 'string',
-            'category_id' => 'string',
+            
         ];
     }
 
@@ -36,7 +36,7 @@ class ArticleRequest extends FormRequest
     'title'=> 'Vul een titelnaam in.',
     'content'=> 'Descriptie in hier.',
     'summary'=> 'Kort descriptie',
-    'category_id'=> 'Wat voor categorie?'
+    
         ];
 }
     }
