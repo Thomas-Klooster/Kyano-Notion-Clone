@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Seeders;
 
 use Carbon\Traits\Timestamp;
@@ -12,7 +11,8 @@ use Illuminate\Support\Str;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Run the database seeders. */
+     * Run the database seeders. 
+     */
     public function run(): void
     {
         DB::table('users')->insert([
@@ -22,30 +22,26 @@ class DatabaseSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-        
-
 
         DB::table('articles')->insert([
-    [
-        'name' => 'First test article',
-        'content' => 'This is test content for article one.',
-        'summary' => 'Project summary in short',
-        'created_at' => now(),
-        'updated_at' => now(),
-        'status' => false,
-        'visibility' => true,
-        
-    ],
-    [
-        'name' => 'Second test article',
-        'content' => 'This is test content for article one.',
-        'summary' => 'Project summary in short',
-        'created_at' => now(),
-        'updated_at' => now(),
-        'status' => false,
-        'visibility' => true,
-        
-    ],
-]);
-}
+            [
+                'title' => 'First test article',
+                'content' => 'This is test content for article one.',
+                'summary' => 'Project summary in short',
+                'created_at' => now(),
+                'updated_at' => now(),
+                'status' => false,
+                'visibility' => true,
+            ],
+            [
+                'title' => 'Second test article',
+                'content' => 'This is test content for article two.', 
+                'summary' => 'Project summary in short',
+                'created_at' => now(),
+                'updated_at' => now(),
+                'status' => false,
+                'visibility' => true,
+            ],
+        ]);
+    }
 }

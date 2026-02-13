@@ -19,8 +19,7 @@ return new class extends Migration
             $table->string('title');
             $table->longText('content')->nullable();
             $table->longText('summary')->nullable();
-            $table->timestamp('created_at')->nullable();
-            $table->timestamp('updated_at')->nullable();
+            $table->timestamps();
             $table->boolean('status')->default(false);
             $table->boolean('visibility')->default(true);
             
