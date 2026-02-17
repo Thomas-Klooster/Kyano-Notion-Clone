@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string('projectname');
-            $table->string('customer_id');
             $table->string('description');
+            $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
     });
     }

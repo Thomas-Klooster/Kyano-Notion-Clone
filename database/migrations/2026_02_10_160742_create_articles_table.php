@@ -20,7 +20,6 @@ return new class extends Migration
             $table->longText('content')->nullable();
             $table->longText('summary')->nullable();
             $table->boolean('status')->default(false);
-            $table->boolean('visibility')->default(true);
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
             

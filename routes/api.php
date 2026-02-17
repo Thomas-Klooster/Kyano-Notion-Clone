@@ -30,15 +30,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('auth:sanctum')->post
     ('/logout', [AuthController::class, 'logout']);
 
-    
-    });
-
     // ! Project & Articles
 
     //  Endpoint voor Projecten
-    Route::post('/projects', [ProjectsController::class,'store']);
-    
-Route::apiResource('categories',
-CategoryController::class);
-Route::apiResource('articles',
-ArticleController::class);
+    Route::post('/projects', [ProjectsController::class, 'store']);
+
+    Route::apiResource(
+        'categories',
+        CategoryController::class
+    );
+    Route::apiResource(
+        'articles',
+        ArticleController::class
+    );
+    });
+
+   

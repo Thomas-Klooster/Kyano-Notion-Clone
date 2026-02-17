@@ -8,10 +8,15 @@ class Project extends Model
 {
     protected $fillable = [
         'projectname',
-        'customer_id',
         'description',
+        'category_id'
     ];
-    public $timestamps = true;
+
+
+    public function category() {
+        return
+        $this->belongsTo(Category::class);
+    }
 }
 
 

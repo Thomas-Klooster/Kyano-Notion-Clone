@@ -18,7 +18,6 @@ class Article extends Model
         'content',
         'summary',
         'status',
-        'visibility',
         'category_id'
 
     ];
