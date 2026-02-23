@@ -19,7 +19,19 @@ const breadcrumbItems = computed(() => {
         disabled: route.path === segment.path
       }
     })
-})   
+})
+const open = ref(['Private'])
+
+const admins = [
+  ['Management', 'mdi-account-multiple-outline'],
+  ['Settings', 'mdi-cog-outline'],
+]
+const cruds = [
+  ['Create', 'mdi-plus-outline'],
+  ['Read', 'mdi-file-outline'],
+  ['Update', 'mdi-update'],
+  ['Delete', 'mdi-delete'],
+]
 </script>
 
 
@@ -37,15 +49,53 @@ const breadcrumbItems = computed(() => {
         <v-list-item link prepend-icon="mdi-inbox" title="Inbox"></v-list-item>
         <v-list-item link prepend-icon="mdi-bookshelf" title="Library"></v-list-item>
 
-        <v-list-subheader>Recents</v-list-subheader>
-        <v-list-item prepend-icon="mdi-plus" title="Add New" link></v-list-item>
+        <v-divider></v-divider>
 
-        <v-list-subheader>Private</v-list-subheader>
-        <v-list-item prepend-icon="mdi-plus" title="Add New" link></v-list-item>
+        <v-list density="compact">
+          <v-list-group>
+            <template v-slot:activator="{ props }">
+              <v-list-subheader v-bind="props" title="Recents"></v-list-subheader>
+            </template>
 
-        <v-list-subheader>Teamspaces</v-list-subheader>
-        <v-list-item prepend-icon="mdi-plus" title="Add New" link></v-list-item>
+            <v-list-item prepend-icon="mdi-plus" title="Add New" link></v-list-item>
+          </v-list-group>
+        </v-list>
+
+        <v-list density="compact" v-model:opened="open">
+
+          <v-list-group value="Users">
+            <template v-slot:activator="{ props }">
+              <v-list-subheader v-bind="props" prepend-icon="mdi-account-circle" title="Private">
+                <template v-slot:append>
+                  <v-btn icon="mdi-information"></v-btn>
+                </template>
+              </v-list-subheader>
+            </template>
+
+            <v-list-group value="Admin">
+              <template v-slot:activator="{ props }">
+                <v-list-item v-bind="props" title="Admin"></v-list-item>
+              </template>
+
+              <v-list-item v-for="([title, icon], i) in admins" :key="i" :prepend-icon="icon" :title="title"
+                :value="title"></v-list-item>
+            </v-list-group>
+
+            <v-list-group value="Actions">
+              <template v-slot:activator="{ props }">
+                <v-list-item v-bind="props" title="Actions"></v-list-item>
+              </template>
+
+              <v-list-item v-for="([title, icon], i) in cruds" :key="i" :prepend-icon="icon" :title="title"
+                :value="title"></v-list-item>
+            </v-list-group>
+
+            <v-list-item prepend-icon="mdi-plus" title="Add New" link></v-list-item>
+          </v-list-group>
+        </v-list>
       </v-list>
+
+      <v-divider></v-divider>
     </v-navigation-drawer>
 
     <v-main @mouseenter="drawer = false">
