@@ -11,6 +11,14 @@ class CategoryController extends Controller
     Category::withCount('articles')->get();
   }
 
+  // public function AdminIndex(Request $request) {
+  //     $query = Category::where(['projects', 'articles']);
+  //     if ($request->user_id) {
+  //       $query->where('user_id', $request->user_id);        
+  //     }
+  //     return $query->get();
+  // }
+
   public function store(Request $request)
   {
     $data = $request->validate([

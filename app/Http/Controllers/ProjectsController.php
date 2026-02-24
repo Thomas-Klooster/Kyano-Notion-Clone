@@ -14,8 +14,10 @@ class ProjectsController extends Controller
     {
         return Project::with('category')->get();
     }
+    // Create
 
-    public function store(Request $request)
+   
+        public function store(Request $request)
     {
         $data = $request->validate([
             'projectname' => 'required',
@@ -29,13 +31,15 @@ class ProjectsController extends Controller
 
         return response()->json($project, 201);
     }
+    // Read
+    // public function show(Project $project)
+    // {
 
-    public function show(Project $project)
-    {
-        $this->authorize('view', $project);
-        return response()->json($project->load('category'));
-    }
+    //     $this->authorize('view', $project);
+    //     return response()->json($project->load('category'));
+    // }
 
+    // Update
     public function update(Request $request, Project $project)
     {
         $this->authorize('update', $project);
@@ -48,16 +52,36 @@ class ProjectsController extends Controller
             ],
             'category_id'  => 'sometimes|required|exists:categories,id',
         ]);
-
+        
         $project->update($data);
         return response()->json($project);
     }
-
+    // Delete
     public function destroy(Project $project)
     {
         $this->authorize('delete', $project);
         $project->delete();
 
         return response()->json(['deleted' => true]);
+    }
+
+    public function AdminIndex(Request $request) {
+        $this->authorize('admin');
+
+        $query = Project::with('category');
+        if ($request->user_id) {
+        $query->where('user_id', $request->user_id);
+         }
+
+         return response()->json($query->get());
+    }
+
+
+     public function myProjects() {
+        // 1. Projects with relationship category
+        // 2. in column user_id authenticate the user id (token)
+        // 3. Execute query as selected id
+        return Project::with('category')->where('user_id', auth()->id())
+        ->get();
     }
 }

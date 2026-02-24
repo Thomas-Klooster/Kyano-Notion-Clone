@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Models\User;
 use App\Http\Controllers\UserController;
-use App\Policies\UserPolicy;
 
 // Login endpoint om te kunnen inloggen met een bestaand account
 Route::post('/login', [AuthController::class,"login"])->name('login');
@@ -43,8 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/articles/{article}', [ArticleController::class, 'show']);
 
     Route::post('/projects', [ProjectsController::class, 'store']);
-    Route::get('/projects/{project}', [ProjectsController::class, 'show']);
-    
+    // Route::get('/projects/{project}', [ProjectsController::class, 'show']);
+    Route::get('/projects/me', [ProjectsController::class, 'myProjects'])->middleware('auth');        
 
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('articles', ArticleController::class);
@@ -56,6 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Attachments: article_id, mime, original_name, size, path
     Route::post('/articles/attachment', [ArticleController::class, 'storeAttachment']);
+    
 
     Route::middleware(['auth:sanctum', 'checkrole:admin'])->prefix('admin')->group(function() {
         //  Protected routes
@@ -63,6 +63,18 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->json(['message' => 'admin.']);
     });
 
+
+        /* Admin CRUD */
+        /* 
+        */ 
+        // Projects CRUD
+        Route::get('/projects', [ProjectsController::class, 'AdminIndex']);
+    // KLANT: My Projects
+        Route::get('/projects/me', [ProjectsController::class, 'myProjects'])->middleware('auth');        
+        // Articles CRUD
+        Route::get('/articles', [ArticleController::class, 'AdminIndex']);
+        // Categories CRUD
+        // Route::get('/categories', [CategoryController::class, 'AdminIndex']);
 
      Route::middleware('auth:sanctum')->get('/users/{id}', function ($id) {
         $user = User::findOrFail($id);

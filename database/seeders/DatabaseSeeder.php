@@ -83,8 +83,8 @@ class DatabaseSeeder extends Seeder
                 'summary' => 'Project summary in short',
                 'created_at' => now(),
                 'updated_at' => now(),
-                'status' => 'published',
-                'visibility' => 'public',
+                'status' => 'withdrawn',
+                'visibility' => 'private',
                 'category_id' => 1
                 
             ],

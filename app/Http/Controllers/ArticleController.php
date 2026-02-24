@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Attachment;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Validation\Rule;
 class ArticleController extends Controller
 {
 
@@ -15,6 +14,17 @@ class ArticleController extends Controller
     public function index() {
         return
         Article::with('category')->get();
+    }
+
+    public function AdminIndex(Request $request) {
+        $this->authorize('admin');
+
+
+        $query = Article::with('category');
+        if ($request->user_id) {
+            $query->where('user_id', $request->user_id);
+        }
+        return response()->json($query->get());
     }
 
     public function store(Request $request, Article $article)     {
