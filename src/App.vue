@@ -74,12 +74,9 @@ const isHovering = ref(false)
             <v-list-group data-depth="2">
 
               <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" title="Group 1" link @mouseenter="isHovering = true"
-                  @mouseleave="isHovering = false">
+                <v-list-item v-bind="props" title="Group 1" style="user-select: none;">
                   <template v-slot:prepend>
-                    <v-icon size="small">
-                      {{ isHovering ? 'mdi-menu-swap' : 'mdi-file-document-outline' }}
-                    </v-icon>
+                    <v-icon size="small" icon="mdi-file-document-outline"></v-icon>
                   </template>
                   <template v-slot:append>
                     <FunctionButtons />
@@ -89,10 +86,9 @@ const isHovering = ref(false)
 
 
               <v-list-item data-depth="3" v-for="([title, icon], i) in admins" :key="i" :title="title" :value="title"
-                link>
+                style="user-select: none;">
                 <template v-slot:prepend>
-                  <v-icon size="small" :icon="icon">
-                  </v-icon>
+                  <v-icon size="small" :icon="icon"></v-icon>
                 </template>
                 <template v-slot:append>
                   <FunctionButtons />
@@ -104,7 +100,7 @@ const isHovering = ref(false)
             <v-list-group data-depth="2">
 
               <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" title="Group 2">
+                <v-list-item v-bind="props" title="Group 2" style="user-select: none;">
                   <template v-slot:prepend>
                     <v-icon size="small" icon="mdi-file-document-outline"></v-icon>
                   </template>
@@ -114,7 +110,8 @@ const isHovering = ref(false)
                 </v-list-item>
               </template>
 
-              <v-list-item data-depth="3" v-for="([title, icon], i) in cruds" :key="i" :title="title" :value="title">
+              <v-list-item data-depth="3" v-for="([title, icon], i) in cruds" :key="i" :title="title" :value="title"
+                style="user-select: none;">
                 <template v-slot:prepend>
                   <v-icon size="small" :icon="icon"></v-icon>
                 </template>
