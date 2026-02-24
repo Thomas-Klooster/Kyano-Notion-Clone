@@ -4,6 +4,7 @@ import { ref } from 'vue'
 const drawer = ref(false)
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import FunctionButtons from './components/FunctionButtons.vue'
 
 const route = useRoute()
 
@@ -23,21 +24,22 @@ const breadcrumbItems = computed(() => {
 const open = ref(['Private'])
 
 const admins = [
-  ['Management', 'mdi-account-multiple-outline'],
-  ['Settings', 'mdi-cog-outline'],
+  ['Page 1', 'mdi-file-document-outline'],
+  ['Page 2', 'mdi-file-document-outline'],
 ]
 const cruds = [
-  ['Create', 'mdi-plus-outline'],
-  ['Read', 'mdi-file-outline'],
-  ['Update', 'mdi-update'],
-  ['Delete', 'mdi-delete'],
-] 
+  ['Page 3', 'mdi-file-document-outline'],
+  ['Page 4', 'mdi-file-document-outline'],
+  ['Page 5', 'mdi-file-document-outline'],
+  ['Page 6', 'mdi-file-document-outline'],
+]
+const isHovering = ref(false)
 </script>
 
 
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" permanent rounded @mouseleave="drawer = false">
+    <v-navigation-drawer v-model="drawer" permanent rounded>
       <v-list density="compact" :opened="opened" @update:opened="opened = $event">
         <v-list-item title="Notion Clone" subtitle="Built with Vuetify"></v-list-item>
 
@@ -63,38 +65,78 @@ const cruds = [
 
         <v-list density="compact" v-model:opened="open">
 
-          <v-list-group data-depth="1" value="Users">
+          <v-list-group data-depth="1">
+
             <template v-slot:activator="{ props }">
               <v-list-subheader v-bind="props" prepend-icon="mdi-account-circle" title="Private"></v-list-subheader>
             </template>
 
-            <v-list-group data-depth="2" value="Admin">
+            <v-list-group data-depth="2">
+
               <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" title="Admin"></v-list-item>
+                <v-list-item v-bind="props" title="Group 1" link @mouseenter="isHovering = true"
+                  @mouseleave="isHovering = false">
+                  <template v-slot:prepend>
+                    <v-icon size="small">
+                      {{ isHovering ? 'mdi-menu-swap' : 'mdi-file-document-outline' }}
+                    </v-icon>
+                  </template>
+                  <template v-slot:append>
+                    <FunctionButtons />
+                  </template>
+                </v-list-item>
               </template>
 
-              <v-list-item data-depth="3" v-for="([title, icon], i) in admins" :key="i" :prepend-icon="icon"
-                :title="title" :value="title"></v-list-item>
+
+              <v-list-item data-depth="3" v-for="([title, icon], i) in admins" :key="i" :title="title" :value="title"
+                link>
+                <template v-slot:prepend>
+                  <v-icon size="small" :icon="icon">
+                  </v-icon>
+                </template>
+                <template v-slot:append>
+                  <FunctionButtons />
+                </template>
+              </v-list-item>
+
             </v-list-group>
 
-            <v-list-group data-depth="2" value="Actions">
+            <v-list-group data-depth="2">
+
               <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" title="Actions"></v-list-item>
+                <v-list-item v-bind="props" title="Group 2">
+                  <template v-slot:prepend>
+                    <v-icon size="small" icon="mdi-file-document-outline"></v-icon>
+                  </template>
+                  <template v-slot:append>
+                    <FunctionButtons />
+                  </template>
+                </v-list-item>
               </template>
 
-              <v-list-item data-depth="3" v-for="([title, icon], i) in cruds" :key="i" :prepend-icon="icon"
-                :title="title" :value="title"></v-list-item>
+              <v-list-item data-depth="3" v-for="([title, icon], i) in cruds" :key="i" :title="title" :value="title">
+                <template v-slot:prepend>
+                  <v-icon size="small" :icon="icon"></v-icon>
+                </template>
+                <template v-slot:append>
+                  <FunctionButtons />
+                </template>
+              </v-list-item>
+
             </v-list-group>
 
             <v-list-item prepend-icon="mdi-plus" title="Add New" link></v-list-item>
+
           </v-list-group>
+
         </v-list>
+
       </v-list>
 
       <v-divider></v-divider>
     </v-navigation-drawer>
 
-    <v-main>
+    <v-main @mouseenter="drawer = false">
       <v-app-bar :elevation="0" density="compact">
         <template v-slot:prepend>
           <v-app-bar-nav-icon @mouseenter="drawer = true"></v-app-bar-nav-icon>
@@ -131,7 +173,22 @@ const cruds = [
   --depth: 4
 }
 
-::deep .v-list-group__items {
-  --indent-padding: calc(var(--depth, 1) * .5rem) !important;
+:deep(.v-list-group__items) {
+  --indent-padding: calc(var(--depth, 1) * .75rem) !important;
+}
+
+:deep(.v-list-item__spacer) {
+  width: 0.5rem !important;
+}
+
+.function-buttons-container {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.2s;
+}
+
+.v-list-item:hover .function-buttons-container {
+  visibility: visible;
+  opacity: 1;
 }
 </style>
