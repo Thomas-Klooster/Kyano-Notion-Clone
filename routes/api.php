@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ProjectsController;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Resetpasswordcontroller;
 use Illuminate\Support\Facades\Route;
@@ -42,12 +43,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/articles/{article}', [ArticleController::class, 'show']);
 
     Route::post('/projects', [ProjectsController::class, 'store']);
-    // Route::get('/projects/{project}', [ProjectsController::class, 'show']);
-    Route::get('/projects/me', [ProjectsController::class, 'myProjects'])->middleware('auth');        
+     Route::get('/projects/{project}', [ProjectsController::class, 'show']);
+            
 
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('articles', ArticleController::class);
-    Route::apiResource('projects', ProjectsController::class);
+    // Route::apiResource('projects', ProjectsController::class);
+    Route::get('/projects', [ProjectsController::class, 'myProjects'])->middleware('auth');
+    
     });
     /**
      * Store an attachment for an article
@@ -68,9 +71,12 @@ Route::middleware('auth:sanctum')->group(function () {
         /* 
         */ 
         // Projects CRUD
-        Route::get('/projects', [ProjectsController::class, 'AdminIndex']);
-    // KLANT: My Projects
-        Route::get('/projects/me', [ProjectsController::class, 'myProjects'])->middleware('auth');        
+        
+         Route::get('/projects', [ProjectsController::class, 'AdminIndex'])->middleware('auth');
+        // Admin: My Projects
+
+        Route::get('projects/me', [ProjectsController::class, 'myProjects']);        
+
         // Articles CRUD
         Route::get('/articles', [ArticleController::class, 'AdminIndex']);
         // Categories CRUD

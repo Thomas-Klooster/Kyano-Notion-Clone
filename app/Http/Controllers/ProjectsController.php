@@ -22,7 +22,7 @@ class ProjectsController extends Controller
         $data = $request->validate([
             'projectname' => 'required',
             'description' => 'required',
-            'slug' => 'required|unique:projects,slug',
+            'slug' => 'unique:projects,slug',
             'category_id' => 'required|exists:categories,id',
         ]);
 
@@ -32,12 +32,13 @@ class ProjectsController extends Controller
         return response()->json($project, 201);
     }
     // Read
-    // public function show(Project $project)
-    // {
 
-    //     $this->authorize('view', $project);
-    //     return response()->json($project->load('category'));
-    // }
+    
+     public function show(Project $project)
+     {
+         $this->authorize('view', $project);
+         return response()->json($project->load('category'));
+    }
 
     // Update
     public function update(Request $request, Project $project)
@@ -65,17 +66,18 @@ class ProjectsController extends Controller
         return response()->json(['deleted' => true]);
     }
 
-    public function AdminIndex(Request $request) {
-        $this->authorize('admin');
-
+  
+  public function AdminIndex(Request $request) {
+        // $this->authorize('admin');
+        // $request->validate((['user_id' => 'required|exists:user,id'
+        // ]));
         $query = Project::with('category');
         if ($request->user_id) {
         $query->where('user_id', $request->user_id);
-         }
+         };
 
          return response()->json($query->get());
     }
-
 
      public function myProjects() {
         // 1. Projects with relationship category
