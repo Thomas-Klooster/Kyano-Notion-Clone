@@ -31,7 +31,7 @@ const cruds = [
   ['Read', 'mdi-file-outline'],
   ['Update', 'mdi-update'],
   ['Delete', 'mdi-delete'],
-]
+] 
 </script>
 
 
@@ -52,7 +52,7 @@ const cruds = [
         <v-divider></v-divider>
 
         <v-list density="compact">
-          <v-list-group>
+          <v-list-group data-depth="1">
             <template v-slot:activator="{ props }">
               <v-list-subheader v-bind="props" title="Recents"></v-list-subheader>
             </template>
@@ -63,31 +63,27 @@ const cruds = [
 
         <v-list density="compact" v-model:opened="open">
 
-          <v-list-group value="Users">
+          <v-list-group data-depth="1" value="Users">
             <template v-slot:activator="{ props }">
-              <v-list-subheader v-bind="props" prepend-icon="mdi-account-circle" title="Private">
-                <template v-slot:append>
-                  <v-btn icon="mdi-information"></v-btn>
-                </template>
-              </v-list-subheader>
+              <v-list-subheader v-bind="props" prepend-icon="mdi-account-circle" title="Private"></v-list-subheader>
             </template>
 
-            <v-list-group value="Admin">
+            <v-list-group data-depth="2" value="Admin">
               <template v-slot:activator="{ props }">
                 <v-list-item v-bind="props" title="Admin"></v-list-item>
               </template>
 
-              <v-list-item v-for="([title, icon], i) in admins" :key="i" :prepend-icon="icon" :title="title"
-                :value="title"></v-list-item>
+              <v-list-item data-depth="3" v-for="([title, icon], i) in admins" :key="i" :prepend-icon="icon"
+                :title="title" :value="title"></v-list-item>
             </v-list-group>
 
-            <v-list-group value="Actions">
+            <v-list-group data-depth="2" value="Actions">
               <template v-slot:activator="{ props }">
                 <v-list-item v-bind="props" title="Actions"></v-list-item>
               </template>
 
-              <v-list-item v-for="([title, icon], i) in cruds" :key="i" :prepend-icon="icon" :title="title"
-                :value="title"></v-list-item>
+              <v-list-item data-depth="3" v-for="([title, icon], i) in cruds" :key="i" :prepend-icon="icon"
+                :title="title" :value="title"></v-list-item>
             </v-list-group>
 
             <v-list-item prepend-icon="mdi-plus" title="Add New" link></v-list-item>
@@ -98,7 +94,7 @@ const cruds = [
       <v-divider></v-divider>
     </v-navigation-drawer>
 
-    <v-main @mouseenter="drawer = false">
+    <v-main>
       <v-app-bar :elevation="0" density="compact">
         <template v-slot:prepend>
           <v-app-bar-nav-icon @mouseenter="drawer = true"></v-app-bar-nav-icon>
@@ -118,4 +114,24 @@ const cruds = [
   </v-app>
 </template>
 
-<style scoped></style>
+<style scoped>
+[data-depth="1"] {
+  --depth: 1
+}
+
+[data-depth="2"] {
+  --depth: 2
+}
+
+[data-depth="3"] {
+  --depth: 3
+}
+
+[data-depth="4"] {
+  --depth: 4
+}
+
+::deep .v-list-group__items {
+  --indent-padding: calc(var(--depth, 1) * .5rem) !important;
+}
+</style>
