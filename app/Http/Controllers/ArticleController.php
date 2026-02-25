@@ -16,19 +16,7 @@ class ArticleController extends Controller
         Article::with('category')->get();
     }
 
-    public function AdminIndex(Request $request) {
-        $this->authorize('admin');
-
-
-        $query = Article::with('category');
-        if ($request->user_id) {
-            $query->where('user_id', $request->user_id);
-        }
-        return response()->json($query->get());
-    }
-
-    public function store(Request $request, Article $article)     {
-        $this->authorize('store', $article);
+    public function store(Request $request)     {
         $data = $request->validate([
             'title' => 'required',
             'content' => 'required',
@@ -50,7 +38,6 @@ class ArticleController extends Controller
         
         
         
-        new JsonResponse($data);
         $file = Storage::put('attachments', $data['file']);
         $attachment = Attachment::create(
             [
@@ -86,9 +73,18 @@ class ArticleController extends Controller
     }
 
     public function destroy(Article $article) {
-        $this->authorize('deleted', $article);
+        $this->authorize('delete', $article);
         $article->delete();
-        return response()->json(['deleted' => true]);
+        return response()->json(['delete' => true]);
         }
+        
+        public function AdminIndex(Request $request) {
+
+        $query = Article::with('category');
+        if ($request->user_id) {
+            $query->where('user_id', $request->user_id);
+        }
+        return response()->json($query->get());
+    }
 }
 

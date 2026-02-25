@@ -4,28 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class CategoryController extends Controller
 {
+
+use AuthorizesRequests;
   public function index() {
     return
     Category::withCount('articles')->get();
   }
-
-  // public function AdminIndex(Request $request) {
-  //     $query = Category::where(['projects', 'articles']);
-  //     if ($request->user_id) {
-  //       $query->where('user_id', $request->user_id);        
-  //     }
-  //     return $query->get();
-  // }
-
   public function store(Request $request)
   {
+    
     $data = $request->validate([
       'name' => 'required',
       'slug' => 'unique:categories,slug'
     ]);
-
       $category = Category::create($data);
 
       // dd($data);
@@ -34,11 +28,13 @@ class CategoryController extends Controller
     }
 
   public function show(Category $category) {
-    return $category->load('articles');
+  $this->authorize('view', $category);  
+  return $category->load('articles');
   }
 
   public function update(Request $request, Category $category)
   {
+    $this->authorize('update', $category);
     $data = $request->validate([
       'name' => 'sometimes|required',
       'slug' => 'sometimes|unique:categories,slug,'
@@ -48,11 +44,18 @@ class CategoryController extends Controller
     $category->update($data);
     return $category;
   }
-  
-  public function destroy(Category $category) {
+
+  public function destroy(Category $category)
+  {
+    $this->authorize('delete', $category);
     $category->delete();
     return response()->json([
       'message' => 'Deleted'
     ]);
   }
+
+  public function AdminIndex() {
+    return Category::withCount('articles')->get();
+    }
+
 }

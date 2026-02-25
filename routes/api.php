@@ -4,7 +4,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ProjectsController;
-use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Resetpasswordcontroller;
 use Illuminate\Support\Facades\Route;
@@ -23,39 +22,23 @@ Route::post('/password/reset', [Resetpasswordcontroller::class,'reset']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // /me endpoint voor het ophalen van de huidige ingelogde gebruiker
-   
-    Route::middleware('auth:sanctum')->get('/me', 
-    function (Request $request)
-     {
-        return $request->user();
-    });
-
-   
-
-    // Logout endpoint voor het uitloggen van een ingelogde gebruiker
-    Route::middleware('auth:sanctum')->post
-    ('/logout', [AuthController::class, 'logout']);
-
+    Route::get('/me', fn (Request $request) => $request->user());
+    Route::post('/logout', [AuthController::class, 'logout']);
     // Project & Articles
 
     //  Endpoint voor Projecten & Articles
-    Route::post('/articles', [ArticleController::class, 'store']);
+    
+    Route::get('/projects', [ProjectsController::class, 'myProjects']);
+    Route::apiResource('projects', ProjectsController::class)->except(['index']);
+    
+
+    Route::get('/articles', [ArticleController::class, 'index']);
     Route::get('/articles/{article}', [ArticleController::class, 'show']);
 
-    Route::post('/projects', [ProjectsController::class, 'store']);
-     Route::get('/projects/{project}', [ProjectsController::class, 'show']);
-            
 
-    Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('articles', ArticleController::class);
-    // Route::apiResource('projects', ProjectsController::class);
-    Route::get('/projects', [ProjectsController::class, 'myProjects'])->middleware('auth');
-    
+    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/categories/{category}', [CategoryController::class, 'show']);
     });
-    /**
-     * Store an attachment for an article
-     */
-
     // Attachments: article_id, mime, original_name, size, path
     Route::post('/articles/attachment', [ArticleController::class, 'storeAttachment']);
     
@@ -65,65 +48,41 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/test', function() {
         return response()->json(['message' => 'admin.']);
     });
-
-
-        /* Admin CRUD */
-        /* 
-        */ 
-        // Projects CRUD
-        
-         Route::get('/projects', [ProjectsController::class, 'AdminIndex'])->middleware('auth');
-        // Admin: My Projects
-
-        Route::get('projects/me', [ProjectsController::class, 'myProjects']);        
-
-        // Articles CRUD
-        Route::get('/articles', [ArticleController::class, 'AdminIndex']);
-        // Categories CRUD
-        // Route::get('/categories', [CategoryController::class, 'AdminIndex']);
-
-     Route::middleware('auth:sanctum')->get('/users/{id}', function ($id) {
-        $user = User::findOrFail($id);
-        return response()->json($user);
-    });
-
-    Route::delete('/users/{id}', [UserController::class, 'destroy']);
-    Route::middleware('auth:sanctum')->post('/users', function (Request $request) {
-            $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'address' => $request->address,
-            'company' => $request->company,
-            'phone_number' => $request->phone_number,
-            'email_verified_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
-            ]);
-            return response()->json(['message' => $user, 201]);
-    });
-    Route::match(['put', 'patch'], '/users/{id}', function (Request $request, $id) {
-        $user = User::findOrFail($id);
-        
-        $user->update($request->only([
-            'name',
-            'email',
-            'password',
-            'address',
-            'company',
-            'phone_number',
-            'email_verified_at' => now(),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]));
-
-        return response()->json($user);
-
-    });
-
-
-
-    
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
+
+        /* --------------------------Admin CRUD-------------------------- */
+
+         // Projects CRUD
+
+         // ! TODO: REMEMBER REMOVING SHOW ---------------------------->
+         Route::get('/projects', [ProjectsController::class, 'AdminIndex']);
+         Route::get('/projects/{project}', [ProjectsController::class, 'show']);
+         Route::post('/projects', [ProjectsController::class, 'store']);
+         Route::get('projects/me', [ProjectsController::class, 'myProjects']); 
+         Route::put('/projects/{project}', [ProjectsController::class, 'update']);
+         Route::delete('/projects/{project}', [ProjectsController::class, 'destroy']);
+
+         // Categories CRUD
+
+         // ! UNCOMMENT
+         Route::get('/categories', [CategoryController::class, 'AdminIndex']);
+         Route::get('/categories/{category}', [CategoryController::class, 'show']);
+         Route::post('/categories', [CategoryController::class, 'store']);
+         Route::put('/categories/{category}', [CategoryController::class, 'update']);
+         Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
+
+         // Articles CRUD
+         Route::get('/articles', [ArticleController::class, 'AdminIndex']);
+         Route::get('/articles/{article}', [ArticleController::class, 'show']);
+         Route::post('/articles', [ArticleController::class, 'store']);
+         Route::put('/articles/{article}', [ArticleController::class, 'update']);
+         Route::delete('/articles/{article}', [ArticleController::class, 'destroy']);
+         
+
+         // Admin User CRUD
+        Route::get('/users/{id}', fn($id) => response()->json(User::findOrFail($id)));
+        Route::post('/users', [UserController::class, 'store']);
+        Route::put('/users/{id}', [UserController::class, 'update']);
+        Route::delete('/users/{id}', [UserController::class, 'destroy']);
     });
