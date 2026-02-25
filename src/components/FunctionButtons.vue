@@ -7,8 +7,9 @@
             <template v-slot:activator="{ props: menu }">
                 <v-tooltip location="bottom" text="Delete, Duplicate and More...">
                     <template v-slot:activator="{ props: tooltip }">
-                        <v-btn icon size="x-small" variant="text" v-bind="mergeProps(menu, tooltip)">
-                            <v-icon>mdi-dots-horizontal</v-icon>
+                        <v-btn rounded icon size="small" density="compact" variant="text"
+                            v-bind="mergeProps(menu, tooltip)">
+                            <v-icon size="small">mdi-dots-horizontal</v-icon>
                         </v-btn>
                     </template>
                 </v-tooltip>
@@ -27,8 +28,8 @@
 
         <v-tooltip location="bottom" text="Add a page inside">
             <template v-slot:activator="{ props }">
-                <v-btn icon size="x-small" variant="text" v-bind="props">
-                    <v-icon>mdi-plus</v-icon>
+                <v-btn rounded icon size="small" density="compact" variant="text" v-bind="props">
+                    <v-icon size="small">mdi-plus</v-icon>
                 </v-btn>
             </template>
         </v-tooltip>
@@ -47,3 +48,16 @@ const items = [
     { title: 'Move to Trash' },
 ]
 </script>
+
+<style>
+.function-buttons-container {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.2s;
+}
+
+.v-list-item:hover .function-buttons-container {
+    visibility: visible;
+    opacity: 1;
+}
+</style>

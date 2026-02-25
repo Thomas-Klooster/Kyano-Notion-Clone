@@ -4,7 +4,61 @@ import { ref } from 'vue'
 const drawer = ref(false)
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import FunctionButtons from './components/FunctionButtons.vue'
+import FunctionButtons from '@/components/FunctionButtons.vue'
+import SidebarItem from './components/SidebarItem.vue'
+
+const pages = ref([
+  {
+    id: '1',
+    title: 'Page 1',
+    icon: 'mdi-file-document-outline',
+    canHaveChildren: true,
+    children: [
+      {
+        id: '1-1',
+        title: 'Page 1-1',
+        icon: 'mdi-file-document-outline',
+        canHaveChildren: true,
+        children: []
+      },
+      {
+        id: '1-2',
+        title: 'Page 1-2',
+        icon: 'mdi-file-document-outline',
+        canHaveChildren: true,
+        children: [
+          {
+            id: '1-2-1',
+            title: 'Page 1-2-1',
+            icon: 'mdi-file-document-outline',
+            canHaveChildren: true,
+            children: []
+          },
+          {
+            id: '1-2-2',
+            title: 'Page 1-2-2',
+            icon: 'mdi-file-document-outline',
+            canHaveChildren: true,
+            children: [
+              {
+                id: '1-2-2-1',
+                title: 'Page 1-2-2-1',
+                icon: 'mdi-file-document-outline',
+                canHaveChildren: true,
+              },
+              {
+                id: '1-2-2-2',
+                title: 'Page 1-2-2-2',
+                icon: 'mdi-file-document-outline',
+                canHaveChildren: true,
+              },
+            ]
+          }
+        ]
+      }
+    ]
+  },
+])
 
 const route = useRoute()
 
@@ -126,6 +180,10 @@ const isHovering = ref(false)
 
           </v-list-group>
 
+          <v-list density="compact" nav>
+            <SidebarItem v-for="page in pages" :key="page.id" :page="page" :depth="0" />
+          </v-list>
+
         </v-list>
 
       </v-list>
@@ -147,7 +205,7 @@ const isHovering = ref(false)
         </template>
       </v-app-bar>
       <v-container>
-        <RouterView />
+        <router-view />
       </v-container>
     </v-main>
   </v-app>
