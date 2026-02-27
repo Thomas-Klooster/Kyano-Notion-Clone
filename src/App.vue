@@ -57,6 +57,55 @@ const pages = ref([
         ]
       }
     ]
+  }, {
+    id: '2',
+    title: 'Page 2',
+    icon: 'mdi-file-document-outline',
+    canHaveChildren: true,
+    children: [
+      {
+        id: '2-1',
+        title: 'Page 2-1',
+        icon: 'mdi-file-document-outline',
+        canHaveChildren: true,
+        children: []
+      },
+      {
+        id: '2-2',
+        title: 'Page 2-2',
+        icon: 'mdi-file-document-outline',
+        canHaveChildren: true,
+        children: [
+          {
+            id: '2-2-1',
+            title: 'Page 2-2-1',
+            icon: 'mdi-file-document-outline',
+            canHaveChildren: true,
+            children: []
+          },
+          {
+            id: '2-2-2',
+            title: 'Page 2-2-2',
+            icon: 'mdi-file-document-outline',
+            canHaveChildren: true,
+            children: [
+              {
+                id: '2-2-2-1',
+                title: 'Page 2-2-2-1',
+                icon: 'mdi-file-document-outline',
+                canHaveChildren: true,
+              },
+              {
+                id: '2-2-2-2',
+                title: 'Page 2-2-2-2',
+                icon: 'mdi-file-document-outline',
+                canHaveChildren: true,
+              },
+            ]
+          }
+        ]
+      }
+    ]
   },
 ])
 
@@ -96,6 +145,9 @@ const isHovering = ref(false)
     <v-navigation-drawer v-model="drawer" permanent rounded>
       <v-list density="compact" :opened="opened" @update:opened="opened = $event">
         <v-list-item title="Notion Clone" subtitle="Built with Vuetify"></v-list-item>
+
+        <v-list-item link prepend-icon="mdi-login" to="/auth/login" title="Login"></v-list-item>
+        <v-list-item link prepend-icon="mdi-account-edit-outline" to="/auth/register" title="Register"></v-list-item>
 
         <v-divider></v-divider>
 
