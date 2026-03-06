@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\password_reset_tokens;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
@@ -18,15 +20,6 @@ class AuthController extends Controller
     public function register(RegisterRequest $request) {
         $validated = $request->validated();
 
-    $request->validate([
-        'name' => 'required|string',
-        'email' => 'required|email|unique:users',
-        'password'=> 'required',
-        'address' => 'nullable|string',
-        'company' => 'nullable',
-        'phone_number' => 'nullable|string|max:15',
-        ]);
-
         $user = User::create([
             'name'=> $validated['name'],
             'email'=> $validated['email'],
@@ -35,7 +28,7 @@ class AuthController extends Controller
             'company' => $validated['company'],
             'phone_number' => $validated['phone_number']
         ]);
-
+        
         $token = $user->createToken('api-token')->plainTextToken;
         return response()->json([
             'message' => 'User Registered',
@@ -67,10 +60,10 @@ class AuthController extends Controller
     ]);
 }
 
-public function logout(LogoutRequest $request) {
+    public function logout(LogoutRequest $request) {
 
-$user = $request->user();
-if (! $user) {
+    $user = $request->user();
+    if (! $user) {
     return response()->json([
     'success' => false,    
     'message'=> 'Unauthorized'],401);
@@ -88,55 +81,76 @@ if (! $user) {
         $request->validate(['email' => 'required|email|exists:users,email']);
         $otp = rand(100000, 999999);
         $user = User::where('email', $request->email)->first();
-        $user->update([
-            'otp' => $otp,
-            'otp_expires_at' => Carbon::now()->addMinutes(10),
-        ]);
-
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['user_id' => $user->id],
+            [
+                'token' => Hash::make($otp),
+                'expires_at' => Carbon::now()->addMinutes(10),
+                'created_at' => now(),
+            ]
+        );
+        
         Mail::to($user->email)->send(new OtpMail($otp));
+        return response()->json(['message' => 'A verification code has been sent to your inbox.']);
+        }
 
-        return response()->json(['message' => 'Code has been sent to your inbox.']);
-    }
-
-     public function verifyOtp(Request $request) {
+   public function verifyOtp(Request $request) {
         $request->validate([
             'email' => 'required|email',
             'otp' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)
-        ->where('otp', $request->otp)
-        ->where('otp_expires_at', '>=', Carbon::now())
-        ->first();
-
+        $user = User::where('email', $request->email)->first();
         if (!$user) {
-            return response()->json(['message' => 'invalid code or expired.'], 422);
+            return response()->json([
+                'message' => 'not found.'    
+            ], 404);
+            
         }
-
-        return response()->json(['message' => 'Password Verified.']);
         
+        $record = DB::table('password_reset_tokens')
+        ->where('user_id', $user->id)
+        ->where('expires_at', '>=', Carbon::now())->first();
+        
+        if (!$record || !Hash::check($request->otp, $record->token)) {
+            return response()->json(['message' => 'Invalid or expired.'], 422);
+        }
+        return response()->json(['message' => 'Code Verified.']);
         }
         public function resetPassword(Request $request) {
-            $request->validate([
-                'email' => 'required|email',
-                'otp' => 'required',
-                'password' => 'required|confirmed|min:8',
-            ]);
-        
-            $user = User::where('email', $request->email)
-            ->where('otp', $request->otp)
-            ->where('otp_expires_at', '>=', Carbon::now())->first();
-            
+        $request->validate([
+        'email' => 'required|email|exists:users,email',
+        'otp' => 'required',
+        'password' => 'required|min:8|confirmed'
+        ]);
+                                   
+       $user = User::where('email', $request->email)->first();
+          
+                // !DEBUGGING
+                // Laat de otp code zien, hoef je niet op je telefoon te kijken
+                // var_dump($otp);
 
-            if (!$user) {
-                return response()->json(['message' => 'Invalid code or expired.'], 422);
-            }
+        $record = DB::table('password_reset_tokens')
+        ->where('user_id', $user->id)
+        ->where('expires_at', '>=', Carbon::now())
+        ->first();
 
-            $user->update([
-                'password' => Hash::make($request->password),
-                'otp' => null,
-                'otp_expires_at' => null,
-            ]);
-            return response()->json(['message' => 'Password has been resetted.' ]);
+
+        if (!$record || !Hash::check($request->otp, $record->token)) {
+        return response()->json(['message' => 'Invalid code or expired.'], 422);
+         }
+
+        $user->update(['password' => Hash::make($request->password)]);
+        DB::table('password_reset_tokens')->where('user_id')->delete();
+          return response()->json(['message' => 'Password has been resetted.']);
+
+            // ? UPCOMING FEATURE:
+            /* 
+            By a password reset you get a email about it.
+            */
+
+          // Mail::to($user->email)->send(new OtpMail($otp));
+                // return response()->json([
+                //     'message' => 'Email resetted message']);
         }
 }

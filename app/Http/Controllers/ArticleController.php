@@ -89,7 +89,6 @@ class ArticleController extends Controller
 
 
 
-        // TODOS------------------------------------------------------------------------------------------------------------------------
     public function projectArticles(Project $project)
     {
         $query = $project->article();
@@ -102,8 +101,6 @@ class ArticleController extends Controller
         }
         return $query->get();
     }
-
-        // TODOS------------------------------------------------------------------------------------------------------------------------
 
     public function AdminIndex(Request $request) {
         $query = Article::with(['category', 'project', 'article']);

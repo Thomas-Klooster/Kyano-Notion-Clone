@@ -31,7 +31,8 @@ class User extends Authenticatable
         'company',
         'password',
         'phone_number',
-        'role'
+        'role',
+        
     ];
 
     protected $casts = [
@@ -59,5 +60,7 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
     
 }
