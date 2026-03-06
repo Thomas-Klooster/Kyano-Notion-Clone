@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Mail\ResetMail;
 use App\Models\password_reset_tokens;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
@@ -142,15 +143,8 @@ class AuthController extends Controller
 
         $user->update(['password' => Hash::make($request->password)]);
         DB::table('password_reset_tokens')->where('user_id')->delete();
-          return response()->json(['message' => 'Password has been resetted.']);
-
-            // ? UPCOMING FEATURE:
-            /* 
-            By a password reset you get a email about it.
-            */
-
-          // Mail::to($user->email)->send(new OtpMail($otp));
-                // return response()->json([
-                //     'message' => 'Email resetted message']);
+        Mail::to($user->email)->send(new ResetMail());  
+        return response()->json(['message' => 'Password has been resetted.']);
+           
         }
 }
