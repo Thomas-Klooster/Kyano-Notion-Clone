@@ -159,83 +159,8 @@ const isHovering = ref(false)
 
         <v-divider></v-divider>
 
-        <v-list density="compact">
-          <v-list-group data-depth="1">
-            <template v-slot:activator="{ props }">
-              <v-list-subheader v-bind="props" title="Recents"></v-list-subheader>
-            </template>
-
-            <v-list-item prepend-icon="mdi-plus" title="Add New" link></v-list-item>
-          </v-list-group>
-        </v-list>
-
-        <v-list density="compact" v-model:opened="open">
-
-          <v-list-group data-depth="1">
-
-            <template v-slot:activator="{ props }">
-              <v-list-subheader v-bind="props" prepend-icon="mdi-account-circle" title="Private"></v-list-subheader>
-            </template>
-
-            <v-list-group data-depth="2">
-
-              <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" title="Group 1" style="user-select: none;">
-                  <template v-slot:prepend>
-                    <v-icon size="small" icon="mdi-file-document-outline"></v-icon>
-                  </template>
-                  <template v-slot:append>
-                    <FunctionButtons />
-                  </template>
-                </v-list-item>
-              </template>
-
-
-              <v-list-item data-depth="3" v-for="([title, icon], i) in admins" :key="i" :title="title" :value="title"
-                style="user-select: none;">
-                <template v-slot:prepend>
-                  <v-icon size="small" :icon="icon"></v-icon>
-                </template>
-                <template v-slot:append>
-                  <FunctionButtons />
-                </template>
-              </v-list-item>
-
-            </v-list-group>
-
-            <v-list-group data-depth="2">
-
-              <template v-slot:activator="{ props }">
-                <v-list-item v-bind="props" title="Group 2" style="user-select: none;">
-                  <template v-slot:prepend>
-                    <v-icon size="small" icon="mdi-file-document-outline"></v-icon>
-                  </template>
-                  <template v-slot:append>
-                    <FunctionButtons />
-                  </template>
-                </v-list-item>
-              </template>
-
-              <v-list-item data-depth="3" v-for="([title, icon], i) in cruds" :key="i" :title="title" :value="title"
-                style="user-select: none;">
-                <template v-slot:prepend>
-                  <v-icon size="small" :icon="icon"></v-icon>
-                </template>
-                <template v-slot:append>
-                  <FunctionButtons />
-                </template>
-              </v-list-item>
-
-            </v-list-group>
-
-            <v-list-item prepend-icon="mdi-plus" title="Add New" link></v-list-item>
-
-          </v-list-group>
-
-          <v-list density="compact" nav>
-            <SidebarItem v-for="page in pages" :key="page.id" :page="page" :depth="0" />
-          </v-list>
-
+        <v-list density="compact" nav>
+          <SidebarItem v-for="page in pages" :key="page.id" :page="page" :depth="0" />
         </v-list>
 
       </v-list>
@@ -264,26 +189,6 @@ const isHovering = ref(false)
 </template>
 
 <style scoped>
-[data-depth="1"] {
-  --depth: 1
-}
-
-[data-depth="2"] {
-  --depth: 2
-}
-
-[data-depth="3"] {
-  --depth: 3
-}
-
-[data-depth="4"] {
-  --depth: 4
-}
-
-:deep(.v-list-group__items) {
-  --indent-padding: calc(var(--depth, 1) * .75rem) !important;
-}
-
 :deep(.v-list-item__spacer) {
   width: 0.5rem !important;
 }
