@@ -43,9 +43,24 @@ const router = createRouter({
       path: '/auth',
       children: [
         { path: 'login', name: 'login', component: LoginPage, meta: { breadcrumb: 'Login' } },
-        { path: 'register', name: 'register', component: RegisterPage, meta: { breadcrumb: 'Register' } },
-        { path: 'forgot-password', name: 'forgot-password', component: ForgotPasswordPage, meta: { breadcrumb: 'Forgot Password' } },
-        { path: 'reset-password', name: 'reset-password', component: ResetPasswordPage, meta: { breadcrumb: 'Reset Password' } },
+        {
+          path: 'register',
+          name: 'register',
+          component: RegisterPage,
+          meta: { breadcrumb: 'Register' },
+        },
+        {
+          path: 'forgot-password',
+          name: 'forgot-password',
+          component: ForgotPasswordPage,
+          meta: { breadcrumb: 'Forgot Password' },
+        },
+        {
+          path: 'reset-password',
+          name: 'reset-password',
+          component: ResetPasswordPage,
+          meta: { breadcrumb: 'Reset Password' },
+        },
       ],
     },
 
@@ -99,6 +114,24 @@ const router = createRouter({
           name: 'admin-project-detail',
           component: ProjectDetailPage,
           meta: { breadcrumb: 'Project detail page' },
+        },
+        {
+          path: 'articles',
+          name: 'admin-articles',
+          component: () => import('@/pages/Admin/ArticlesPage.vue'),
+          meta: { breadcrumb: 'Articles' },
+        },
+        {
+          path: 'articles/new',
+          name: 'admin-articles-new',
+          component: () => import('@/pages/Admin/ArticleEditorPage.vue'),
+          meta: { breadcrumb: 'Article editor page' },
+        },
+        {
+          path: 'articles/:id/edit',
+          name: 'admin-articles-edit',
+          component: () => import('@/pages/Admin/ArticleEditorPage.vue'),
+          meta: { breadcrumb: 'Article editor page' },
         },
       ],
     },

@@ -109,8 +109,7 @@
               <p class="page-subtitle mb-0">
                 Je staat op het punt om
                 <strong>{{ customerToDelete?.name }}</strong>
-                te verwijderen. Deze actie is tijdelijk alleen voor de frontend
-                skeleton en haalt de klant uit de mock lijst.
+                te verwijderen. Deze kan niet ongedaan worden.
               </p>
             </div>
           </div>
