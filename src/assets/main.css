@@ -1,3 +1,136 @@
 .v-list-item-title {
     font-size: 0.875rem !important;
 }
+body {
+  background: #ffffff;
+  color: #2f3437;
+}
+
+.admin-page-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 32px 48px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.page-title {
+  font-size: 2rem;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #191919;
+  margin: 0;
+}
+
+.page-subtitle {
+  margin: 6px 0 0;
+  color: #787774;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.notion-card {
+  border: 1px solid #ebebea !important;
+  box-shadow: none !important;
+  background: #ffffff !important;
+}
+
+.notion-section {
+  margin-bottom: 20px;
+}
+
+.notion-muted {
+  color: #787774;
+}
+
+.notion-table thead th {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #787774;
+  background: #ffffff;
+  border-bottom: 1px solid #efefef;
+  text-transform: none;
+  letter-spacing: 0;
+  height: 44px !important;
+}
+
+.notion-table tbody td {
+  color: #2f3437;
+  border-bottom: 1px solid #f3f3f3;
+  height: 56px !important;
+}
+
+.notion-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.notion-chip {
+  background: #f3f3f2 !important;
+  color: #5f5e5b !important;
+  border: 1px solid #ecebea !important;
+}
+
+.notion-meta-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #787774;
+  margin-bottom: 6px;
+}
+
+.notion-form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.notion-tab-panel {
+  padding: 24px;
+}
+
+.notion-empty-state {
+  border: 1px dashed #e7e5e4;
+  border-radius: 16px;
+  padding: 24px;
+  background: #fcfcfb;
+}
+
+.notion-stat-card {
+  padding: 20px;
+  border: 1px solid #ebebea;
+  border-radius: 20px;
+  background: #fff;
+}
+
+.notion-stat-label {
+  font-size: 0.85rem;
+  color: #787774;
+  margin-bottom: 10px;
+}
+
+.notion-stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #191919;
+}
+
+.notion-soft-input :deep(.v-field) {
+  border-radius: 14px !important;
+  box-shadow: none !important;
+  background: #fbfbfa !important;
+}
+
+.notion-soft-tabs :deep(.v-tab) {
+  text-transform: none;
+  font-weight: 600;
+  color: #6b6b6b;
+}
+
+.notion-soft-tabs :deep(.v-tab--selected) {
+  color: #191919;
+}

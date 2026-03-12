@@ -124,7 +124,7 @@ const breadcrumbItems = computed(() => {
       }
     })
 })
-const open = ref(['Private'])
+const opened = ref(['Private'])
 
 const admins = [
   ['Page 1', 'mdi-file-document-outline'],
@@ -142,7 +142,7 @@ const isHovering = ref(false)
 
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" permanent rounded>
+    <v-navigation-drawer v-model="drawer" permanent rounded color="#fbfbfa">
       <v-list density="compact" :opened="opened" @update:opened="opened = $event">
         <v-list-item title="Notion Clone" subtitle="Built with Vuetify"></v-list-item>
 
@@ -169,6 +169,7 @@ const isHovering = ref(false)
     </v-navigation-drawer>
 
     <v-main @mouseenter="drawer = false">
+      <div class="admin-page-shell">
       <v-app-bar :elevation="0" density="compact">
         <template v-slot:prepend>
           <v-app-bar-nav-icon @mouseenter="drawer = true"></v-app-bar-nav-icon>
@@ -184,6 +185,8 @@ const isHovering = ref(false)
       <v-container>
         <router-view />
       </v-container>
+      </div>
+
     </v-main>
   </v-app>
 </template>
