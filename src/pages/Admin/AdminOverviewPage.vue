@@ -82,5 +82,27 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="12" md="6">
+        <v-card class="notion-card" flat rounded="xl" to="/admin/articles">
+          <div class="pa-6">
+            <div class="d-flex align-center justify-space-between mb-4">
+              <div class="text-h6 font-weight-bold">Artikelen</div>
+              <v-icon icon="mdi-account-box-multiple-outline" />
+            </div>
+
+            <p class="page-subtitle">
+              Artikelen beheren, bewerken en structureren binnen de admin omgeving.
+            </p>
+
+            <div class="mt-6">
+              <v-btn variant="text" color="primary">
+                Open Artikelen
+              </v-btn>
+            </div>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
