@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="admin-page-container">
     <div class="page-header">
       <div>
         <h1 class="page-title">Projects</h1>
@@ -8,12 +8,7 @@
         </p>
       </div>
 
-      <v-btn
-        color="primary"
-        rounded="lg"
-        prepend-icon="mdi-plus"
-        to="/admin/projects/new"
-      >
+      <v-btn color="primary" rounded="lg" prepend-icon="mdi-plus" to="/admin/projects/new">
         Nieuw project
       </v-btn>
     </div>
@@ -22,15 +17,9 @@
       <div class="pa-4">
         <v-row>
           <v-col cols="12" md="4">
-            <v-select
-              class="notion-soft-input"
-              label="Filter op customer"
-              :items="['Alle customers', 'Kyano Digital', 'Studio North', 'Pixelworks']"
-              variant="solo-filled"
-              flat
-              hide-details
-              model-value="Alle customers"
-            />
+            <v-select class="notion-soft-input" label="Filter op customer"
+              :items="['Alle customers', 'Kyano Digital', 'Studio North', 'Pixelworks']" variant="solo-filled" flat
+              hide-details model-value="Alle customers" />
           </v-col>
         </v-row>
       </div>
@@ -58,18 +47,10 @@
               </v-chip>
             </td>
             <td class="text-right">
-              <v-btn
-                size="small"
-                variant="text"
-                :to="`/admin/projects/${project.id}`"
-              >
+              <v-btn size="small" variant="text" :to="`/admin/projects/${project.id}`">
                 Details
               </v-btn>
-              <v-btn
-                size="small"
-                variant="text"
-                :to="`/admin/projects/${project.id}/edit`"
-              >
+              <v-btn size="small" variant="text" :to="`/admin/projects/${project.id}/edit`">
                 Bewerken
               </v-btn>
             </td>

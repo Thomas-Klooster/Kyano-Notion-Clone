@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="admin-page-container">
     <div class="page-header">
       <div>
         <h1 class="page-title">Project detail page</h1>

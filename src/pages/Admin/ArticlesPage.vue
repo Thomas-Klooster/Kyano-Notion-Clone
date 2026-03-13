@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="admin-page-container">
     <div class="page-header">
       <div>
         <h1 class="page-title">Articles</h1>
@@ -17,52 +17,24 @@
       <div class="pa-4">
         <v-row>
           <v-col>
-            <v-text-field
-              v-model="search"
-              class="notion-soft-input"
-              label="Zoek op titel, samenvatting of categorie"
-              prepend-inner-icon="mdi-magnify"
-              variant="solo-filled"
-              flat
-              hide-details
-            />
+            <v-text-field v-model="search" class="notion-soft-input" label="Zoek op titel, samenvatting of categorie"
+              prepend-inner-icon="mdi-magnify" variant="solo-filled" flat hide-details />
           </v-col>
         </v-row>
         <v-row>
           <v-col>
-            <v-select
-              v-model="selectedProject"
-              class="notion-soft-input"
-              :items="projects"
-              label="Project"
-              variant="solo-filled"
-              flat
-              hide-details
-            />
+            <v-select v-model="selectedProject" class="notion-soft-input" :items="projects" label="Project"
+              variant="solo-filled" flat hide-details />
           </v-col>
 
           <v-col>
-            <v-select
-              v-model="selectedStatus"
-              class="notion-soft-input"
-              :items="statuses"
-              label="Status"
-              variant="solo-filled"
-              flat
-              hide-details
-            />
+            <v-select v-model="selectedStatus" class="notion-soft-input" :items="statuses" label="Status"
+              variant="solo-filled" flat hide-details />
           </v-col>
 
           <v-col>
-            <v-select
-              v-model="sortBy"
-              class="notion-soft-input"
-              :items="sortOptions"
-              label="Sorteren"
-              variant="solo-filled"
-              flat
-              hide-details
-            />
+            <v-select v-model="sortBy" class="notion-soft-input" :items="sortOptions" label="Sorteren"
+              variant="solo-filled" flat hide-details />
           </v-col>
         </v-row>
       </div>

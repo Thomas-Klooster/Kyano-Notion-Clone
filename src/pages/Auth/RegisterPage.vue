@@ -164,7 +164,6 @@ function focusConfirm() {
 }
 
 async function onSubmit() {
-    // register logic
 }
 
 function onSocial(provider) {

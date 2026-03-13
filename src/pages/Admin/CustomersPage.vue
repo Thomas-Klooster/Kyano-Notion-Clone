@@ -1,19 +1,14 @@
 <template>
-  <div>
+  <div class="admin-page-container">
     <div class="page-header">
       <div>
-        <h1 class="page-title">Customers</h1>
+        <h1 class="page-title">Klanten</h1>
         <p class="page-subtitle">
           Beheer klanten, basisgegevens en gekoppelde projecten.
         </p>
       </div>
 
-      <v-btn
-        color="primary"
-        rounded="lg"
-        prepend-icon="mdi-plus"
-        to="/admin/customers/new"
-      >
+      <v-btn color="primary" rounded="lg" prepend-icon="mdi-plus" to="/admin/customers/new">
         Nieuwe klant
       </v-btn>
     </div>
@@ -22,15 +17,8 @@
       <div class="pa-4">
         <v-row>
           <v-col cols="12" md="6">
-            <v-text-field
-              v-model="search"
-              class="notion-soft-input"
-              label="Zoek klant"
-              prepend-inner-icon="mdi-magnify"
-              variant="solo-filled"
-              flat
-              hide-details
-            />
+            <v-text-field v-model="search" class="notion-soft-input" label="Zoek klant" prepend-inner-icon="mdi-magnify"
+              variant="solo-filled" flat hide-details />
           </v-col>
         </v-row>
       </div>
@@ -58,20 +46,11 @@
               </v-chip>
             </td>
             <td class="text-right">
-              <v-btn
-                size="small"
-                variant="text"
-                :to="`/admin/customers/${customer.id}/edit`"
-              >
+              <v-btn size="small" variant="text" :to="`/admin/customers/${customer.id}/edit`">
                 Bewerken
               </v-btn>
 
-              <v-btn
-                size="small"
-                variant="text"
-                color="error"
-                @click="openDeleteDialog(customer)"
-              >
+              <v-btn size="small" variant="text" color="error" @click="openDeleteDialog(customer)">
                 Verwijderen
               </v-btn>
             </td>

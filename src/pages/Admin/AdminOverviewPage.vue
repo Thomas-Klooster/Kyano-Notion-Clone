@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <div class="admin-page-container">
     <div class="page-header">
       <div>
         <h1 class="page-title">Admin omgeving</h1>
         <p class="page-subtitle">
-          Overzicht van de admin modules voor customers en projects.
+          Overzicht van de admin modules voor klanten en projecten.
         </p>
       </div>
     </div>
@@ -19,7 +19,7 @@
 
       <v-col cols="12" sm="6" md="3">
         <div class="notion-stat-card">
-          <div class="notion-stat-label">Klanten</div>
+          <div class="notion-stat-label">Projecten</div>
           <div class="notion-stat-value">28</div>
         </div>
       </v-col>
@@ -45,7 +45,7 @@
           <div class="pa-6">
             <div class="d-flex align-center justify-space-between mb-4">
               <div class="text-h6 font-weight-bold">Klanten</div>
-              <v-icon icon="mdi-domain" />
+              <v-icon icon="mdi-account-box-multiple-outline" />
             </div>
 
             <p class="page-subtitle">

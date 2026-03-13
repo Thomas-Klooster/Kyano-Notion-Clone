@@ -170,21 +170,21 @@ const isHovering = ref(false)
 
     <v-main @mouseenter="drawer = false">
       <div class="admin-page-shell">
-      <v-app-bar :elevation="0" density="compact">
-        <template v-slot:prepend>
-          <v-app-bar-nav-icon @mouseenter="drawer = true"></v-app-bar-nav-icon>
-          <v-breadcrumbs :items="breadcrumbItems">
-            <template v-slot:item="{ item }">
-              <v-breadcrumbs-item :to="item.to" :disabled="item.disabled">
-                {{ item.text }}
-              </v-breadcrumbs-item>
-            </template>
-          </v-breadcrumbs>
-        </template>
-      </v-app-bar>
-      <v-container>
+        <v-app-bar :elevation="0" density="compact">
+          <template v-slot:prepend>
+            <v-app-bar-nav-icon @mouseenter="drawer = true"></v-app-bar-nav-icon>
+            <v-breadcrumbs :items="breadcrumbItems">
+              <template v-slot:item="{ item }">
+                <v-breadcrumbs-item :to="item.to" :disabled="item.disabled">
+                  {{ item.text }}
+                </v-breadcrumbs-item>
+              </template>
+            </v-breadcrumbs>
+          </template>
+        </v-app-bar>
+        <!-- <v-container> -->
         <router-view />
-      </v-container>
+        <!-- </v-container> -->
       </div>
 
     </v-main>
