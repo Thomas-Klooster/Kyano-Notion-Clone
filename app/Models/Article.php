@@ -40,6 +40,12 @@ class Article extends Model
         $this->hasMany(Attachment::class);
         
     }
+
+    public function feedbacks() {
+       return
+        $this->hasMany(Feedback::class);
+    }
+
     public function category()
 {
     return $this->belongsTo(Category::class);

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use App\Http\Requests\WorkspaceRequest;
 use App\Http\Requests\WorkspaceUpdateRequest;
+use App\Http\Requests\WorkspaceInviteRequest;
 class WorkspaceController extends Controller
 {
     use AuthorizesRequests;
@@ -61,14 +62,10 @@ class WorkspaceController extends Controller
         return $workspace->projects()->get();
     }
 
-    public function invite(Request $request, Workspace $workspace)
+    public function invite(WorkspaceInviteRequest $request, Workspace $workspace)
     {
-        $this->authorize('manage', $workspace);
-
-        $data = $request->validate([
-            'email' => 'required|email',
-            'role' => 'sometimes|in:member,admin',
-        ]);
+        $this->authorize('manage', $workspace); 
+        $data = $request->validated();
 
         $user = User::where('email', $data['email'])->first();
 
@@ -92,18 +89,18 @@ class WorkspaceController extends Controller
 
         $acceptUrl = URL::temporarySignedRoute(
             'workspace.invite.accept',
-            now()->addDays(7),
+             now()->addDays(7),
             ['token' => $token]
         );
 
         Mail::to($data['email'])->send(new InviteMail($workspace, $acceptUrl));
         return 
-        response()->json(['message' => 'Uitnodiging verstuurd.'], 200);
+        response()->json(['message' => 'Een uitnodiging is verstuurd.'], 200);
     }
 
     public function acceptInvite(Request $request)
     {
-        if (! $request->hasValidSignature()) {
+        if (!$request->hasValidSignature()) {
             return response()->json(['message' => 'Ongeldige of verlopen uitnodiging.'], 403);
         }
 
@@ -114,7 +111,7 @@ class WorkspaceController extends Controller
         $user = User::where('email', $invite->email)->firstOrFail();
         $workspace = Workspace::findOrFail($invite->workspace_id);
 
-        if (! $workspace->members()->where('user_id', $user->id)->exists()) {
+        if (!$workspace->members()->where('user_id', $user->id)->exists()) {
             $workspace->members()->attach($user->id, ['role' => $invite->role]);
         }
 

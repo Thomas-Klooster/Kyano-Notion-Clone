@@ -24,11 +24,13 @@ class WorkspacePolicy
     // return $this->manage($user, $workspace);
     public function view(User $user, Workspace $workspace) {
         if ($workspace->owner_id === $user->id);
+        return true;
     }
 
     public function update($user, Workspace $workspace) {
-        return
-         $workspace->owner_id === $user->id;
+        if
+        ($workspace->owner_id === $user->id);
+         return true;
     }
 
     public function delete($user, Workspace $workspace) {

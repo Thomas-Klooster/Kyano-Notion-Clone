@@ -22,10 +22,13 @@ class ProjectsController extends Controller
         return Project::create($data);
     }
     // Read
-     public function show(Project $project)
-     {
-         $this->authorize('view', $project);
-         return $project->load(['category', 'article', 'workspace']);
+    public function show(Project $project)
+    {
+        $this->authorize('view', $project);
+        if ($project->user_id !== auth()->id() && auth()->user()->role !== 'admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        return $project->load(['category', 'article', 'workspace']);
     }
 
     // Update

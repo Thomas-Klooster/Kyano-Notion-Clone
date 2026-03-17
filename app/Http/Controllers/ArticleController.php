@@ -12,7 +12,7 @@ use App\Models\Project;
 use App\Models\Article;
 use App\Models\Workspace;
 use App\Http\Requests\ArticleRequest;
-
+use App\Http\Requests\FeedbackRequest;
 class ArticleController extends Controller
 {
 
@@ -65,7 +65,38 @@ class ArticleController extends Controller
         }
 
 
+    public function ProjectByIndex(Project $project) {
+        
+    $this->authorize('view', $project);
 
+    $articles = $project->articles()->where('status', 'public')->get();
+    return response()->json($articles);
+    }
+
+
+    public function showPublished(Project $project, Article $article)
+    {
+    abort_if($article->project_id !== $project->id, 404);
+    abort_if($article->status !== 'public', 403);
+    return response()->json($article);
+}
+
+    public function search(Project $project, Request $request)
+    {
+        
+     $query = $request->input('keyword');
+     if (!$query) {
+        return response()->json([]);
+     }
+     $articles = $project->articles()
+      ->where('status', 'public') 
+        ->where(function ($keyword) use ($query) {
+            $keyword->where('title', 'like', "%{$query}%")
+              ->orWhere('content', 'like', "%{$query}%");
+        })->get();
+
+    return response()->json($articles);
+}
     public function projectArticles(Project $project)
     {
         $query = $project->article();
@@ -79,7 +110,19 @@ class ArticleController extends Controller
         return $query->get();
     }
 
+    public function storeFeedback(FeedbackRequest $request, Article $article) {
+    $data = $request->validated();
     
+    $feedback = $article->feedbacks()->updateOrCreate(
+        ['user_id' => auth()->id()],    
+        [
+            'helpful' => $data['helpful'],
+            'comment' => $data['comment'],
+
+            ]);
+            
+    return response()->json($feedback, 201);
+}
 
     public function AdminIndex(Request $request) {
         $query = Article::with(['category', 'project', 'article']);

@@ -25,7 +25,7 @@ class ArticlePolicy
 //     return $workspace->members()->where('user_id', $user->id)->exists();
 // }
 
-public function before($user, $ability) {
+public function before($user) {
     if ($user->role === 'admin') {
         return true;
     }

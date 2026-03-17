@@ -33,10 +33,10 @@ class ProjectsRequest extends FormRequest
 
     public function messages(): array {
         return [
-            'projectname.required' => 'Het invullen van een projectnaam is verplicht.',
+            'projectname.required' => 'Het invullen van jouw projectnaam is verplicht.',
             'description.required' => 'Een descriptie is verplicht.',
-            'category_id.required' => 'Je hebt een categorie nodig!',
-            'workspace_id.required' => 'Je hebt een workspace nodig!'            
+            'category_id.required' => 'Een categorie is verplicht om een project aan te maken.',
+            'workspace_id.required' => 'Een workspace is verplicht om een project aan te maken.'            
             ];
     }
 }
