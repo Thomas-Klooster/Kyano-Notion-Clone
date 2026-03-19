@@ -29,8 +29,9 @@
       </div>
 
       <div class="editor-block">
-        <QuillEditor v-model:content="content" :modules="modules" contentType="html" theme="snow" toolbar="full"
-          class="notion-quill" />
+        <!-- <QuillEditor v-model:content="content" :modules="modules" contentType="html" theme="snow" toolbar="full"
+          class="notion-quill" /> -->
+        <TipTap />
       </div>
 
       <div class="bookmark-section">
@@ -44,20 +45,6 @@
           <span>Add a web bookmark</span>
         </div>
       </div>
-      <!-- 
-      <v-file-upload v-model="model" density="comfortable" clearable multiple show-size>
-        <template v-slot:item="{ props: itemProps }">
-          <v-file-upload-item v-bind="itemProps" lines="two">
-            <template v-slot:prepend>
-              <v-avatar rounded="lg" size="32" style="transform: rotate(45deg)"></v-avatar>
-            </template>
-
-<template v-slot:clear="{ props: clearProps }">
-              <v-btn color="error" icon="mdi-trash-can" v-bind="clearProps"></v-btn>
-            </template>
-</v-file-upload-item>
-</template>
-</v-file-upload> -->
       <v-file-upload v-model="model" clearable multiple show-size>
         <template v-slot:default>
           <v-file-upload-dropzone density="comfortable"></v-file-upload-dropzone>
@@ -96,6 +83,8 @@ import { ref } from 'vue'
 import {
   VFileUpload
 } from 'vuetify/labs/VFileUpload'
+import TipTap from '@/components/TipTap.vue'
+
 
 const title = ref('PAGE TITLE')
 const status = ref('Draft')
