@@ -24,6 +24,9 @@ class ArticleRequest extends FormRequest
             'workspace_id' => 'required|exists:workspaces,id',
             'visibility' => 'required|in:public,private',
             'status' => 'required|in:draft,published,archived',
+            'article_id' => 'nullable|exists:articles,id',
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx,webm|max:10240',
         ];
     }
 
@@ -37,7 +40,17 @@ class ArticleRequest extends FormRequest
         }
         return $workspace->members()->where('user_id', auth()
         ->id())->exists();
+   
+     }
+     
+    protected function prepareForValidation(): void
+{
+    if ($this->hasFile('attachments')) {
+        $this->merge([
+            'attachments' => $this->file('attachments'),
+        ]);
     }
+}
 
     public function messages() {
 
@@ -45,7 +58,11 @@ class ArticleRequest extends FormRequest
         'title.required' => 'Het invullen van een titel is verplicht.',
         'content.required' => 'Het invullen van een titel is verplicht.',
         'workspace_id.required' => 'Je hebt een workspace nodig.',
-        'project_id' => 'Voeg een project toe.'
+        'attachments.*.file' => 'Voeg een geldig bestand in.',
+        'attachments.*.mimes' => 'Alleen jpg, png, pdf, doc en docx zijn toegestaan.',
+        'attachments.*.max' => 'Een bestand mag niet groter zijn dan 10MB.',
     ];
     }
 }
+
+

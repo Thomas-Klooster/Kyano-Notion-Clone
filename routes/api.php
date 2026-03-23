@@ -17,18 +17,20 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/newPassword', [AuthController::class, 'newPassword']);
+Route::get('/workspace/invite/accept', [WorkspaceController::class, 'acceptInvite'])
+->name('workspace.invite.accept');    
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', fn(Request $request) => $request->user());
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-    Route::get('/workspace/invite/accept', [WorkspaceController::class, 'acceptInvite'])->name('workspace.invite.accept');
     // Klant: kan alleen lezen binnen eigen klantomgeving + (optioneel) feedback geven.
     //Ziet eigen projecten
     //Kan artikelen lezen (alleen published)
     //Zoekbalk binnen project (titel + content)
     //(Optioneel) “Was dit nuttig?” + feedback tekstveld of met emojis
+
     Route::get('projects', [ProjectsController::class, 'myProjects']);
     Route::get('projects/{project}', [ProjectsController::class, 'show']);
     Route::get('projects/{project}', [ProjectsController::class, 'ProjectByIndex']);
@@ -54,7 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('workspaces', WorkspaceController::class);
         Route::post('/workspaces/{workspace}/invite', [WorkspaceController::class, 'invite']);
         Route::delete('/workspaces/{workspace}/members/{user}', [WorkspaceController::class, 'removeMember']);
-        Route::post('/articles/attachment', [ArticleController::class, 'storeAttachment']);
+        Route::post('/articles/attachment', [ArticleController::class, 'store']);
         Route::get('/users/{id}',fn($id) => response()->json(User::findOrFail($id)));
         Route::post('/users', [UserController::class, 'store']);
         Route::put('/users/{id}', [UserController::class, 'update']);

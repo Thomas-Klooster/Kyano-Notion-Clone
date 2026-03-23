@@ -21,7 +21,7 @@ return new class extends Migration
             $table->longText('summary')->nullable();
             $table->enum('status', ['draft', 'published', 'archived'])->default('published'); 
             $table->enum('visibility', ['public', 'private'])->default('public');
-            $table->foreignId('project_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('project_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->foreignId('workspace_id')->nullable()->constrained()->nullOnDelete();
             $table->timestamps();

@@ -95,7 +95,8 @@ class WorkspaceController extends Controller
 
         Mail::to($data['email'])->send(new InviteMail($workspace, $acceptUrl));
         return 
-        response()->json(['message' => 'Een uitnodiging is verstuurd.'], 200);
+        response()->json(['message' => 'Een uitnodiging is verstuurd.',
+        ]);
     }
 
     public function acceptInvite(Request $request)

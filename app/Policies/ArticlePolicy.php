@@ -60,5 +60,6 @@ public function view(User $user, Article $article) {
 
     return $user->role === 'admin' || $workspace->members()->where('user_id', $user->id)->exists();
 }
+    
 
 }

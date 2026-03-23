@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ArticleUpdateRequest;
+use Arr;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -22,28 +23,28 @@ class ArticleController extends Controller
         Article::visibleTo(auth()->user())->latest()->get();
     }
 
-    public function store(ArticleRequest $request)     {
+   public function store(ArticleRequest $request): JsonResponse
+{
     $data = $request->validated();
 
-     return Article::create($data);
+    $article = Article::create(Arr::except($data, ['attachments']));
+
+    if ($request->hasFile('attachments')) {
+        foreach ($request->file('attachments') as $file) {
+            $path = Storage::put('attachments', $file);
+
+            Attachment::create([
+                'article_id'    => $article->id,
+                'path'          => $path,
+                'mime'          => $file->getMimeType(),
+                'original_name' => $file->getClientOriginalName(),
+                'size'          => $file->getSize(),
+            ]);
+        }
     }
 
-    public function storeAttachment(Request $request): JsonResponse
-    {   
-        $data = $request->validated();
-                
-        $file = Storage::put('attachments', $data['file']);
-        $attachment = Attachment::create(
-            [
-                'article_id' => $data['article_id'],
-                'path' => $file,
-                'mime' => $data['file']->getMimeType(),
-                'original_name' => $data['file']->getClientOriginalName(),
-                'size' => $data['file']->getSize()
-            ],
-        );
-        return new JsonResponse($attachment);
-    }
+    return response()->json($article->load('attachments'), 201);
+}
 
     public function show(Article $article) { 
     $this->authorize('view', $article);
@@ -85,16 +86,17 @@ class ArticleController extends Controller
     {
         
      $query = $request->input('keyword');
+     
      if (!$query) {
         return response()->json([]);
      }
      $articles = $project->articles()
-      ->where('status', 'public') 
+      ->where('status', 'published') 
         ->where(function ($keyword) use ($query) {
             $keyword->where('title', 'like', "%{$query}%")
-              ->orWhere('content', 'like', "%{$query}%");
+              ->orWhere('content', 'like', "%{$query}%")
+              ->orWhere('summary', 'like', "%{$query}%");
         })->get();
-
     return response()->json($articles);
 }
     public function projectArticles(Project $project)
@@ -120,7 +122,6 @@ class ArticleController extends Controller
             'comment' => $data['comment'],
 
             ]);
-            
     return response()->json($feedback, 201);
 }
 

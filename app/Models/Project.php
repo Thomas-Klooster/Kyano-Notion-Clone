@@ -20,24 +20,18 @@ class Project extends Model
         'category_id',
         'workspace_id',
     ];
-    /**
-     * @return BelongsTo<User,Project>
-     */
+  
     public function users(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-    /**
-     * @return BelongsTo<Category,Project>
-     */
+   
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
-    /**
-     * @return HasMany<Article,Project>
-     */
-    public function article(): HasMany
+   
+    public function articles(): HasMany
     {
         return $this->hasMany(Article::class);
     }

@@ -32,7 +32,7 @@ class Article extends Model
         return $this->belongsTo(Workspace::class);
     }
 
-    public function project(){
+    public function projects(){
     return $this->belongsTo(Project::class);
 }
     public function attachments() {

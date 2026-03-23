@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-
+use Resend\Laravel\Facades\Resend;
 class ForgotMail extends Mailable
 {
     use Queueable, SerializesModels;
@@ -42,7 +42,7 @@ class ForgotMail extends Mailable
 
 
         return new Content(
-            htmlString: "
+            htmlString:"
           <!DOCTYPE html>
 <html lang='nl'>
     <head>

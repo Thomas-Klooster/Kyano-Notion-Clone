@@ -37,10 +37,7 @@ class RegisterRequest extends FormRequest
             return [
                 'name.required'=> 'Het invullen van je naam is verplicht.',
                 'email.required'=> 'Je email invullen is verplicht',
-                'password'=> 'Vul een wachtwoord in!',
-                'phone_number.required' => 'optioneel',
-                'company.required' => 'Bedrijf',
-                'address.required' => 'optioneel'
+                'password'=> 'Vul een wachtwoord in!'
                 ];
         }
     
