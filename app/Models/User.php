@@ -35,7 +35,6 @@ class User extends Authenticatable
         
     ];
 
-
     public function workspaces() {
     return $this->belongsToMany(Workspace::class, 'user_workspace')
         ->withPivot('role')

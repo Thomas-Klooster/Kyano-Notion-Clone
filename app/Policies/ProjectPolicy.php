@@ -7,32 +7,28 @@ use App\Models\Project;
 class ProjectPolicy
 {
 
-
-    //public function viewAny(User $user, Project $project) {
-  //      return $user->$user->role === 'admin' || $project->user_id === $user->id;
-//    }
-
-    // public function viewAny(User $user, Project $project)
-    // {
-    //       return in_array($user->role, ['admin']) || $project->user_id === $user->id;
+       
+    // public function viewAny(User $user, Project $project) {
+    // return $project->users()->where('user_id', $user->id)->exists() ||
+    // $user->role === 'admin';
     // }
-
-public function view($user)
+public function view(User $user, Project $project)
 {
-    return true;
+    return $project->user_id === $user->id ||
+    $user->role == 'admin';
 }
-public function create($user)
+public function create(User $user)
 {
-    return true;
+    return in_array($user->role, ['admin', 'owner']);
 }
 
-public function update($user)
+public function update(User $user)
 {
-    return true;
+    return in_array($user->role, ['admin', 'owner']);
 }
 
 public function delete($user)
 {
-    return true;
+    return in_array($user->role, ['admin', 'owner']);
 }
 }

@@ -32,7 +32,7 @@ class Article extends Model
         return $this->belongsTo(Workspace::class);
     }
 
-    public function projects(){
+    public function project(){
     return $this->belongsTo(Project::class);
 }
     public function attachments() {
@@ -56,12 +56,14 @@ class Article extends Model
     }
 
 
-  public function scopeVisibleTo($query, $user = null)
+    public function scopeVisibleTo($query, $user)
 {
-    if ($user && $user->role === 'admin') {
+    if ($user->role === 'admin') {
         return $query;
     }
-    
-    return $query->where('visibility', 'public')->where('status', 'published');
+
+    return $query->whereHas('project', function ($q) use ($user) {
+        $q->where('user_id', $user->id);
+    });
 }
 }

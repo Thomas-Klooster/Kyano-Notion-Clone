@@ -28,14 +28,17 @@ Route::middleware('auth:sanctum')->group(function () {
     //Ziet eigen projecten
     Route::get('projects', [ProjectsController::class, 'myProjects']);
     // Klant: kan alleen lezen binnen eigen klantomgeving + (optioneel) feedback geven.
-    Route::get('projects/{project}', [ProjectsController::class, 'show']);    
+    Route::get('/projects/{project}', [ProjectsController::class, 'show']);    
     //Zoekbalk binnen project (titel + content)
     Route::get('/projects/{project}/articles/search', [ArticleController::class, 'search']);
     //Kan artikelen lezen (alleen published)
     Route::get('/projects/{project}/articles/{article}', [ArticleController::class, 'showPublished']);
     //(Optioneel) “Was dit nuttig?” + feedback tekstveld of met emojis
     Route::post('/articles/{article}/feedback', [ArticleController::class, 'storeFeedback']);
-    
+    Route::apiResource('articles', ArticleController::class);
+    // Route::apiResource('categories', CategoryController::class);
+    // Route::get('/articles/{articles}', [ArticleController::class, 'show']);
+    // Route::get('articles', [ArticleController::class, 'show']);
     });
 
 
@@ -44,7 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
         /* --------------------------Admin CRUD-------------------------- */
         
         
-        // Admin kan alles
+        // Admin kan alles.
 
         Route::apiResource('projects', ProjectsController::class);
         Route::apiResource('categories', CategoryController::class);

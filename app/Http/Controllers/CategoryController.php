@@ -17,6 +17,7 @@ use AuthorizesRequests;
   }
   public function store(CategoryRequest $request)
   {
+    $this->authorize('create', Category::class);
     $data = $request->validated();
       
     return 
@@ -28,13 +29,13 @@ use AuthorizesRequests;
     }
 
   public function show(Category $category) {
-  $this->authorize('view', $category);  
+  $this->authorize('view', Category::class);  
   return $category->load('projects');
   }
 
 public function update(Request $request, Category $category)
 {
-    $this->authorize('update', $category);
+    $this->authorize('update', Category::class);
 
     $data = $request->validate([
         'name' => 'sometimes|required|string',
@@ -49,7 +50,7 @@ public function update(Request $request, Category $category)
 }
   public function destroy(Category $category)
   {
-    $this->authorize('delete', $category);
+    $this->authorize('delete', Category::class);
     $category->delete();
     return response()->json([
       'message' => 'Verwijderd.'

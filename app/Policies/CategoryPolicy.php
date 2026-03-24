@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Policies;
-use App\Models\User;
+  use App\Models\User;
 use App\Models\Category;
 
 class CategoryPolicy
@@ -16,19 +16,19 @@ public function view($user, Category $category)
     return true;
 }
 
-public function create($user)
+public function create(User $user)
 {
-    return $user->admin;
+    return in_array($user->role, ['admin', 'owner']);           
 }
 
-public function update($user, Category $category)
+public function update(User $user)
 {
-    return $user->admin;
+    return in_array($user->role, ['admin', 'owner']);
 }
 
-public function delete($user, Category $category)
+public function delete(User $user)
 {
-    return $user->admin;
+    return in_array($user->role, ['admin', 'owner']);
 }
 
 }

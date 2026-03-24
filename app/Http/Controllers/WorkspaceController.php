@@ -20,6 +20,7 @@ class WorkspaceController extends Controller
 
     public function store(WorkspaceRequest $request)
     {
+        $this->authorize('create', Workspace::class);
         $request->validated();
      
 
@@ -34,14 +35,14 @@ class WorkspaceController extends Controller
     }
    public function show(Workspace $workspace)
     {
-        $this->authorize('view', $workspace);
+        $this->authorize('view', Workspace::class);
         return 
         $workspace->load(['articles', 'projects']);
     }
 
     public function update(Workspace $workspace, WorkspaceUpdateRequest $request)
     {
-        $this->authorize('update', $workspace);
+        $this->authorize('update', Workspace::class);
         $data = $request->validated();
 
         if (isset($data['name'])) {
@@ -64,7 +65,7 @@ class WorkspaceController extends Controller
 
     public function invite(WorkspaceInviteRequest $request, Workspace $workspace)
     {
-        $this->authorize('manage', $workspace); 
+        $this->authorize('manage', Workspace::class); 
         $data = $request->validated();
 
         $user = User::where('email', $data['email'])->first();
@@ -123,7 +124,7 @@ class WorkspaceController extends Controller
 
     public function removeMember(Workspace $workspace, User $user)
     {
-        $this->authorize('manage', $workspace);
+        $this->authorize('manage', Workspace::class);
         $workspace->members()->detach($user->id);
         return 
         response()->json(['message' => 'Gebruiker is verwijderd'], 200);
