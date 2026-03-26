@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Workspace extends Model
 {
+
+    
     protected $fillable = ['name', 'slug', 'owner_id'];
 
     public function owner() {
@@ -19,12 +21,18 @@ class Workspace extends Model
     public function WorkspaceInvite() {
         return $this->hasMany(WorkspaceInvite::class);
     }
-    public function Articles() {
+    public function articles() {
         return
         $this->hasMany(Article::class);
     }
 
-    public function Projects() {
+    public function scopeVisibleTo($query, $user) {
+        if ($user->role === 'admin') {
+            return $query;
+        }
+    }
+
+    public function projects() {
         return
         $this->hasMany(Project::class);
     }

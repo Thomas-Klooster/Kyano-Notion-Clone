@@ -19,7 +19,7 @@ class ArticleRequest extends FormRequest
             'title' => 'required|string',
             'content' => 'required|string',
             'summary' => 'nullable|string',
-            'project_id' => 'required|exists:projects,id',
+            'project_id' => 'nullable|exists:projects,id',
             'category_id' => 'nullable|exists:categories,id',
             'workspace_id' => 'required|exists:workspaces,id',
             'visibility' => 'required|in:public,private',
@@ -35,15 +35,17 @@ class ArticleRequest extends FormRequest
      */
     public function authorize(): bool
 {
-    $projectId = $this->input('project_id');
+    
+      $articleId = $this->input('article_id');
 
-    if (!$projectId) return false;
+      if (!$articleId)
+        return in_array(auth()->user()->role, ['admin', 'owner']);
 
-    $project = \App\Models\Project::find($projectId);
-    if (!$project) return false;
+      $article = \App\Models\Article::find($articleId);
+      if (!$article) return false;
 
-    return auth()->user()->role === 'admin'
-        || $project->user_id === auth()->id();
+      return in_array(auth()->user()->role, ['admin', 'owner'])
+         || $article->user_id === auth()->id();
 }
      
     protected function prepareForValidation(): void
@@ -60,7 +62,7 @@ class ArticleRequest extends FormRequest
     return [
         'title.required' => 'Het invullen van een titel is verplicht.',
         'content.required' => 'Het invullen van een titel is verplicht.',
-        'project_id.required' => 'Je hebt een project nodig!', 
+        // 'project_id.required' => 'Je hebt een project nodig!', 
         'workspace_id.required' => 'Een workspace is verplicht om een project aan te maken.',
         'attachments.*.file' => 'Voeg een geldig bestand in.',
         'attachments.*.mimes' => 'Alleen jpg, png, pdf, doc en docx zijn toegestaan.',

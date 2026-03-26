@@ -32,7 +32,6 @@ class ProjectsController extends Controller
     public function update(ProjectsUpdateRequest $request, Project $project)
     {
         $this->authorize('update', $project);
-
         $data = $request->validated();
         $project->update($data);    
         return $project;

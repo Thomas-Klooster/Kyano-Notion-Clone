@@ -15,27 +15,28 @@ class WorkspacePolicy
         
     // }
 
+    public function viewAny(User $user, Workspace $workspace) {
+        if ($user->role === 'admin') return true;
+        return $workspace->owner_id === $user->id;
+        // return in_array($user->role, ['admin', 'owner']);
+    }
    public function create(User $user ) {
-        return true;
+        return 
+        in_array($user->role, ['admin', 'owner']);
     }
-    // public function show($user, Workspace $workspace) {
-    //     return true;
-    // }
-    // return $this->manage($user, $workspace);
     public function view(User $user, Workspace $workspace) {
-        if ($workspace->owner_id === $user->id);
-        return true;
+        if ($user->role === 'admin') return true;
+        return $workspace->owner_id === $user->id;
     }
 
-    public function update($user, Workspace $workspace) {
-        if
-        ($workspace->owner_id === $user->id);
-         return true;
+    public function update(User $user, Workspace $workspace) {
+        if ($user->role === 'admin') return true;
+        return $workspace->owner_id === $user->id;
     }
 
-    public function delete($user, Workspace $workspace) {
-        if ($workspace->owner_id === $user->id)
-             return true;
+    public function delete(User $user, Workspace $workspace) {
+        if ($user->role === 'admin') return true;
+        return $workspace->owner_id === $user->id;
     }
 
     public function invite($user, Workspace $workspace) {

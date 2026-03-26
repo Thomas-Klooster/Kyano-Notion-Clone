@@ -9,11 +9,20 @@ class Category extends Model
 {
     use HasFactory;
     protected $fillable = ['name', 'slug'];
+    
     public function projects()
     {
         return $this->hasMany(Project::class);
     }
+    public function scopeVisibleTo($query, $user) {
+        if ($user->role === 'admin') {
+            return $query;
+        }
 
+        return $query->whereHas('project', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        });
+    }
     protected static function boot()
     {
         parent::boot();

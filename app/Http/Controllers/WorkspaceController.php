@@ -18,11 +18,18 @@ class WorkspaceController extends Controller
 {
     use AuthorizesRequests;
 
+
+    public function index() {
+
+    $workspaces = Workspace::visibleTo(auth()->user())->with('projects')
+    ->latest()->get();
+    return response()->json($workspaces);
+
+    }
     public function store(WorkspaceRequest $request)
     {
         $this->authorize('create', Workspace::class);
         $request->validated();
-     
 
         $workspace = Workspace::create([
             'name' => $request->name,
@@ -35,7 +42,7 @@ class WorkspaceController extends Controller
     }
    public function show(Workspace $workspace)
     {
-        $this->authorize('view', Workspace::class);
+        $this->authorize('view', $workspace);
         return 
         $workspace->load(['articles', 'projects']);
     }
@@ -136,10 +143,5 @@ class WorkspaceController extends Controller
         $workspace->delete();
         return
         response()->json(['message' => 'Succesvol verwijderd.']);
-    }
-
-    public function index()
-    {
-        return auth()->user()->workspaces()->with('owner')->get();
     }
 }

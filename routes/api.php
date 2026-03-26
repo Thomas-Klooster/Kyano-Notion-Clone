@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
@@ -36,9 +35,9 @@ Route::middleware('auth:sanctum')->group(function () {
     //(Optioneel) “Was dit nuttig?” + feedback tekstveld of met emojis
     Route::post('/articles/{article}/feedback', [ArticleController::class, 'storeFeedback']);
     Route::apiResource('articles', ArticleController::class);
-    // Route::apiResource('categories', CategoryController::class);
-    // Route::get('/articles/{articles}', [ArticleController::class, 'show']);
-    // Route::get('articles', [ArticleController::class, 'show']);
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('projects', ProjectsController::class);
+    Route::apiResource('workspaces', WorkspaceController::class);
     });
 
 

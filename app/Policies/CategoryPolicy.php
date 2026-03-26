@@ -1,29 +1,31 @@
 <?php
 
 namespace App\Policies;
-  use App\Models\User;
 use App\Models\Category;
+use App\Models\User;
 
 class CategoryPolicy
 {
-public function viewAny($user)
+public function viewAny(User $user, Category $category)
 {
-    return true;
+    return 
+    $category->user_id === $user->id;
 }
 
-public function view($user, Category $category)
-{
-    return true;
+public function view(User $user) {
+    return in_array($user->role, ['admin', 'owner']);
 }
+
 
 public function create(User $user)
 {
-    return in_array($user->role, ['admin', 'owner']);           
+    return in_array($user->role, ['admin', 'owner']);
 }
 
 public function update(User $user)
 {
     return in_array($user->role, ['admin', 'owner']);
+    
 }
 
 public function delete(User $user)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+
 use Illuminate\Foundation\Http\FormRequest;
 
 class CategoryRequest extends FormRequest
@@ -10,9 +11,18 @@ class CategoryRequest extends FormRequest
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
-    {
-        return true;
-    }
+{
+    $categoryId = $this->input('category_id');
+
+    if(!$categoryId) return 
+        in_array(auth()->user()->role, ['admin', 'owner']);
+
+    $category = \App\Models\Category::find($categoryId);
+    if (!$category) return false;
+
+    return auth()->user()->role === 'admin' ||
+    $category->user_id === auth()->id();
+}
 
     /**
      * Get the validation rules that apply to the request.

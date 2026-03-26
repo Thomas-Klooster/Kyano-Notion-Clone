@@ -11,7 +11,16 @@ class ProjectsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $projectId = $this->input('project_id');
+
+        if (!$projectId) return
+        in_array(auth()->user()->role, ['admin', 'owner']);
+
+        $project = \App\Models\Category::find($projectId);
+        if (!$project) return false;
+        
+        return auth()->user()->role === 'admin' ||
+        $project->user_id === auth()->id();
     }
 
     /**

@@ -19,6 +19,9 @@ public function view(User $user, Project $project)
 }
 public function create(User $user)
 {
+    // $project = Project::find($projetcId);
+    // if (!$project) return false;
+    // return $project->user_id === $user->id;
     return in_array($user->role, ['admin', 'owner']);
 }
 

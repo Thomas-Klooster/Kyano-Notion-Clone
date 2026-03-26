@@ -11,7 +11,16 @@ class WorkspaceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+    $workspaceId = $this->input('workspace_id');
+    if(!$workspaceId) return 
+    in_array(auth()->user()->role, ['admin', 'owner']);
+
+    $workspace = \App\Models\Workspace::find($workspaceId);
+    if (!$workspace) return false;
+
+    return auth()->user()->role === 'admin' ||
+    $workspace->user_id === auth()->id();
+
     }
 
     /**

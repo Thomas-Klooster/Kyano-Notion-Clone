@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Validation\Rule;
+use App\Http\Requests\CategoryUpdateRequest;
 use App\Models\Category;
-use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Http\Requests\CategoryRequest;
 class CategoryController extends Controller
@@ -12,40 +11,28 @@ class CategoryController extends Controller
   
 use AuthorizesRequests;
   public function index() {
-    return
-    Category::withCount('projects')->latest()->get();
+    $categories = Category::visibleTo(auth()->user())->with(['projects'])
+    ->latest()->get();
+    return response()->json($categories);
   }
   public function store(CategoryRequest $request)
   {
-    $this->authorize('create', Category::class);
+    $this->authorize('create', [Category::class, $request->category_id]);
     $data = $request->validated();
-      
-    return 
-    Category::create($data);
-
-      // dd($data);
-      
-      
+    return Category::create($data);      
     }
 
   public function show(Category $category) {
-  $this->authorize('view', Category::class);  
+  $this->authorize('view', $category);  
   return $category->load('projects');
   }
 
-public function update(Request $request, Category $category)
+  public function update(CategoryUpdateRequest $request, Category $category)
 {
-    $this->authorize('update', Category::class);
+    $this->authorize('update', $category);
 
-    $data = $request->validate([
-        'name' => 'sometimes|required|string',
-        'slug' => ['sometimes', 'required',
-        Rule::unique('categories', 'slug')->ignore($category->id),
-        ],
-    ]);
-
+    $data = $request->validated();
     $category->update($data);
-    
     return $category;
 }
   public function destroy(Category $category)
