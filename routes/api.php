@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\WorkspaceController;
+use App\Http\Requests\CategoryRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
@@ -32,12 +33,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/projects/{project}/articles/{article}', [ArticleController::class, 'showPublished']);
     //(Optioneel) “Was dit nuttig?” + feedback tekstveld of met emojis
     // Klant: kan alleen lezen binnen eigen klantomgeving + (optioneel) feedback geven.
-    Route::post('/articles/{article}/feedback', [ArticleController::class, 'storeFeedback']);
-    
+    Route::post('/articles/{article}/feedback', [ArticleController::class, 'storeFeedback']);    
     Route::apiResource('articles', ArticleController::class);
-    // Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('workspaces.categories', CategoryController::class)->shallow();
     Route::apiResource('projects', ProjectsController::class);
-    // Route::apiResource('workspaces', WorkspaceController::class);
+    Route::apiResource('workspaces', WorkspaceController::class);
     });
 
 
@@ -49,7 +49,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Admin kan alles.
 
         Route::apiResource('projects', ProjectsController::class);
-        Route::apiResource('categories', CategoryController::class);
+        Route::apiResource('workspaces.categories', CategoryController::class)->shallow();
         Route::apiResource('articles', ArticleController::class);
         Route::apiResource('workspaces', WorkspaceController::class);
         Route::apiResource('users', UserController::class);

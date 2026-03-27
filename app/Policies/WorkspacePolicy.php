@@ -18,7 +18,6 @@ class WorkspacePolicy
     public function viewAny(User $user, Workspace $workspace) {
         if ($user->role === 'admin') return true;
         return $workspace->owner_id === $user->id;
-        // return in_array($user->role, ['admin', 'owner']);
     }
    public function create(User $user ) {
         return 

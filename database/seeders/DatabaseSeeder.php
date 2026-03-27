@@ -37,9 +37,18 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        DB::table('workspaces')->insert([
+            'name' => 'Workspace',
+            'slug' => 'workspace-69c4f76cb51d7',
+            'owner_id' => '11',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         DB::table('categories')->insert([
             'name' => 'Tech',
             'slug' => 'tech',
+            'workspace_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);

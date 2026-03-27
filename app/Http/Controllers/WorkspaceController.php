@@ -20,7 +20,7 @@ class WorkspaceController extends Controller
 
 
     public function index() {
-
+    $this->authorize('viewAny', Workspace::class);
     $workspaces = Workspace::visibleTo(auth()->user())->with('projects')
     ->latest()->get();
     return response()->json($workspaces);
