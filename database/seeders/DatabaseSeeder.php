@@ -1,11 +1,15 @@
 <?php
 namespace Database\Seeders;
 
+use App\Models\Article;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Str;
 use App\Models\Project;
+use App\Models\Workspace;
+use App\Models\Category;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -19,9 +23,6 @@ class DatabaseSeeder extends Seeder
         */
         /* ------------------------------------ */
     
-        User::factory()
-        ->count(10)
-        ->create();
 
         
 
@@ -30,17 +31,9 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
             'email' => 'Admin@gmail.com',
             'address' => 'Kyano',
-            'company' => 'Kyano',
+            'company' => 'Kyano Digital',
             'phone_number' => '053853833',
             'password' => Hash::make('Admin@password'),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::table('workspaces')->insert([
-            'name' => 'Workspace',
-            'slug' => 'workspace-69c4f76cb51d7',
-            'owner_id' => '11',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -48,36 +41,17 @@ class DatabaseSeeder extends Seeder
         DB::table('categories')->insert([
             'name' => 'Tech',
             'slug' => 'tech',
-            'workspace_id' => 1,
             'created_at' => now(),
             'updated_at' => now()
         ]);
         
         Project::factory()
-        ->count(5)
+        ->count(6)
         ->create();
-
-        DB::table('projects')-> insert([
-            'projectname' => 'api laravel',
-            'description' => 'api for app',
-            'user_id' => 11,
-            'slug' => 'api-laravel',
-            'category_id' => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        // DB::table('attachments')->insert([
-        //     'article_id' => 1,
-        //     'original_name' => 'Attachment',
-        //     'path' => '/application/img',
-        //     'mime' => 'jpg',
-        //     'size' => 24,
-        //     'created_at' => now(),
-        //     'updated_at' => now(),
-        //     ]);
         
-
+        Article::factory()
+        ->count(9)
+        ->create();
         
          DB::table('tags')->insert([
             [
@@ -95,31 +69,5 @@ class DatabaseSeeder extends Seeder
 
 
 
-        DB::table('articles')->insert([
-            [
-                'title' => 'First test article',
-                'content' => 'This is test content for article one.',
-                'summary' => 'Project summary in short',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'status' => 'archived',
-                'visibility' => 'private',
-                'project_id' => 3,
-                'category_id' => 1
-                
-            ],
-
-            [
-                'title' => 'Second test article',
-                'content' => 'This is test content for article two.', 
-                'summary' => 'Project summary in short',
-                'created_at' => now(),
-                'updated_at' => now(),
-                'status' => 'published',
-                'visibility' => 'public',
-                'project_id' => 2,
-                'category_id' => 1
-            ],
-        ]);
     }
 }

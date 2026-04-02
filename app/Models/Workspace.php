@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Workspace extends Model
 {
-
+    use HasFactory;
     
     protected $fillable = ['name', 'slug', 'owner_id'];
 
@@ -29,11 +30,14 @@ class Workspace extends Model
         $this->hasMany(Article::class);
     }
 
-    public function scopeVisibleTo($query, $user) {
-        if ($user->role === 'admin') {
-            return $query;
-        }
-    }
+public function scopeVisibleTo($query, $user) {
+    if ($user->role === 'admin') return $query;
+    return $query->whereHas('members', function ($q) use ($user) {
+        $q->where('user_id', $user->id);
+    });
+}
+
+
 
     public function projects() {
         return

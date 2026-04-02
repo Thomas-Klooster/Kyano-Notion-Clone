@@ -60,15 +60,11 @@ class Article extends Model
     return $this->belongsToMany(Tag::class);
     }
 
-
-    public function scopeVisibleTo($query, $user)
-{
-    if ($user->role === 'admin') {
-        return $query;
-    }
-
-    return $query->whereHas('project', function ($q) use ($user) {
+public function scopeVisibleTo($query, $user) {
+    if ($user->role === 'admin') return $query;
+    return $query->whereHas('projects.workspace.members', function ($q) use ($user) {
         $q->where('user_id', $user->id);
     });
 }
+
 }

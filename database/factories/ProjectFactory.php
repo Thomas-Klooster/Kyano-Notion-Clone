@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Str;
 use App\Models\Category;
+use App\Models\Workspace;
 // use App\Models\Article;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Project>
@@ -14,7 +15,8 @@ use App\Models\Category;
 
 class ProjectFactory extends Factory
 {
-        protected $model = project::class;
+    
+        protected $model = Project::class;
     /**
      * Define the model's default state.
      *
@@ -23,15 +25,15 @@ class ProjectFactory extends Factory
     
 public function definition(): array
 {
-    $projectname = $this->faker->sentence();
+
+    $projectname = $this->faker->company();
     return [
         'projectname' => $projectname,
-        'description' => $this->faker->paragraph(),
+        'description' => $this->faker->paragraph(4, true),
         'slug' => Str::slug($projectname),
-        'category_id' => Category::inRandomOrder()->first()->id,
-        // 'article_id' => Article::InRandomOrder()->first()->id,
-        'user_id' => User::inRandomOrder()->first()->id,
+        'workspace_id' => Workspace::inRandomOrder()->first()->id ?? Workspace::factory(),
+        'category_id' => Category::inRandomOrder()->first()?->id ?? Category::factory(),
+        'user_id' => User::factory(),
     ];
 }
 }
-

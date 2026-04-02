@@ -4,36 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CategoryUpdateRequest;
 use App\Models\Category;
-use App\Models\User;
-use App\Models\Workspace;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Http\Requests\CategoryRequest;
 class CategoryController extends Controller
 {
   
 use AuthorizesRequests;
-// all
-  public function index(Workspace $workspace) {
-    $this->authorize('viewAny', Category::class);
-    $categories = Category::where('workspace_id', $workspace->id)
-        ->with('projects')->latest()->get();
-        
-        return response()->json($categories);
+  public function index() {
+    $categories = Category::visibleTo(auth()->user())->with(['projects'])
+    ->latest()->get();
+    return response()->json($categories);
+  }
+  public function store(CategoryRequest $request)
+  {
+    $this->authorize('create', [Category::class, $request->category_id]);
+    $data = $request->validated();
+    return Category::create($data);      
     }
 
-public function store(CategoryRequest $request, Workspace $workspace)
-{
-    $this->authorize('create', Category::class);
-    abort_unless($workspace->members()->where('user_id',
-    auth()->id())->exists(), 403);
-    $data = array_merge($request->validated(), [
-    'workspace_id' => $workspace->id,
-    ]);
-    return Category::create($data);
-}
-    // single
   public function show(Category $category) {
-  $this->authorize('view', $category);
+  $this->authorize('view', $category);  
   return $category->load('projects');
   
   }

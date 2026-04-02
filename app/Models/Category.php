@@ -23,7 +23,7 @@ class Category extends Model
             return $query;
         }
 
-        return $query->whereHas('projects', function ($q) use ($user) {
+        return $query->whereHas('project', function ($q) use ($user) {
             $q->where('user_id', $user->id);
         });
     }

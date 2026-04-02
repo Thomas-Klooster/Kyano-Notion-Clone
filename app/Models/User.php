@@ -41,6 +41,7 @@ class User extends Authenticatable
         ->withTimestamps();
 }
 
+
 protected $casts = [
         'admin' => 'enum',
     ];

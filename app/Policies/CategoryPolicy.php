@@ -7,11 +7,15 @@ use App\Models\Workspace;
 
 class CategoryPolicy
 {
-public function viewAny(User $user)
+public function viewAny(User $user, Category $category)
 {
-    return in_array($user->role, ['admin', 'owner']);
-
+    return 
+    $category->user_id === $user->id;
 }
+
+// public function view(User $user) {
+//     return in_array($user->role, ['admin', 'owner']);
+// }
 
 public function view(User $user, Category $category) {
 
@@ -20,19 +24,17 @@ public function view(User $user, Category $category) {
     }
 
 public function create(User $user)
-    {
-        return in_array($user->role, ['admin', 'owner']);
-    }
-
-public function update(User $user)
 {
     return in_array($user->role, ['admin', 'owner']);
-    
+}
+
+public function update(User $user) {
+    return $this->update($user);    
 }
 
 public function delete(User $user)
 {
-    return in_array($user->role, ['admin', 'owner']);
+    return $this->delete($user);    
 }
 
 }

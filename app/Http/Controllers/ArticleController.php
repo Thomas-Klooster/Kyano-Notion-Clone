@@ -99,7 +99,7 @@ class ArticleController extends Controller
     public function projectArticles(Project $project) {
     $this->authorize('view', $project);
     $articles = Article::visibleTo(auth()->user())
-        ->where(['project', 'category', 'attachments'])
+        ->with(['project', 'category', 'attachments'])
         ->where('project_id', $project->id)
         ->get();
         return response()->json($articles);

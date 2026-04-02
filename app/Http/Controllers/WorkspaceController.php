@@ -49,7 +49,7 @@ class WorkspaceController extends Controller
 
     public function update(Workspace $workspace, WorkspaceUpdateRequest $request)
     {
-        $this->authorize('update', Workspace::class);
+        $this->authorize('update', $workspace);
         $data = $request->validated();
 
         if (isset($data['name'])) {
@@ -72,7 +72,7 @@ class WorkspaceController extends Controller
 
     public function invite(WorkspaceInviteRequest $request, Workspace $workspace)
     {
-        $this->authorize('manage', Workspace::class); 
+        $this->authorize('manage', $workspace); 
         $data = $request->validated();
 
         $user = User::where('email', $data['email'])->first();
