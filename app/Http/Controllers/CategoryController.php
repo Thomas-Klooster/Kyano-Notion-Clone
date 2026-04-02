@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CategoryUpdateRequest;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Http\Requests\CategoryRequest;
 class CategoryController extends Controller
@@ -17,12 +18,12 @@ use AuthorizesRequests;
   }
   public function store(CategoryRequest $request)
   {
-    $this->authorize('create', [Category::class, $request->category_id]);
+    $this->authorize('create', [Category::class]);
     $data = $request->validated();
     return Category::create($data);      
     }
 
-  public function show(Category $category) {
+  public function show(User $user, Category $category) {
   $this->authorize('view', $category);  
   return $category->load('projects');
   

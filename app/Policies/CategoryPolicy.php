@@ -7,15 +7,11 @@ use App\Models\Workspace;
 
 class CategoryPolicy
 {
-public function viewAny(User $user, Category $category)
-{
-    return 
-    $category->user_id === $user->id;
-}
 
-// public function view(User $user) {
-//     return in_array($user->role, ['admin', 'owner']);
-// }
+public function before(User $user): ?bool {
+    if ($user->role === 'admin') return true;
+    return null;
+}
 
 public function view(User $user, Category $category) {
 
@@ -25,7 +21,9 @@ public function view(User $user, Category $category) {
 
 public function create(User $user)
 {
-    return in_array($user->role, ['admin', 'owner']);
+    return $user->workspaces()
+    ->wherePivotIn('role', ['owner', 'admin'])
+    ->exists();
 }
 
 public function update(User $user) {

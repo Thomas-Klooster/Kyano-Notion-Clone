@@ -10,8 +10,8 @@ use App\Http\Controllers\CategoryController;
 use App\Models\User;
 use App\Http\Controllers\UserController;
 
-Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
+
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::post('/newPassword', [AuthController::class, 'newPassword']);
@@ -51,8 +51,6 @@ Route::middleware('auth:sanctum')->group(function () {
         /* --------------------------Admin CRUD-------------------------- */
         
         
-        // Admin kan alles.
-
         Route::apiResource('projects', ProjectsController::class);
         Route::apiResource('categories', CategoryController::class);
         Route::apiResource('articles', ArticleController::class);

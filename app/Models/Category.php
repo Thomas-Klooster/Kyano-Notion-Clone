@@ -18,16 +18,13 @@ class Category extends Model
     public function workspace() {
       return $this->belongsTo(Workspace::class);
     }
-    public function scopeVisibleTo($query, $user) {
-        if ($user->role === 'admin') {
-            return $query;
-        }
-
-        return $query->whereHas('project', function ($q) use ($user) {
-            $q->where('user_id', $user->id);
-        });
-    }
-    protected static function boot()
+public function scopeVisibleTo($query, $user) {
+    if ($user->role === 'admin') return $query;
+    return $query->whereHas('projects.workspace.members', function ($q) use ($user) {
+        $q->where('user_id', $user->id);
+    });
+}
+   protected static function boot()
     {
         parent::boot();
 

@@ -36,15 +36,23 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('Admin@password'),
             'created_at' => now(),
             'updated_at' => now(),
+            'email_verified_at' => now(),
+            'remember_token' => Str::random(10),
         ]);
 
-        DB::table('categories')->insert([
-            'name' => 'Tech',
-            'slug' => 'tech',
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
+
+        User::factory()
+        ->count(4)
+        ->create();        
         
+        Workspace::factory()
+        ->count(8)
+        ->create();
+
+        Category::factory()
+        ->count(7)
+        ->create();
+
         Project::factory()
         ->count(6)
         ->create();
