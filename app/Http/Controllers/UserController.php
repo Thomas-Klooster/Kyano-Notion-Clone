@@ -24,12 +24,11 @@ use AuthorizesRequests;
       return response()->json($user);
     }
 
-    public function destroy(User $user) {
-      $this->authorize('delete', $user);
-      $user->delete();
-      return response()->json([
-      'message' => 'Gebruiker is verwijderd.'
-    ]);
+    public function get($id) {
+        
+        $this->authorize('get', $id);
+        $user = User::findOrFail($id);
+        return response()->json($user);
     }
 }
 
