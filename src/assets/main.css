@@ -1,3 +1,7 @@
+:root {
+  font-family: 'Gilroy';
+}
+
 .v-list-item-title {
   font-size: 0.875rem !important;
 }

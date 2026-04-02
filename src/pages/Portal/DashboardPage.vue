@@ -35,7 +35,6 @@
 
                 <div v-if="filteredWorkspaces.length" class="tree-list">
                     <div v-for="workspace in filteredWorkspaces" :key="workspace.id" class="tree-group">
-                        <!-- Workspace -->
                         <div class="tree-row tree-row-workspace">
                             <router-link :to="workspaceRoute(workspace)" class="tree-row-main tree-link">
                                 <div class="tree-icon">
@@ -63,7 +62,6 @@
                         </div>
 
                         <div v-if="expandedWorkspaces.includes(workspace.id)" class="tree-children">
-                            <!-- Categories -->
                             <div v-for="category in workspace.categories" :key="category.id" class="tree-group">
                                 <div class="tree-row tree-row-category">
                                     <router-link :to="categoryRoute(workspace, category)"
@@ -91,7 +89,6 @@
                                 </div>
 
                                 <div v-if="expandedCategories.includes(category.id)" class="tree-children">
-                                    <!-- Projects -->
                                     <div v-for="project in category.projects" :key="project.id" class="tree-group">
                                         <div class="tree-row tree-row-project">
                                             <router-link :to="projectRoute(project)" class="tree-row-main tree-link">
@@ -120,7 +117,6 @@
 
                                         <div v-if="expandedProjects.includes(project.id)"
                                             class="tree-children tree-children-articles">
-                                            <!-- Articles -->
                                             <router-link v-for="article in project.articles" :key="article.id"
                                                 :to="articleRoute(project, article)"
                                                 class="tree-row tree-row-article tree-link">
@@ -174,7 +170,7 @@ const workspaces = ref([
         name: 'Kyano',
         categories: [
             {
-                id: 11,
+                id: 1,
                 name: 'Development',
                 projects: [
                     {
@@ -198,7 +194,7 @@ const workspaces = ref([
                 ],
             },
             {
-                id: 12,
+                id: 2,
                 name: 'Documentatie',
                 projects: [
                     {
@@ -219,7 +215,7 @@ const workspaces = ref([
         name: 'Client Portal',
         categories: [
             {
-                id: 21,
+                id: 3,
                 name: 'Support',
                 projects: [
                     {
@@ -338,7 +334,7 @@ function workspaceRoute(workspace) {
 
 function categoryRoute(workspace, category) {
     return {
-        name: '',
+        name: 'category',
         params: {
             workspaceId: workspace.id,
             id: category.id,
@@ -348,7 +344,7 @@ function categoryRoute(workspace, category) {
 
 function projectRoute(project) {
     return {
-        name: '',
+        name: 'project',
         params: {
             id: project.id,
         },
@@ -357,7 +353,7 @@ function projectRoute(project) {
 
 function articleRoute(project, article) {
     return {
-        name: '',
+        name: 'article',
         params: {
             projectId: project.id,
             id: article.id,
@@ -382,6 +378,7 @@ function articleRoute(project, article) {
     min-height: 200px;
     border-radius: 26px;
     background: #24A1C7;
+    /* background: linear-gradient(340deg, rgba(36, 161, 199, 1) 0%, rgba(76, 180, 212, 1) 100%); */
     margin-bottom: 20px;
     padding: 32px 36px;
     display: flex;

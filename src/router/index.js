@@ -1,4 +1,4 @@
-import Home from '@/views/Home.vue'
+import Home from '@/pages/Portal/DashboardPage.vue'
 import MoreSettings from '@/views/MoreSettings.vue'
 import Settings from '@/views/Settings.vue'
 
@@ -21,7 +21,30 @@ import { createRouter, createWebHistory } from 'vue-router'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', component: Home, meta: { breadcrumb: 'Home' } },
+    {
+      path: '/',
+      name: 'Dashboard',
+      component: () => import('@/pages/Portal/DashboardPage.vue'),
+      meta: { breadcrumb: 'Dashboard' },
+    },
+    {
+      path: '/category/:id',
+      name: 'category',
+      component: () => import('@/pages/Portal/CategoryPage.vue'),
+      meta: { breadcrumb: 'Category' },
+    },
+    {
+      path: '/project/:id',
+      name: 'project',
+      component: () => import('@/pages/Portal/ProjectPage.vue'),
+      meta: { breadcrumb: 'Project' },
+    },
+    {
+      path: '/article/:id',
+      name: 'article',
+      component: () => import('@/pages/Portal/ArticlePreviewPage.vue'),
+      meta: { breadcrumb: 'Article' },
+    },
 
     {
       path: '/settings',
@@ -132,6 +155,12 @@ const router = createRouter({
           name: 'admin-articles-edit',
           component: () => import('@/pages/Admin/ArticleEditorPage.vue'),
           meta: { breadcrumb: 'Article editor page' },
+        },
+        {
+          path: '/articles/:id',
+          name: 'article-preview',
+          component: () => import('@/pages/Portal/ArticlePreviewPage.vue'),
+          meta: { breadcrumb: 'Article preview' },
         },
       ],
     },

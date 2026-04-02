@@ -1,0 +1,104 @@
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-THIN.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-THINITALIC.ttf') format('truetype');
+  font-weight: 100;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-ULTRALIGHT.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-ULTRALIGHTITALIC.ttf') format('truetype');
+  font-weight: 200;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-LIGHT.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-LIGHTITALIC.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-REGULAR.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-REGULARITALIC.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-MEDIUM.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-MEDIUMITALIC.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-SEMIBOLD.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-SEMIBOLDITALIC.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-BOLD.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-EXTRABOLD.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gilroy';
+  src: url('@/assets/fonts/Gilroy/GILROY-HEAVYITALIC.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+}
