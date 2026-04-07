@@ -1,0 +1,275 @@
+.entity-page {
+  min-height: 100%;
+  background: #f7f7f5;
+}
+
+.entity-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 28px 72px;
+}
+
+.entity-hero {
+  min-height: 200px;
+  border-radius: 26px;
+  background: linear-gradient(135deg, #24a1c7 0%, #1b7e9a 100%);
+  margin-bottom: 20px;
+  padding: 32px 36px;
+  display: flex;
+  align-items: end;
+}
+
+.hero-content {
+  max-width: 760px;
+}
+
+.hero-meta-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.92rem;
+}
+
+.hero-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.hero-meta-separator {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.hero-title {
+  margin: 0;
+  color: #ffffff;
+  font-size: 3rem;
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.hero-subtitle {
+  max-width: 720px;
+  margin: 16px 0 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 1.02rem;
+  line-height: 1.8;
+}
+
+.entity-card {
+  border: 1px solid #ececea;
+  border-radius: 26px;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(15, 15, 15, 0.03);
+  overflow: hidden;
+}
+
+.entity-card-head {
+  padding: 28px 28px 22px;
+  border-bottom: 1px solid #f0efec;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.section-kicker {
+  margin-bottom: 8px;
+  color: #787774;
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.section-title {
+  margin: 0;
+  color: #191919;
+  font-size: 1.7rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.entity-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  min-width: 320px;
+  height: 48px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid #e7e5e4;
+  background: #fbfbfa;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #787774;
+}
+
+.search-field input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #191919;
+  font-size: 0.96rem;
+}
+
+.entity-list {
+  padding: 12px 20px 20px;
+}
+
+.entity-row {
+  min-height: 86px;
+  padding: 18px 8px;
+  border-bottom: 1px solid #f1efec;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.entity-row:last-child {
+  border-bottom: none;
+}
+
+.entity-row-main {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.entity-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: #f3f8fa;
+  border: 1px solid #d9ebf1;
+  color: #177f9d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.entity-icon-soft {
+  background: #f7f7f5;
+  border-color: #eceae6;
+  color: #5f5c56;
+}
+
+.entity-info {
+  min-width: 0;
+}
+
+.entity-name {
+  color: #191919;
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.entity-meta {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: #787774;
+  font-size: 0.92rem;
+}
+
+.dot {
+  color: #b3afa7;
+}
+
+.entity-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.entity-chip {
+  background: #f4f3f1;
+  color: #44403c;
+  border: 1px solid #ebe7e2;
+}
+
+.empty-state {
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.empty-state-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 14px;
+  border-radius: 16px;
+  background: #f6f5f3;
+  color: #6b6a66;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state h3 {
+  margin: 0;
+  color: #191919;
+  font-size: 1.1rem;
+}
+
+.empty-state p {
+  margin: 8px 0 0;
+  color: #787774;
+}
+
+@media (max-width: 860px) {
+  .entity-shell {
+    padding: 24px 18px 56px;
+  }
+
+  .entity-hero {
+    padding: 28px 22px;
+  }
+
+  .hero-title {
+    font-size: 2.35rem;
+  }
+
+  .entity-card-head {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .entity-list {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .entity-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .search-field {
+    min-width: 100%;
+  }
+}

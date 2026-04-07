@@ -10,11 +10,13 @@ import ResetPasswordPage from '@/pages/Auth/ResetPasswordPage.vue'
 
 // ADMIN
 import AdminOverviewPage from '@/pages/Admin/AdminOverviewPage.vue'
-import CustomersPage from '@/pages/Admin/CustomersPage.vue'
-import CustomerFormPage from '@/pages/Admin/CustomerFormPage.vue'
-import ProjectsPage from '@/pages/Admin/ProjectsPage.vue'
-import ProjectFormPage from '@/pages/Admin/ProjectFormPage.vue'
-import ProjectDetailPage from '@/pages/Admin/ProjectDetailPage.vue'
+import CustomersPage from '@/pages/Admin/Customers/CustomersPage.vue'
+import CustomerFormPage from '@/pages/Admin/Customers/CustomerFormPage.vue'
+import ProjectsPage from '@/pages/Admin/Projects/ProjectsPage.vue'
+import ProjectFormPage from '@/pages/Admin/Projects/ProjectFormPage.vue'
+import ProjectDetailPage from '@/pages/Admin/Projects/ProjectDetailPage.vue'
+import WorkspacesPage from '@/pages/Admin/Workspaces/WorkspacesPage.vue'
+import CategoriesPage from '@/pages/Admin/Categories/CategoriesPage.vue'
 
 import { createRouter, createWebHistory } from 'vue-router'
 
@@ -115,6 +117,18 @@ const router = createRouter({
           meta: { breadcrumb: 'Customer create/edit form' },
         },
         {
+          path: 'workspaces',
+          name: 'admin-workspaces',
+          component: WorkspacesPage,
+          meta: { breadcrumb: 'Workspaces' },
+        },
+        {
+          path: 'categories',
+          name: 'admin-categories',
+          component: CategoriesPage,
+          meta: { breadcrumb: 'Categories' },
+        },
+        {
           path: 'projects',
           name: 'admin-projects',
           component: ProjectsPage,
@@ -141,19 +155,19 @@ const router = createRouter({
         {
           path: 'articles',
           name: 'admin-articles',
-          component: () => import('@/pages/Admin/ArticlesPage.vue'),
+          component: () => import('@/pages/Admin/Articles/ArticlesPage.vue'),
           meta: { breadcrumb: 'Articles' },
         },
         {
           path: 'articles/new',
           name: 'admin-articles-new',
-          component: () => import('@/pages/Admin/ArticleEditorPage.vue'),
+          component: () => import('@/pages/Admin/Articles/ArticleEditorPage.vue'),
           meta: { breadcrumb: 'Article editor page' },
         },
         {
           path: 'articles/:id/edit',
           name: 'admin-articles-edit',
-          component: () => import('@/pages/Admin/ArticleEditorPage.vue'),
+          component: () => import('@/pages/Admin/Articles/ArticleEditorPage.vue'),
           meta: { breadcrumb: 'Article editor page' },
         },
         {
