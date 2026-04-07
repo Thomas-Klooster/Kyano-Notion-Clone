@@ -38,7 +38,10 @@
 
                 <div v-if="filteredArticles.length" class="project-table-wrap">
                     <div class="project-table">
-                        <div v-for="article in filteredArticles" :key="article.id" class="project-row">
+                        <div v-for="article in filteredArticles" :key="article.id"
+                            class="project-row project-row-clickable" role="button" tabindex="0"
+                            @click="goToArticle(article.id)" @keydown.enter="goToArticle(article.id)"
+                            @keydown.space.prevent="goToArticle(article.id)">
                             <div class="project-row-main">
                                 <div class="project-icon">
                                     <v-icon size="18">mdi-file-document-outline</v-icon>
@@ -71,7 +74,9 @@
 
 <script setup>
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const search = ref('')
 
 const project = ref({
@@ -122,6 +127,10 @@ const filteredArticles = computed(() => {
         article.tags.some(tag => tag.toLowerCase().includes(query))
     )
 })
+
+function goToArticle(id) {
+    router.push(`/article/${id}`)
+}
 </script>
 
 <style scoped>
