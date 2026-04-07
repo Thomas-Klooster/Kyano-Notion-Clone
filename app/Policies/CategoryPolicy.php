@@ -29,12 +29,11 @@ public function create(User $user)
 }
 
 public function update(User $user) {
-    return $this->update($user);    
-}
+    return $this->create($user);
+ }
 
 public function delete(User $user)
 {
-    return $this->delete($user);    
-}
+ return $this->create($user);}
 
 }

@@ -26,8 +26,7 @@ class WorkspaceController extends Controller
     return response()->json($workspaces);
 
     }
-    public function store(WorkspaceRequest $request)
-    {
+    public function store(WorkspaceRequest $request) {
         $this->authorize('create', Workspace::class);
         $request->validated();
 
@@ -40,15 +39,13 @@ class WorkspaceController extends Controller
         $workspace->members()->attach(auth()->id(), ['role' => 'owner']);
         return response()->json($workspace, 201);
     }
-   public function show(Workspace $workspace)
-    {
+        public function show(Workspace $workspace) {
         $this->authorize('view', $workspace);
         return 
         $workspace->load(['articles', 'projects']);
     }
 
-    public function update(Workspace $workspace, WorkspaceUpdateRequest $request)
-    {
+    public function update(Workspace $workspace, WorkspaceUpdateRequest $request) {
         $this->authorize('update', $workspace);
         $data = $request->validated();
 
@@ -60,21 +57,20 @@ class WorkspaceController extends Controller
         return response()->json($workspace);
     }
 
-    public function workspaceArticles(Workspace $workspace)
-    {
+    public function workspaceArticles(Workspace $workspace) {
+        $this->authorize('view', $workspace);
         return $workspace->articles()->get();
     } 
 
     public function workspaceProjects(Workspace $workspace)
     {
+        $this->authorize('view', $workspace);
         return $workspace->projects()->get();
     }
 
-    public function invite(WorkspaceInviteRequest $request, Workspace $workspace)
-    {
+    public function invite(WorkspaceInviteRequest $request, Workspace $workspace) {
         $this->authorize('manage', $workspace); 
         $data = $request->validated();
-
         $user = User::where('email', $data['email'])->first();
 
         if ($user && $workspace->members()->where('user_id', $user->id)->exists()) {
@@ -131,7 +127,7 @@ class WorkspaceController extends Controller
 
     public function removeMember(Workspace $workspace, User $user)
     {
-        $this->authorize('manage', Workspace::class);
+        $this->authorize('manage', $workspace);
         $workspace->members()->detach($user->id);
         return 
         response()->json(['message' => 'Gebruiker is verwijderd'], 200);

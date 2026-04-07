@@ -29,18 +29,21 @@ class Workspace extends Model
         return
         $this->hasMany(Article::class);
     }
-
-public function scopeVisibleTo($query, $user) {
-    if ($user->role === 'admin') return $query;
-    return $query->whereHas('members', function ($q) use ($user) {
-        $q->where('user_id', $user->id);
-    });
-}
-
-
-
-    public function projects() {
+        public function projects() {
         return
         $this->hasMany(Project::class);
     }
+
+    public function scopeVisibleTo($query, $user)
+{
+    if ($user->role === 'admin') return $query;
+
+    return $query->where(function ($q) use ($user) {
+        $q->where('owner_id', $user->id)   
+          ->orWhereHas('members', function ($q) use ($user) {
+              $q->where('user_id', $user->id);
+          });
+    });
+}
+
 }

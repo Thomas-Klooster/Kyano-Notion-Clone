@@ -37,29 +37,29 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
-    Route::middleware(['auth:sanctum', 'checkrole:owner'])->group(function () {
-        Route::apiResource('projects', ProjectsController::class)->except(['index']);
-        Route::apiResource('articles', ArticleController::class)->except(['index']);
-        Route::apiResource('workspaces', WorkspaceController::class)->except(['index']);
-        Route::apiResource('categories', CategoryController::class)->except(['index']);
-        Route::post('/workspaces/{workspace}/invite', [WorkspaceController::class, 'invite']);
-        Route::delete('/workspaces/{workspace}/members/{user}', [WorkspaceController::class, 'removeMember']);
-    });
-
+Route::middleware(['auth:sanctum', 'checkrole:owner'])->group(function () {
+    Route::apiResource('projects', ProjectsController::class)->except(['index', 'show']); 
+    Route::apiResource('articles', ArticleController::class)->except(['index', 'show']);
+    Route::apiResource('workspaces', WorkspaceController::class)->except(['index', 'show']);
+    Route::apiResource('categories', CategoryController::class)->except(['index', 'show']);
+    Route::post('/workspaces/{workspace}/invite', [WorkspaceController::class, 'invite']);
+    Route::delete('/workspaces/{workspace}/members/{user}', [WorkspaceController::class, 'removeMember']);
+});
     Route::middleware(['auth:sanctum', 'checkrole:admin'])->prefix('admin')->group(function () {        
         
         /* --------------------------Admin CRUD-------------------------- */
         
         
-        Route::apiResource('projects', ProjectsController::class);
-        Route::apiResource('categories', CategoryController::class);
-        Route::apiResource('articles', ArticleController::class);
+        Route::apiResource('projects', ProjectsController::class)->except(['AdminIndex']);
+        Route::apiResource('categories', CategoryController::class)->except(['AdminIndex']);
+        Route::apiResource('articles', ArticleController::class)->except(['AdminIndex']);
         Route::apiResource('workspaces', WorkspaceController::class);
         Route::post('/workspaces/{workspace}/invite', [WorkspaceController::class, 'invite']);
         Route::delete('/workspaces/{workspace}/members/{user}', [WorkspaceController::class, 'removeMember']);
+        Route::apiResource('users', UserController::class);
         // Route::post('/articles/attachment', [ArticleController::class, 'store']);
-        Route::get('/users/{id}',fn($id) => response()->json(User::findOrFail($id)));
-        Route::post('/users', [UserController::class, 'store']);
-        Route::put('/users/{id}', [UserController::class, 'update']);
-        Route::delete('/users/{id}', [UserController::class, 'destroy']);
+        // Route::get('/users/{id}',fn($id) => response()->json(User::findOrFail($id)));
+        // Route::post('/users', [UserController::class, 'store']);
+        // Route::put('/users/{id}', [UserController::class, 'update']);
+        // Route::delete('/users/{id}', [UserController::class, 'destroy']);
     });

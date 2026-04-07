@@ -25,7 +25,6 @@ class DatabaseSeeder extends Seeder
     
 
         
-
         DB::table('users')->insert([
             'name' => 'Admin',
             'role' => 'admin',
@@ -40,15 +39,25 @@ class DatabaseSeeder extends Seeder
             'remember_token' => Str::random(10),
         ]);
 
-
         User::factory()
-        ->count(4)
+        ->count(10)
         ->create();        
         
         Workspace::factory()
-        ->count(8)
+        ->count(5)
         ->create();
         
+        $users = User::where('email', '!=', 'Admin@gmail.com')->get();
+        $workspaces = Workspace::all();
+
+        foreach ($users as $user) {
+        $randomWorkspaces = $workspaces->random(rand(1, 3));
+    
+        foreach ($randomWorkspaces as $workspace) {
+        if (!$workspace->members()->where('user_id', $user->id)->exists()) {
+            $workspace->members()->attach($user->id, ['role' => 'member']);
+        }}}
+                
         Category::factory()
         ->count(7)
         ->create();

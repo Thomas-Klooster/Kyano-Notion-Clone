@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ArticleUpdateRequest;
 use Arr;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Attachment;
@@ -18,10 +17,10 @@ class ArticleController extends Controller
 
     use AuthorizesRequests;
     public function index() {
-        $this->authorize('viewAny', Article::class);        
-        $articles = Article::where('status', 'published')
-        ->latest()->get();
-        return response()->json($articles);
+     $this->authorize('viewAny', Article::class);        
+     $articles = Article::visibleTo(auth()->user())
+     ->where('status', 'published')->latest()->get();
+     return response()->json($articles);
     }
 
    public function store(ArticleRequest $request) {
@@ -46,12 +45,12 @@ class ArticleController extends Controller
     return response()->json($article->load('attachments'), 201);
 }
 
+
+    // Niet gezien?
     public function show(Article $article) { 
     $this->authorize('view', $article);
-     $article = Article::where('status', 'published')
-     ->findOrFail($article->id);
-
-    return response()->json($article);
+        var_dump('test');
+    return response()->json($article->load(['projects', 'categories', 'attachments']));
     }
 
     public function update(ArticleUpdateRequest $request, Article $article) {

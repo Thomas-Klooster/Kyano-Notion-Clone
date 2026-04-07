@@ -10,7 +10,7 @@ class WorkspaceFactory extends Factory
 {
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Workspace>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Project>
  */
 
     protected $model = Workspace::class;
@@ -23,21 +23,21 @@ class WorkspaceFactory extends Factory
     public function definition(): array
     {
         $name = $this->faker->unique()->company();
+        $admin = User::where('email', 'Admin@gmail.com')->first();
 
         return [
             'name' => $name,
-            'owner_id' => User::factory(),
+            'owner_id' => $admin->id,
             'slug' => Str::slug($name),
         ];
     }
 
-public function configure(): static
-{
-    return $this->afterCreating(function (Workspace $workspace) {
-        $users = User::inRandomOrder()->take(rand(2, 5))->pluck('id');
-
-        $workspace->members()->attach($users, [
-            'role' => 'member',
-        ]);
-    });
-}}
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Workspace $workspace) {
+            $workspace->members()->attach($workspace->owner_id, [
+                'role' => 'owner',
+            ]);
+        });
+    }
+}

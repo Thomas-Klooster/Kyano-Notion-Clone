@@ -17,7 +17,7 @@ class UserPolicy
     }
 
     public function view(User $authUser, User $user) {
-    return $authUser->role === 'admin' || $user->id === $user->id;
+    return $authUser->role === 'admin' || $authUser->id === $user->id;
     }
 
     public function create(User $authUser) {

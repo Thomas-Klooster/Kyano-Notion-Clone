@@ -35,6 +35,9 @@ class Project extends Model
     {
         return $this->hasMany(Article::class);
     }
+    public function articles() {
+        return $this->hasMany(Article::class);
+    }
     
     public function workspace(): BelongsTo {
         return $this->belongsTo(Workspace::class);
@@ -44,7 +47,7 @@ class Project extends Model
     if ($user->role === 'admin') return $query;
     return $query->whereHas('workspace.members', function ($q) use ($user) {
         $q->where('user_id', $user->id);
-    });
+    })->where('user_id', $user->id);
 }
 
     protected static function boot(): void

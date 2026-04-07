@@ -33,38 +33,39 @@ class Article extends Model
         public function users() {
             return $this->belongsTo(User::class);
         }
-    public function workspace() {
-        return $this->belongsTo(Workspace::class);
+
+        public function workspace() {
+            return $this->belongsTo(Workspace::class);
     }
 
-    public function project(){
-    return $this->belongsTo(Project::class);
+        public function projects() {
+            return $this->belongsTo(Project::class);
+    }
+        public function project() {
+            return $this->belongsTo(Project::class);
+        }
+        public function attachments() {
+            return $this->hasMany(Attachment::class);
+    }
+
+        public function feedbacks() {
+            return $this->hasMany(Feedback::class);
+    }
+
+        public function categories() {
+            return $this->belongsTo(Category::class);
 }
-    public function attachments() {
-        return 
-        $this->hasMany(Attachment::class);
-        
-    }
-
-    public function feedbacks() {
-       return
-        $this->hasMany(Feedback::class);
-    }
-
-    public function category()
-{
-    return $this->belongsTo(Category::class);
-}
-    public function tags() {
-        
-    return $this->belongsToMany(Tag::class);
+        public function tags() {
+            return $this->belongsToMany(Tag::class);
     }
 
 public function scopeVisibleTo($query, $user) {
     if ($user->role === 'admin') return $query;
-    return $query->whereHas('projects.workspace.members', function ($q) use ($user) {
-        $q->where('user_id', $user->id);
-    });
+    return $query->whereHas('project.workspace.members', function ($q) use ($user) {
+    $q->where('user_id', $user->id);
+})->where(function ($q) use ($user) {
+    $q->where('visibility', 'public')
+    ->orWhere('user_id', $user->id);
+});
 }
-
 }
