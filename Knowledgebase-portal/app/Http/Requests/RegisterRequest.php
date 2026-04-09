@@ -26,9 +26,6 @@ class RegisterRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'phone_number' => 'nullable|string|max:15',
-            'company' => 'nullable|string',
-            'address' => 'nullable|string',
             'password' => 'required|min:8',
         ];
 }
@@ -37,7 +34,7 @@ class RegisterRequest extends FormRequest
             return [
                 'name.required'=> 'Het invullen van je naam is verplicht.',
                 'email.required'=> 'Je email invullen is verplicht',
-                'password'=> 'Vul een wachtwoord in!'
+                'password.required'=> 'Vul een wachtwoord in!'
                 ];
         }
     

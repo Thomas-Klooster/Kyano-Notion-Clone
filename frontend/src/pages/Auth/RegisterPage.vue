@@ -11,9 +11,8 @@
 
                             <div>
                                 <div class="text-h6 font-weight-semibold">Create account</div>
-                                <div class="text-body-2 text-medium-emphasis">
-                                    Sign up to get started
-                                </div>
+
+                                <div class="text-body-2 text-medium-emphasis">Sign up to get started</div>
                             </div>
                         </div>
                     </div>
@@ -21,13 +20,13 @@
 
                 <v-card-text class="pt-6">
                     <v-form ref="formRef" v-model="formValid" @submit.prevent="onSubmit">
-                        <v-text-field v-model="name" label="Full name" placeholder="Your name..." autocomplete="name"
-                            variant="outlined" density="comfortable" prepend-inner-icon="mdi-account-outline"
-                            :rules="nameRules" hide-details="auto" class="mb-3" @keydown.enter.prevent="focusEmail" />
-
-                        <v-text-field ref="emailField" v-model="email" label="Email" placeholder="name@company.com"
-                            autocomplete="email" type="email" variant="outlined" density="comfortable"
-                            prepend-inner-icon="mdi-email-outline" :rules="emailRules" hide-details="auto" class="mb-3"
+                        <v-text-field v-model="fullName" label="Full name" placeholder="Your name..."
+                            autocomplete="name" variant="outlined" density="comfortable"
+                            prepend-inner-icon="mdi-account-outline" :rules="nameRules" hide-details="auto" class="mb-3"
+                            @keydown.enter.prevent="focusEmail" /><v-text-field ref="emailField" v-model="email"
+                            label="Email" placeholder="name@company.com" autocomplete="email" type="email"
+                            variant="outlined" density="comfortable" prepend-inner-icon="mdi-email-outline"
+                            :rules="emailRules" hide-details="auto" class="mb-3"
                             @keydown.enter.prevent="focusPassword" />
 
                         <v-text-field ref="passwordField" v-model="password" label="Password" placeholder="••••••••"
@@ -37,7 +36,7 @@
                             :rules="passwordRules" hide-details="auto" class="mb-3"
                             @click:append-inner="showPassword = !showPassword" @keydown.enter.prevent="focusConfirm" />
 
-                        <v-text-field ref="confirmField" v-model="confirmPassword" label="Confirm password"
+                        <v-text-field ref="confirmField" v-model="password_confirmation" label="Confirm password"
                             placeholder="••••••••" autocomplete="new-password" :type="showConfirm ? 'text' : 'password'"
                             variant="outlined" density="comfortable" prepend-inner-icon="mdi-lock-check-outline"
                             :append-inner-icon="showConfirm ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
@@ -77,10 +76,11 @@
                             <span class="text-body-2 text-medium-emphasis">or continue with</span>
                         </div>
 
-                        <div style="display: flex; gap: 0.5rem; flex-direction: column;">
+                        <div style="display: flex; gap: 0.5rem; flex-direction: column">
                             <v-btn block variant="outlined" prepend-icon="mdi-google" @click="onSocial('google')">
                                 Google
                             </v-btn>
+
                             <v-btn block variant="outlined" prepend-icon="mdi-microsoft" @click="onSocial('microsoft')">
                                 Microsoft
                             </v-btn>
@@ -88,9 +88,8 @@
 
                         <div class="text-center mt-6 text-body-2">
                             <span class="text-medium-emphasis">Already have an account?</span>
-                            <v-btn variant="text" class="px-1" @click="goToLogin">
-                                Sign in
-                            </v-btn>
+
+                            <v-btn variant="text" class="px-1" @click="goToLogin"> Sign in </v-btn>
                         </div>
                     </v-form>
                 </v-card-text>
@@ -99,88 +98,109 @@
     </v-row>
 </template>
 
+<!-- API CONNECTION -->
 <script setup>
-import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
-
-const formRef = ref(null);
-
-const emailField = ref(null);
-const passwordField = ref(null);
-const confirmField = ref(null);
-
-const formValid = ref(false);
-const loading = ref(false);
-
-const name = ref("");
-const email = ref("");
-const password = ref("");
-const confirmPassword = ref("");
-
-const acceptTerms = ref(false);
-
-const showPassword = ref(false);
-const showConfirm = ref(false);
-
-const errorMessage = ref("");
-
-const router = useRouter();
+import axios from 'axios'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+const formRef = ref(null)
+const emailField = ref(null)
+const passwordField = ref(null)
+const confirmField = ref(null)
+const formValid = ref(false)
+const loading = ref(false)
+const errorMessage = ref('')
+const errors = ref({})
+const fullName = ref('')
+const email = ref('')
+const password = ref('')
+const confirmPassword = ref('')
+const acceptTerms = ref(false)
+const showPassword = ref(false)
+const showConfirm = ref(false)
+const router = useRouter()
 
 const nameRules = [
-    (v) => !!v || "Name is required",
-    (v) => (v?.trim()?.length ?? 0) >= 2 || "Name must be at least 2 characters",
-];
+    (v) => !!v || 'Name is required',
+    (v) => (v?.trim()?.length ?? 0) >= 2 || 'Name must be at least 2 characters',
+]
 
 const emailRules = [
-    (v) => !!v || "Email is required",
-    (v) => /.+@.+\..+/.test(v) || "Enter a valid email",
-];
+    (v) => !!v || 'Email is required',
+    (v) => /.+@.+\..+/.test(v) || 'Enter a valid email',
+]
 
 const passwordRules = [
-    (v) => !!v || "Password is required",
-    (v) => (v?.length ?? 0) >= 8 || "Password must be at least 8 characters",
-    (v) => /[A-Z]/.test(v) || "Password must contain at least one uppercase letter",
-    (v) => /[a-z]/.test(v) || "Password must contain at least one lowercase letter",
-    (v) => /[\d\W]/.test(v) || "Password must contain at least one number or special character",
-];
+    (v) => !!v || 'Password is required',
+    (v) => (v?.length ?? 0) >= 8 || 'Password must be at least 8 characters',
+    (v) => /[A-Z]/.test(v) || 'Must contain an uppercase letter',
+    (v) => /[a-z]/.test(v) || 'Must contain a lowercase letter',
+    (v) => /[\d\W]/.test(v) || 'Must contain a number or special character',
+]
 
 const confirmRules = computed(() => [
-    (v) => !!v || "Please confirm your password",
-    (v) => v === password.value || "Passwords do not match",
-]);
-
-const termsRules = [
-    (v) => v === true || "You must accept the terms to continue",
-];
+    (v) => !!v || 'Please confirm your password',
+    (v) => v === password.value || 'Passwords do not match',
+])
+const termsRules = [(v) => v === true || 'You must accept the terms to continue']
 
 function focusEmail() {
-    emailField.value?.focus?.();
+    emailField.value?.focus?.()
 }
+
 function focusPassword() {
-    passwordField.value?.focus?.();
+    passwordField.value?.focus?.()
 }
+
 function focusConfirm() {
-    confirmField.value?.focus?.();
+    confirmField.value?.focus?.()
 }
 
 async function onSubmit() {
+    const { valid } = await formRef.value.validate()
+    if (!valid) return
+    loading.value = true
+    errors.value = {}
+    errorMessage.value = ''
+
+    try {
+        const response = await axios.post('/api/register', {
+            name: fullName.value,
+            email: email.value,
+            password: password.value,
+            password_confirmation: confirmPassword.value,
+        })
+
+        console.log('Registered:', response.data)
+
+        router.push({ name: 'login' })
+    } catch (error) {
+        if (error.response?.status === 422) {
+            errors.value = error.response.data.errors ?? {}
+            errorMessage.value = 'Please check the fields and try again.'
+        } else {
+            errorMessage.value = 'An unexpected error occurred.'
+            console.error(error)
+        }
+    } finally {
+        loading.value = false
+    }
 }
 
 function onSocial(provider) {
-    console.log("Social signup:", provider);
-    errorMessage.value = `Social signup (${provider}) is not connected yet.`;
+    errorMessage.value = `Social signup (${provider}) is not connected yet.`
 }
 
 function goToLogin() {
-    router.push({ name: "login" }).catch(() => { });
+    router.push({ name: 'login' }).catch(() => { })
 }
 
 function onOpenTerms() {
-    console.log("Open terms clicked");
+    console.log('Open terms')
 }
 
 function onOpenPrivacy() {
-    console.log("Open privacy clicked");
+    console.log('Open privacy')
 }
 </script>
 
@@ -194,7 +214,7 @@ function onOpenPrivacy() {
 
 .divider::before,
 .divider::after {
-    content: "";
+    content: '';
     height: 1px;
     background: rgba(0, 0, 0, 0.12);
 }
