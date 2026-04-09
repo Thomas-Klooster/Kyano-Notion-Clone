@@ -105,7 +105,7 @@
 .entity-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
@@ -120,6 +120,13 @@
   align-items: center;
   gap: 10px;
   color: #787774;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.search-field:focus-within {
+  border-color: #c9e2ea;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(36, 161, 199, 0.08);
 }
 
 .search-field input {
@@ -272,4 +279,45 @@
   .search-field {
     min-width: 100%;
   }
+}
+
+
+.delete-btn {
+  color: red;
+}
+
+.entity-create-btn {
+  min-height: 48px;
+  padding: 0 14px;
+  border-radius: 14px !important;
+  background: #24a1c7;
+  color: #FFF;
+  border: 1px solid #e7e5e4 !important;
+  box-shadow: none !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  text-transform: none !important;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.entity-create-btn:hover {
+  transform: translateY(-1px);
+}
+
+.entity-create-btn:active {
+  transform: translateY(0);
+}
+
+.entity-create-btn :deep(.v-btn__prepend) {
+  margin-inline-end: 8px;
+}
+
+.entity-create-btn :deep(.v-icon) {
+  font-size: 18px;
+  color: #ffffff !important;
 }

@@ -7,9 +7,13 @@ import '@/assets/main.css'
 import '@/assets/fonts/fonts.css'
 
 import axios from 'axios'
-axios.defaults.baseURL = '?'
+
+axios.defaults.baseURL = 'http://localhost:8000'
 axios.defaults.withCredentials = true
 axios.defaults.withXSRFToken = true
+axios.defaults.headers.common['Accept'] = 'application/json'
+
+window.axios = axios
 
 // VueQuill
 import { QuillEditor } from '@vueup/vue-quill'

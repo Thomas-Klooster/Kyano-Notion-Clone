@@ -27,30 +27,30 @@ const router = createRouter({
       path: '/',
       name: 'Dashboard',
       component: () => import('@/pages/Portal/DashboardPage.vue'),
-      meta: { breadcrumb: 'Dashboard' },
+      meta: { guestOnly: true, breadcrumb: 'Dashboard' },
     },
     {
       path: '/category/:id',
       name: 'category',
       component: () => import('@/pages/Portal/CategoryPage.vue'),
-      meta: { breadcrumb: 'Category' },
+      meta: { requiresAuth: true, breadcrumb: 'Category' },
     },
     {
       path: '/project/:id',
       name: 'project',
       component: () => import('@/pages/Portal/ProjectPage.vue'),
-      meta: { breadcrumb: 'Project' },
+      meta: { requiresAuth: true, breadcrumb: 'Project' },
     },
     {
       path: '/article/:id',
       name: 'article',
       component: () => import('@/pages/Portal/ArticlePreviewPage.vue'),
-      meta: { breadcrumb: 'Article' },
+      meta: { requiresAuth: true, breadcrumb: 'Article' },
     },
 
     {
       path: '/settings',
-      meta: { breadcrumb: 'Settings' },
+      meta: { requiresAuth: true, breadcrumb: 'Settings' },
       children: [
         {
           path: '',
@@ -67,31 +67,31 @@ const router = createRouter({
     {
       path: '/auth',
       children: [
-        { path: 'login', name: 'login', component: LoginPage, meta: { breadcrumb: 'Login' } },
+        { path: 'login', name: 'login', component: LoginPage, meta: { guestOnly: true, breadcrumb: 'Login' } },
         {
           path: 'register',
           name: 'register',
           component: RegisterPage,
-          meta: { breadcrumb: 'Register' },
+          meta: { guestOnly: true, breadcrumb: 'Register' },
         },
         {
           path: 'forgot-password',
           name: 'forgot-password',
           component: ForgotPasswordPage,
-          meta: { breadcrumb: 'Forgot Password' },
+          meta: { guestOnly: true, breadcrumb: 'Forgot Password' },
         },
         {
           path: 'reset-password',
           name: 'reset-password',
           component: ResetPasswordPage,
-          meta: { breadcrumb: 'Reset Password' },
+          meta: { guestOnly: true, breadcrumb: 'Reset Password' },
         },
       ],
     },
 
     {
       path: '/admin',
-      meta: { breadcrumb: 'Admin omgeving' },
+      meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Admin omgeving' },
       children: [
         {
           path: '',
@@ -102,83 +102,107 @@ const router = createRouter({
           path: 'customers',
           name: 'admin-customers',
           component: CustomersPage,
-          meta: { breadcrumb: 'Customers module' },
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Customers module' },
         },
         {
           path: 'customers/new',
           name: 'admin-customers-new',
           component: CustomerFormPage,
-          meta: { breadcrumb: 'Customer create/edit form' },
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Customer create/edit form' },
         },
         {
           path: 'customers/:id/edit',
           name: 'admin-customers-edit',
           component: CustomerFormPage,
-          meta: { breadcrumb: 'Customer create/edit form' },
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Customer create/edit form' },
         },
         {
           path: 'workspaces',
           name: 'admin-workspaces',
           component: WorkspacesPage,
-          meta: { breadcrumb: 'Workspaces' },
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Workspaces' },
         },
         {
           path: 'categories',
           name: 'admin-categories',
           component: CategoriesPage,
-          meta: { breadcrumb: 'Categories' },
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Categories' },
         },
         {
           path: 'projects',
           name: 'admin-projects',
           component: ProjectsPage,
-          meta: { breadcrumb: 'Projects' },
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Projects' },
         },
         {
           path: 'projects/new',
           name: 'admin-projects-new',
           component: ProjectFormPage,
-          meta: { breadcrumb: 'Project create/edit' },
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Project create/edit' },
         },
         {
           path: 'projects/:id/edit',
           name: 'admin-projects-edit',
           component: ProjectFormPage,
-          meta: { breadcrumb: 'Project create/edit' },
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Project create/edit' },
         },
         {
           path: 'projects/:id',
           name: 'admin-project-detail',
           component: ProjectDetailPage,
-          meta: { breadcrumb: 'Project detail page' },
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Project detail page' },
         },
         {
           path: 'articles',
           name: 'admin-articles',
           component: () => import('@/pages/Admin/Articles/ArticlesPage.vue'),
-          meta: { breadcrumb: 'Articles' },
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Artikelen' },
         },
         {
           path: 'articles/new',
           name: 'admin-articles-new',
           component: () => import('@/pages/Admin/Articles/ArticleEditorPage.vue'),
-          meta: { breadcrumb: 'Article editor page' },
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Article editor page' },
         },
         {
           path: 'articles/:id/edit',
           name: 'admin-articles-edit',
           component: () => import('@/pages/Admin/Articles/ArticleEditorPage.vue'),
-          meta: { breadcrumb: 'Article editor page' },
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Article editor page' },
         },
         {
           path: '/articles/:id',
           name: 'article-preview',
           component: () => import('@/pages/Portal/ArticlePreviewPage.vue'),
-          meta: { breadcrumb: 'Article preview' },
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Article preview' },
         },
       ],
     },
   ],
 })
+
+// import { useAuthStore } from '@/stores/auth'
+
+// router.beforeEach(async (to) => {
+//   const auth = useAuthStore()
+
+//   if (!auth.initialized) {
+//     await auth.fetchUser()
+//   }
+
+//   if (to.meta.requiresAuth && !auth.isAuthenticated) {
+//     return { name: 'login' }
+//   }
+
+//   if (to.meta.guestOnly && auth.isAuthenticated) {
+//     return auth.isAdmin ? { name: 'admin-overview' } : { name: 'Dashboard' }
+//   }
+
+//   if (to.meta.requiresAdmin && !auth.isAdmin) {
+//     return { name: 'Dashboard' }
+//   }
+
+//   return true
+// })
 
 export default router

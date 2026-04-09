@@ -68,7 +68,7 @@
                     <div class="sidebar-label">Extra feedback</div>
 
                     <textarea ref="feedbackTextarea" v-model="feedbackTitle" class="feedback-input feedback-textarea"
-                        placeholder="Laat je feedback achter..." rows="1" @input="autoResizeTextarea"></textarea>
+                        placeholder="Laat je feedback achter..." rows="1" @input="autoResizeTextarea" maxlength="500"></textarea>
 
                     <button class="feedback-submit" type="submit">
                         Versturen

@@ -30,8 +30,8 @@
               <input v-model="search" type="text" placeholder="Zoek een categorie..." />
             </div>
 
-            <v-btn color="primary" rounded="xl" prepend-icon="mdi-plus">
-              Nieuwe categorie
+            <v-btn class="entity-create-btn" variant="text" prepend-icon="mdi-plus">
+              Nieuwe catergorie
             </v-btn>
           </div>
         </div>
@@ -56,8 +56,8 @@
             </div>
 
             <div class="entity-actions">
-              <v-chip size="small" class="entity-chip">{{ category.scope }}</v-chip>
               <v-btn size="small" variant="text">Bewerken</v-btn>
+              <v-btn size="small" variant="text" class="delete-btn">Verwijderen</v-btn>
             </div>
           </div>
         </div>

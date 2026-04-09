@@ -1,76 +1,112 @@
 <template>
-  <div class="admin-page-container">
-    <div class="page-header">
-      <div>
-        <h1 class="page-title">Klanten</h1>
-        <p class="page-subtitle">
-          Beheer klanten, basisgegevens en gekoppelde projecten.
-        </p>
-      </div>
+  <div class="entity-page">
+    <div class="entity-shell">
+      <section class="entity-hero">
+        <div class="hero-content">
+          <div class="hero-meta-line">
+            <span class="hero-pill">Admin</span>
+            <span class="hero-meta-separator">•</span>
+            <span>{{ filteredCustomers.length }} klanten</span>
+          </div>
 
-      <v-btn color="primary" rounded="lg" prepend-icon="mdi-plus" to="/admin/customers/new">
-        Nieuwe klant
-      </v-btn>
-    </div>
+          <h1 class="hero-title">Klanten</h1>
 
-    <v-card class="notion-card mb-4" flat rounded="xl">
-      <div class="pa-4">
-        <v-row>
-          <v-col cols="12" md="6">
-            <v-text-field v-model="search" class="notion-soft-input" label="Zoek klant" prepend-inner-icon="mdi-magnify"
-              variant="solo-filled" flat hide-details />
-          </v-col>
-        </v-row>
-      </div>
-    </v-card>
+          <p class="hero-subtitle">
+            Beheer klanten, basisgegevens en gekoppelde projecten.
+          </p>
+        </div>
+      </section>
 
-    <v-card class="notion-card" flat rounded="xl">
-      <v-table class="notion-table">
-        <thead>
-          <tr>
-            <th>Naam</th>
-            <th>Contactpersoon</th>
-            <th>Projecten</th>
-            <th>Status</th>
-            <th class="text-right">Acties</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="customer in filteredCustomers" :key="customer.id">
-            <td>{{ customer.name }}</td>
-            <td>{{ customer.contact }}</td>
-            <td>{{ customer.projects }}</td>
-            <td>
-              <v-chip size="small" class="notion-chip">
-                {{ customer.status }}
-              </v-chip>
-            </td>
-            <td class="text-right">
-              <v-btn size="small" variant="text" :to="`/admin/customers/${customer.id}/edit`">
+      <section class="entity-card">
+        <div class="entity-card-head">
+          <div>
+            <div class="section-kicker">Overzicht</div>
+            <h2 class="section-title">Alle klanten</h2>
+          </div>
+
+          <div class="entity-controls">
+            <div class="search-field">
+              <v-icon size="18">mdi-magnify</v-icon>
+              <input
+                v-model="search"
+                type="text"
+                placeholder="Zoek een klant..."
+              />
+            </div>
+
+            <v-btn
+              class="entity-create-btn"
+              variant="text"
+              prepend-icon="mdi-plus"
+              to="/admin/customers/new"
+            >
+              Nieuwe klant
+            </v-btn>
+          </div>
+        </div>
+
+        <div v-if="filteredCustomers.length" class="entity-list">
+          <div
+            v-for="customer in filteredCustomers"
+            :key="customer.id"
+            class="entity-row"
+          >
+            <div class="entity-row-main">
+              <div class="entity-icon entity-icon-soft">
+                <v-icon size="18">mdi-domain</v-icon>
+              </div>
+
+              <div class="entity-info">
+                <div class="entity-name">{{ customer.name }}</div>
+
+                <div class="entity-meta">
+                  <span>{{ customer.contact }}</span>
+                  <span class="dot">•</span>
+
+                  <v-chip
+                    size="small"
+                    class="entity-chip"
+                    :class="{
+                      'entity-chip-active': customer.status === 'Actief',
+                      'entity-chip-draft': customer.status === 'Concept'
+                    }"
+                  >
+                    {{ customer.status }}
+                  </v-chip>
+                </div>
+              </div>
+            </div>
+
+            <div class="entity-actions">
+              <v-btn
+                size="small"
+                variant="text"
+                :to="`/admin/customers/${customer.id}/edit`"
+              >
                 Bewerken
               </v-btn>
 
-              <v-btn size="small" variant="text" color="error" @click="openDeleteDialog(customer)">
+              <v-btn
+                size="small"
+                variant="text"
+                class="delete-btn"
+                @click="openDeleteDialog(customer)"
+              >
                 Verwijderen
               </v-btn>
-            </td>
-          </tr>
+            </div>
+          </div>
+        </div>
 
-          <tr v-if="filteredCustomers.length === 0">
-            <td colspan="5">
-              <div class="notion-empty-state ma-4">
-                <div class="text-subtitle-1 font-weight-medium mb-1">
-                  Geen klanten gevonden
-                </div>
-                <p class="page-subtitle mb-0">
-                  Probeer een andere zoekterm of voeg een nieuwe klant toe.
-                </p>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </v-table>
-    </v-card>
+        <div v-else class="empty-state">
+          <div class="empty-state-icon">
+            <v-icon size="24">mdi-domain-off</v-icon>
+          </div>
+          <h3>Geen klanten gevonden</h3>
+          <p>Probeer een andere zoekterm of voeg een nieuwe klant toe.</p>
+        </div>
+      </section>
+    </div>
 
     <v-dialog v-model="deleteDialog" max-width="480">
       <v-card class="notion-card" flat rounded="xl">
@@ -88,7 +124,7 @@
               <p class="page-subtitle mb-0">
                 Je staat op het punt om
                 <strong>{{ customerToDelete?.name }}</strong>
-                te verwijderen. Deze kan niet ongedaan worden.
+                te verwijderen. Deze actie kan niet ongedaan worden gemaakt.
               </p>
             </div>
           </div>
@@ -116,13 +152,28 @@ const deleteDialog = ref(false)
 const customerToDelete = ref(null)
 
 const customers = ref([
-  { id: 1, name: 'Kyano Digital', contact: 'info@kyano.nl', projects: 3, status: 'Actief' },
-  { id: 2, name: 'Studio North', contact: 'hello@studionorth.nl', projects: 2, status: 'Actief' },
-  { id: 3, name: 'Pixelworks', contact: 'team@pixelworks.nl', projects: 1, status: 'Concept' },
+  {
+    id: 1,
+    name: 'Kyano Digital',
+    contact: 'info@kyano.nl',
+    status: 'Actief',
+  },
+  {
+    id: 2,
+    name: 'Kawasaki',
+    contact: 'hello@kawasaki.jp',
+    status: 'Actief',
+  },
+  {
+    id: 3,
+    name: 'Yamaha',
+    contact: 'team@yamaha.jp',
+    status: 'Concept',
+  },
 ])
 
 const filteredCustomers = computed(() => {
-  const query = search.value.toLowerCase().trim()
+  const query = search.value.trim().toLowerCase()
 
   if (!query) return customers.value
 
@@ -155,6 +206,8 @@ function confirmDelete() {
 </script>
 
 <style scoped>
+@import '../shared-admin-list.css';
+
 .dialog-icon-wrapper {
   width: 40px;
   height: 40px;
@@ -166,5 +219,17 @@ function confirmDelete() {
   border: 1px solid #f3d6d6;
   color: #b42318;
   flex-shrink: 0;
+}
+
+.entity-chip-active {
+  background: #eefaf2;
+  border-color: #d7f0df;
+  color: #18794e;
+}
+
+.entity-chip-draft {
+  background: #f6f5f3;
+  border-color: #ebe7e2;
+  color: #6b6a66;
 }
 </style>

@@ -30,7 +30,7 @@
               <input v-model="search" type="text" placeholder="Zoek een workspace..." />
             </div>
 
-            <v-btn color="primary" rounded="xl" prepend-icon="mdi-plus">
+            <v-btn class="entity-create-btn" variant="text" prepend-icon="mdi-plus">
               Nieuwe workspace
             </v-btn>
           </div>
@@ -56,8 +56,8 @@
             </div>
 
             <div class="entity-actions">
-              <v-chip size="small" class="entity-chip">{{ workspace.status }}</v-chip>
               <v-btn size="small" variant="text">Bewerken</v-btn>
+              <v-btn size="small" variant="text" class="delete-btn">Verwijderen</v-btn>
             </div>
           </div>
         </div>
@@ -80,9 +80,9 @@ import { computed, ref } from 'vue'
 const search = ref('')
 
 const workspaces = ref([
-  { id: 1, name: 'Kyano Core', customer: 'Kyano Digital', categories: 4, projects: 9, status: 'Actief' },
-  { id: 2, name: 'Support Center', customer: 'Kyano Digital', categories: 3, projects: 6, status: 'Actief' },
-  { id: 3, name: 'Client Portals', customer: 'キヤノデジタル', categories: 5, projects: 8, status: 'Concept' },
+  { id: 1, name: 'Kyano Core', customer: 'Kyano Digital', categories: 4, projects: 9 },
+  { id: 2, name: 'Support Center', customer: 'Kyano Digital', categories: 3, projects: 6 },
+  { id: 3, name: 'Client Portals', customer: 'キヤノデジタル', categories: 5, projects: 8 },
 ])
 
 const filteredWorkspaces = computed(() => {
@@ -92,8 +92,7 @@ const filteredWorkspaces = computed(() => {
 
   return workspaces.value.filter(workspace =>
     workspace.name.toLowerCase().includes(query) ||
-    workspace.customer.toLowerCase().includes(query) ||
-    workspace.status.toLowerCase().includes(query)
+    workspace.customer.toLowerCase().includes(query)
   )
 })
 </script>
