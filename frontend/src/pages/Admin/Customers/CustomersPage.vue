@@ -12,7 +12,7 @@
           <h1 class="hero-title">Klanten</h1>
 
           <p class="hero-subtitle">
-            Beheer klanten, basisgegevens en gekoppelde projecten.
+            Beheer klantaccounts, bedrijfsgegevens en gekoppelde contactinformatie.
           </p>
         </div>
       </section>
@@ -30,7 +30,7 @@
               <input
                 v-model="search"
                 type="text"
-                placeholder="Zoek een klant..."
+                placeholder="Zoek klanten..."
               />
             </div>
 
@@ -49,7 +49,7 @@
           <div
             v-for="customer in filteredCustomers"
             :key="customer.id"
-            class="entity-row"
+            class="entity-row entity-row-rich"
           >
             <div class="entity-row-main">
               <div class="entity-icon entity-icon-soft">
@@ -57,22 +57,34 @@
               </div>
 
               <div class="entity-info">
-                <div class="entity-name">{{ customer.name }}</div>
-
-                <div class="entity-meta">
-                  <span>{{ customer.contact }}</span>
-                  <span class="dot">•</span>
+                <div class="entity-name-row">
+                  <div class="entity-name">{{ customer.companyName }}</div>
 
                   <v-chip
                     size="small"
                     class="entity-chip"
                     :class="{
-                      'entity-chip-active': customer.status === 'Actief',
-                      'entity-chip-draft': customer.status === 'Concept'
+                      'entity-chip-admin': customer.role === 'admin',
+                      'entity-chip-customer': customer.role === 'customer'
                     }"
                   >
-                    {{ customer.status }}
+                    {{ customer.role }}
                   </v-chip>
+                </div>
+
+                <div class="entity-meta entity-meta-stack">
+                  <span>
+                    <strong>Contact:</strong> {{ customer.name }}
+                  </span>
+                  <span class="dot">•</span>
+                  <span>{{ customer.email }}</span>
+                  <span class="dot">•</span>
+                  <span>{{ customer.tel }}</span>
+                </div>
+
+                <div class="entity-submeta">
+                  <v-icon size="15">mdi-map-marker-outline</v-icon>
+                  <span>{{ customer.address }}</span>
                 </div>
               </div>
             </div>
@@ -121,9 +133,9 @@
                 Klant verwijderen?
               </h2>
 
-              <p class="page-subtitle mb-0">
+              <p class="page-subtitle mb-0 dialog-copy">
                 Je staat op het punt om
-                <strong>{{ customerToDelete?.name }}</strong>
+                <strong>{{ customerToDelete?.companyName }}</strong>
                 te verwijderen. Deze actie kan niet ongedaan worden gemaakt.
               </p>
             </div>
@@ -154,21 +166,30 @@ const customerToDelete = ref(null)
 const customers = ref([
   {
     id: 1,
-    name: 'Kyano Digital',
-    contact: 'info@kyano.nl',
-    status: 'Actief',
+    companyName: 'Kyano Digital',
+    name: 'Kyano Team',
+    email: 'info@kyano.nl',
+    tel: '+31 6 12345678',
+    address: 'Moermanskweg 2-25, 9723 HM Groningen',
+    role: 'admin',
   },
   {
     id: 2,
-    name: 'Kawasaki',
-    contact: 'hello@kawasaki.jp',
-    status: 'Actief',
+    companyName: 'Kawasaki',
+    name: 'Yasuhiko Hashimoto',
+    email: 'hello@kawasaki.jp',
+    tel: '+81 3-3435-2111',
+    address: '1 Chome-14-5 Kaigan, Minato City, Tokyo 105-0022, Japan',
+    role: 'customer',
   },
   {
     id: 3,
-    name: 'Yamaha',
-    contact: 'team@yamaha.jp',
-    status: 'Concept',
+    companyName: 'Yamaha',
+    name: 'Motofumi Shitara',
+    email: 'team@yamaha.jp',
+    tel: '+81 538-32-1115',
+    address: '2500 Shingai, Iwata, Shizuoka 438-0025, Japan',
+    role: 'customer',
   },
 ])
 
@@ -178,9 +199,12 @@ const filteredCustomers = computed(() => {
   if (!query) return customers.value
 
   return customers.value.filter((customer) =>
+    customer.companyName.toLowerCase().includes(query) ||
     customer.name.toLowerCase().includes(query) ||
-    customer.contact.toLowerCase().includes(query) ||
-    customer.status.toLowerCase().includes(query)
+    customer.email.toLowerCase().includes(query) ||
+    customer.tel.toLowerCase().includes(query) ||
+    customer.address.toLowerCase().includes(query) ||
+    customer.role.toLowerCase().includes(query)
   )
 })
 
@@ -221,15 +245,44 @@ function confirmDelete() {
   flex-shrink: 0;
 }
 
-.entity-chip-active {
-  background: #eefaf2;
-  border-color: #d7f0df;
-  color: #18794e;
+.entity-row-rich {
+  align-items: flex-start;
 }
 
-.entity-chip-draft {
+.entity-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.entity-meta-stack {
+  margin-top: 8px;
+}
+
+.entity-submeta {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #787774;
+  font-size: 0.92rem;
+}
+
+.entity-chip-admin {
+  background: #eef6ff;
+  border-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.entity-chip-customer {
   background: #f6f5f3;
   border-color: #ebe7e2;
   color: #6b6a66;
+}
+
+.dialog-copy {
+  color: #5f5c56;
+  line-height: 1.7;
 }
 </style>
