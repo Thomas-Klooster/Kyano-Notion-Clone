@@ -13,7 +13,7 @@
 
                     <p class="hero-subtitle">
                         Bekijk alle workspaces waar je toegang toe hebt en navigeer direct door categorieën,
-                        projecten en artikelen.
+                        projecten en artikelen heen.
                     </p>
                 </div>
             </section>
