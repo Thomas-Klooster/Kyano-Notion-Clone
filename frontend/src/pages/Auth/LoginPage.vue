@@ -20,7 +20,7 @@
                 </v-card-item>
 
                 <v-card-text class="pt-6">
-                    <v-form ref="form" v-model="formValid" @submit.prevent="onSubmit">
+                    <v-form ref="formRef" v-model="formValid" @submit.prevent="onSubmit">
                         <v-text-field v-model="email" label="Email" placeholder="name@company.com" autocomplete="email"
                             type="email" variant="outlined" density="comfortable" prepend-inner-icon="mdi-email-outline"
                             :rules="emailRules" class="mb-3" hide-details="auto" @keydown.enter="focusPassword" />
@@ -76,20 +76,20 @@
 </template>
 
 <script setup>
+import axios from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 const passwordField = ref(null);
-
+const formRef = ref(null);
 const formValid = ref(false);
 const loading = ref(false);
-
+const errors = ref({});
 const email = ref("");
 const password = ref("");
 const remember = ref(true);
 const showPassword = ref(false);
 const errorMessage = ref("");
-
 const router = useRouter();
 
 const emailRules = [
@@ -108,7 +108,36 @@ const passwordRules = [
 ];
 
 async function onSubmit() {
-    // login logic
+    const { valid } = await
+    formRef.value.validate()
+
+    if (!valid) return
+
+    loading.value = true 
+    errors.value = {}
+    errorMessage.value = ''
+
+    try {
+        const response = await axios.post('api/login', {
+            email: email.value,
+            password: password.value,
+        })
+        console.log('Ingelogd:', response.data)
+
+        router.push({ name: 'Dashboard' })
+    } catch (error) {
+        if (error.response?.status === 422) {
+            errors.value = error.response.data.errors ?? {}
+            errorMessage.value = 'Invalid Credentials.'
+        } else {
+            errorMessage.value = 'An unexpected error occurred.'
+            console.error(error)
+        } 
+        } finally {
+        loading.value = false
+    }
+
+
 }
 
 function focusPassword() {

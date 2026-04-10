@@ -46,10 +46,8 @@ class ArticleController extends Controller
 }
 
 
-    // Niet gezien?
     public function show(Article $article) { 
     $this->authorize('view', $article);
-        var_dump('test');
     return response()->json($article->load(['projects', 'categories', 'attachments']));
     }
 
