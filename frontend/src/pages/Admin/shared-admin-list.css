@@ -10,7 +10,7 @@
 }
 
 .entity-hero {
-  min-height: 200px;
+  /* min-height: 220px; */
   border-radius: 26px;
   background: linear-gradient(135deg, #24a1c7 0%, #1b7e9a 100%);
   margin-bottom: 20px;

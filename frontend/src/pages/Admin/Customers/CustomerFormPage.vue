@@ -196,7 +196,7 @@ const form = ref({
 
 .entity-input {
   border: 1px solid #ebe7e2;
-  background: #fbfaf8;
+  background: rgba(245, 245, 245, 0.69420);
   border-radius: 18px;
   transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
   overflow: hidden;

@@ -125,7 +125,7 @@ const totalEntities = computed(() =>
 }
 
 .admin-dashboard-shell {
-  max-width: 1240px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 32px 28px 72px;
 }

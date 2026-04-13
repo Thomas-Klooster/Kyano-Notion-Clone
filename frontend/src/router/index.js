@@ -19,10 +19,17 @@ import WorkspacesPage from '@/pages/Admin/Workspaces/WorkspacesPage.vue'
 import CategoriesPage from '@/pages/Admin/Categories/CategoriesPage.vue'
 
 import { createRouter, createWebHistory } from 'vue-router'
+import CategoriesFormPage from '@/pages/Admin/Categories/CategoriesFormPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/test',
+      name: 'test',
+      component: () => import('@/pages/Admin/NewAdminLayoutTestPage.vue'),
+      meta: { breadcrumb: 'test'}
+    },
     {
       path: '/',
       name: 'Dashboard',
@@ -127,6 +134,18 @@ const router = createRouter({
           name: 'admin-categories',
           component: CategoriesPage,
           meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Categories' },
+        },
+        {
+          path: 'categories/new',
+          name: 'admin-categories-new',
+          component: CategoriesFormPage,
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Categories create/edit form' },
+        },
+        {
+          path: 'categories/:id/edit',
+          name: 'admin-categories-edit',
+          component: CategoriesFormPage,
+          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Categories create/edit form' },
         },
         {
           path: 'projects',

@@ -56,7 +56,7 @@
             </div>
 
             <div class="entity-actions">
-              <v-btn size="small" variant="text">Bewerken</v-btn>
+              <v-btn size="small" variant="text" :to="`/admin/categories/${category.id}/edit`">Bewerken</v-btn>
               <v-btn size="small" variant="text" class="delete-btn">Verwijderen</v-btn>
             </div>
           </div>
