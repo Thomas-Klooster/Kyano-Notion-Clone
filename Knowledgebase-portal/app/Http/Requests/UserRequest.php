@@ -30,6 +30,8 @@ class UserRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', "unique:users,email,{$userId}",
             ],
+            'remember' => ['nullable', 'boolean'],
+
 
             'password' => [
                 $isUpdate ? 'sometimes' : 'required', 'confirmed',

@@ -15,11 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__.'/../routes/api.php',
         health: '/up',
     )
-    // Incoming requests from SPA can authenticate using session cookies.
+
     ->withMiddleware(function (Middleware $middleware): void {
     $middleware->statefulApi(); 
     $middleware->alias([
-     // Defining token alias abilities.
     'abilities' => CheckAbilities::class,
     'ability' => CheckForAnyAbility::class,
     'auth' => Authenticate::class,
@@ -27,9 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ]);
 
 })
-    ->withMiddleware(function (Middleware $middleware): void {
-            //
-    })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

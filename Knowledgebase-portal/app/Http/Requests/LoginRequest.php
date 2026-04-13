@@ -24,6 +24,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => 'required|email',
             'password' => 'required',
+            'remember' => 'nullable|boolean'
         ];
     }
 
@@ -31,7 +32,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'email.required'=> 'Je email invullen is verplicht!',
-            'password'=> 'required',
+            'password.required'=> 'Een wachtwoord is verplicht.',
         ];
     }
 }

@@ -117,11 +117,16 @@ async function onSubmit() {
     errors.value = {}
     errorMessage.value = ''
 
-    try {
-        const response = await axios.post('api/login', {
+        try {
+        await axios.get('http://localhost:8000/sanctum/csrf-cookie');
+            const response =
+
+        await axios.post('http://localhost:8000/api/login', {
             email: email.value,
             password: password.value,
+            remember: remember.value,
         })
+
         console.log('Ingelogd:', response.data)
 
         router.push({ name: 'Dashboard' })

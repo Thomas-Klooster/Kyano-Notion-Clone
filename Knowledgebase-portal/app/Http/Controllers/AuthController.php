@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 use App\Mail\ForgotMail;
 use App\Mail\ResetMail;
-use App\Models\password_reset_tokens;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -28,37 +27,28 @@ class AuthController extends Controller
             'password'=> Hash::make($data['password']),
         ]);
         
-        $token = $user->createToken('api-token')->plainTextToken;
         return response()->json([
             'message' => 'Geregistreerd!',
-            'token'=> $token,
             'user'=> $user,
         ]);
     }
    public function login(LoginRequest $request)
 {
-    $validated = $request->validated();
-    
-    $credentials = [
-        'email' => $validated['email'],
-        'password' => $validated['password'],
-    ];
-    
-    if (!Auth::attempt($credentials)) {
+    $credentials = $request->only('email', 'password');
+    if (!Auth::attempt($credentials, $request->filled('remember'))) {
         return response()->json(['message' => 'Ongeldige inloggegevens.'], 401);
     }
-    
-    $user = Auth::user();
-    $token = $user->createToken('token-name', ['server:update'])->plainTextToken;
+        
+    $request->session()->regenerate();
     
     return response()->json([
         'message' => 'Ingelogd!',
-        'token' => $token,
-        'user' => $user,
+        'user' => Auth::user(),
     ]);
+
 }
 
-    public function logout(LogoutRequest $request) {
+public function logout(LogoutRequest $request) {
 
     $user = $request->user();
     if (! $user) {
