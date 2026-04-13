@@ -275,13 +275,13 @@ async function verifyOtp() {
     loading.value = true;
 
     try {
-        const response = await axios.post("http://localhost:8000/api/verify-reset-otp", {
+        const response = await axios.post("http://localhost:8000/api/verify-otp", {
             email: email.value,
             otp: otpCode.value,
         });
 
         router.push({
-            path: "/reset-password",
+            path: "/auth/reset-password",
             query: {
                 email: email.value,
                 otp: otpCode.value,
