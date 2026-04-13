@@ -6,98 +6,88 @@
                     <div class="d-flex align-center ga-3">
                         <v-avatar size="44" color="primary" variant="tonal">
                             <v-icon
-                                :icon="stage === 'verify' ? 'mdi-shield-key-outline' : 'mdi-email-lock-outline'" />
+                                :icon="stage === STAGES.VERIFY ? 'mdi-shield-key-outline' : 'mdi-email-lock-outline'" />
                         </v-avatar>
 
                         <div>
                             <div class="text-h6 font-weight-semibold">
-                                {{ stage === 'verify' ? 'Verify code' : 'Forgot password' }}
+                                {{ stageTitle }}
                             </div>
 
                             <div class="text-body-2 text-medium-emphasis">
-                                <template v-if="stage === 'request'">
-                                    We’ll send a reset code to your email
-                                </template>
-
-                                <template v-else-if="stage === 'codeSent'">
-                                    We sent a code to {{ email }}
-                                </template>
-
-                                <template v-else>
-                                    Enter the 6-digit code you received
-                                </template>
+                                {{ stageSubtitle }}
                             </div>
                         </div>
                     </div>
                 </v-card-item>
 
                 <v-card-text class="pt-6">
-                    <v-form ref="formRef" v-model="formValid" @submit.prevent="handlePrimaryAction">
-                        <!-- STAGE 1 + 2 -->
-                        <template v-if="stage === 'request' || stage === 'codeSent'">
-                            <v-text-field ref="emailField" v-model="email" label="Email"
-                                placeholder="name@company.com" autocomplete="email" type="email"
-                                variant="outlined" density="comfortable" prepend-inner-icon="mdi-email-outline"
-                                :rules="emailRules" hide-details="auto" class="mb-3"
-                                :readonly="stage === 'codeSent'" @keydown.enter.prevent="handlePrimaryAction" />
+                    <v-form ref="formRef" v-model="formValid" @submit.prevent="onSubmit">
+                        <template v-if="stage === STAGES.REQUEST || stage === STAGES.CODE_SENT">
+                            <v-text-field ref="emailField" v-model.trim="email" label="Email"
+                                placeholder="name@company.com" autocomplete="email" type="email" variant="outlined"
+                                density="comfortable" prepend-inner-icon="mdi-email-outline" :rules="emailRules"
+                                hide-details="auto" class="mb-3" :readonly="stage === STAGES.CODE_SENT"
+                                @keydown.enter.prevent="onSubmit" />
 
                             <v-alert v-if="successMessage" type="success" variant="tonal" density="comfortable"
                                 class="mb-3">
                                 {{ successMessage }}
                             </v-alert>
 
-                            <v-alert v-if="errorMessage" type="error" variant="tonal" density="comfortable"
-                                class="mb-3" closable @click:close="errorMessage = ''">
+                            <v-alert v-if="errorMessage" type="error" variant="tonal" density="comfortable" class="mb-3"
+                                closable @click:close="clearMessages">
                                 {{ errorMessage }}
                             </v-alert>
 
                             <v-btn class="mt-2" type="submit" color="primary" size="large" block :loading="loading"
-                                :disabled="loading || !formValid">
-                                {{ stage === 'codeSent' ? 'Send code again' : 'Send reset code' }}
+                                :disabled="loading">
+                                {{ stage === STAGES.CODE_SENT ? "Send code again" : "Send reset code" }}
                             </v-btn>
 
-                            <v-btn v-if="stage === 'codeSent'" class="mt-3" variant="outlined" color="primary"
-                                size="large" block @click="goToVerifyStage">
+                            <v-btn v-if="stage === STAGES.CODE_SENT" class="mt-3" variant="outlined" color="primary"
+                                size="large" block :disabled="loading" @click="goToVerifyStage">
                                 I've received my code
                             </v-btn>
 
-                            <v-btn v-if="stage === 'codeSent'" variant="text" block class="mt-2"
-                                @click="useAnotherEmail">
+                            <v-btn v-if="stage === STAGES.CODE_SENT" variant="text" block class="mt-2"
+                                :disabled="loading" @click="useAnotherEmail">
                                 Use another email
                             </v-btn>
                         </template>
 
-                        <!-- STAGE 3 -->
-                        <template v-else-if="stage === 'verify'">
-                            <v-text-field v-model="email" label="Email" variant="outlined" density="comfortable"
+                        <template v-else-if="stage === STAGES.VERIFY">
+                            <v-text-field :model-value="email" label="Email" variant="outlined" density="comfortable"
                                 prepend-inner-icon="mdi-email-outline" readonly class="mb-3" />
 
                             <div class="text-subtitle-2 mb-2">Verification code</div>
 
                             <div class="d-flex ga-2 mb-4">
-                                <v-text-field v-for="(digit, index) in otp" :key="index"
-                                    :ref="(el) => setOtpRef(el, index)" v-model="otp[index]" variant="outlined"
-                                    density="comfortable" maxlength="1" hide-details class="otp-input" @input="onOtpInput(index, $event)"
-                                    @keydown.backspace="onOtpBackspace(index, $event)"
-                                    @paste="onOtpPaste" />
+                                <v-text-field v-for="(char, index) in otp" :key="index"
+                                    :ref="(el) => setOtpRef(el, index)" :model-value="otp[index]" variant="outlined"
+                                    density="comfortable" maxlength="1" hide-details class="otp-input" inputmode="text"
+                                    autocomplete="one-time-code"
+                                    @update:model-value="(value) => onOtpInput(index, value)"
+                                    @keydown.backspace="onOtpBackspace(index)" @paste="onOtpPaste" />
                             </div>
 
-                            <v-alert v-if="errorMessage" type="error" variant="tonal" density="comfortable"
-                                class="mb-3" closable @click:close="errorMessage = ''">
+                            <v-alert v-if="errorMessage" type="error" variant="tonal" density="comfortable" class="mb-3"
+                                closable @click:close="clearMessages">
                                 {{ errorMessage }}
                             </v-alert>
 
                             <v-btn color="primary" size="large" block :loading="loading"
-                                :disabled="loading || otpCode.length !== 6" @click="verifyOtp">
+                                :disabled="loading || otpCode.length !== OTP_LENGTH" @click="verifyOtp">
                                 Verify
                             </v-btn>
 
-                            <v-btn variant="outlined" color="primary" block class="mt-2" :disabled="loading" @click="stage = 'codeSent'">
+                            <v-btn variant="outlined" color="primary" block class="mt-2" :disabled="loading"
+                                @click="backToCodeSent">
                                 Back
                             </v-btn>
 
                             <div class="text-center mt-3">
-                                <v-btn variant="text" :disabled="loading" @click="sendResetCode">
+                                <v-btn variant="text" :disabled="loading" @click="resendCodeFromVerify">
                                     Send code again
                                 </v-btn>
                             </div>
@@ -123,22 +113,45 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
+const STAGES = {
+    REQUEST: "request",
+    CODE_SENT: "codeSent",
+    VERIFY: "verify",
+};
+
+const OTP_LENGTH = 6;
+
 const formRef = ref(null);
 const emailField = ref(null);
 
 const formValid = ref(false);
 const loading = ref(false);
-const errors = ref({});
 const email = ref("");
 const errorMessage = ref("");
 const successMessage = ref("");
+const stage = ref(STAGES.REQUEST);
 
-const stage = ref("request"); // request | codeSent | verify
-
-const otp = ref(["", "", "", "", "", ""]);
+const otp = ref(Array.from({ length: OTP_LENGTH }, () => ""));
 const otpRefs = ref([]);
 
 const otpCode = computed(() => otp.value.join(""));
+
+const stageTitle = computed(() => {
+    if (stage.value === STAGES.VERIFY) return "Verify code";
+    return "Forgot password";
+});
+
+const stageSubtitle = computed(() => {
+    if (stage.value === STAGES.REQUEST) {
+        return "We’ll send a reset code to your email";
+    }
+
+    if (stage.value === STAGES.CODE_SENT) {
+        return `We sent a code to ${email.value}`;
+    }
+
+    return "Enter the code you received to continue";
+});
 
 const emailRules = [
     (v) => !!v || "Het invullen van een email is verplicht.",
@@ -148,6 +161,15 @@ const emailRules = [
 onMounted(() => {
     emailField.value?.focus?.();
 });
+
+function clearMessages() {
+    errorMessage.value = "";
+    successMessage.value = "";
+}
+
+function resetOtp() {
+    otp.value = Array.from({ length: OTP_LENGTH }, () => "");
+}
 
 function setOtpRef(el, index) {
     if (el) {
@@ -161,18 +183,14 @@ function focusOtp(index) {
     });
 }
 
-function clearMessages() {
-    errors.value = {};
-    errorMessage.value = "";
-    successMessage.value = "";
+async function validateEmailForm() {
+    if (!formRef.value) return false;
+    const result = await formRef.value.validate();
+    return !!result.valid;
 }
 
-function resetOtp() {
-    otp.value = ["", "", "", "", "", ""];
-}
-
-async function handlePrimaryAction() {
-    if (stage.value === "request" || stage.value === "codeSent") {
+async function onSubmit() {
+    if (stage.value === STAGES.REQUEST || stage.value === STAGES.CODE_SENT) {
         await sendResetCode();
     }
 }
@@ -180,26 +198,25 @@ async function handlePrimaryAction() {
 async function sendResetCode() {
     clearMessages();
 
-    const { valid } = await formRef.value.validate();
+    const valid = await validateEmailForm();
     if (!valid) return;
 
     loading.value = true;
 
     try {
-        await axios.post("http://localhost:8000/api/forgot-password", {
-            email: email.value,
-        });
+        await axios.post(
+            "http://localhost:8000/api/forgot-password",
+            { email: email.value },
+            { withCredentials: true }
+        );
 
-        stage.value = "codeSent";
+        stage.value = STAGES.CODE_SENT;
         successMessage.value = "A verification code has been sent to your email address.";
     } catch (error) {
-        if (error.response?.status === 422) {
-            errors.value = error.response.data.errors ?? {};
-            errorMessage.value = "Email niet gevonden.";
-        } else {
-            errorMessage.value = "Er is een onverwachte fout opgetreden.";
-            console.error(error);
-        }
+        handleRequestError(error, {
+            defaultMessage: "Er is een onverwachte fout opgetreden.",
+            notFoundMessage: "Email niet gevonden.",
+        });
     } finally {
         loading.value = false;
     }
@@ -207,27 +224,40 @@ async function sendResetCode() {
 
 function goToVerifyStage() {
     clearMessages();
-    stage.value = "verify";
     resetOtp();
+    stage.value = STAGES.VERIFY;
     focusOtp(0);
+}
+
+function backToCodeSent() {
+    clearMessages();
+    resetOtp();
+    stage.value = STAGES.CODE_SENT;
 }
 
 function useAnotherEmail() {
     clearMessages();
-    stage.value = "request";
     resetOtp();
+    email.value = "";
+    stage.value = STAGES.REQUEST;
+
     nextTick(() => {
         emailField.value?.focus?.();
     });
 }
 
-function onOtpInput(index, event) {
-    const rawValue = event?.target?.value ?? otp.value[index] ?? "";
-    const value = rawValue.slice(0, 1).toUpperCase();
+function normalizeOtpCharacter(value) {
+    return String(value ?? "")
+        .trim()
+        .slice(0, 1)
+        .toUpperCase();
+}
 
-    otp.value[index] = value;
+function onOtpInput(index, value) {
+    const normalized = normalizeOtpCharacter(value);
+    otp.value[index] = normalized;
 
-    if (value && index < 5) {
+    if (normalized && index < OTP_LENGTH - 1) {
         focusOtp(index + 1);
     }
 }
@@ -245,67 +275,90 @@ function onOtpBackspace(index) {
 }
 
 function onOtpPaste(event) {
-    const pasted = event.clipboardData?.getData("text")?.trim().slice(0, 6).toUpperCase() ?? "";
-    if (!pasted) return;
+    const pasted = event.clipboardData?.getData("text") ?? "";
+    const normalized = pasted.trim().toUpperCase().slice(0, OTP_LENGTH);
+
+    if (!normalized) return;
 
     event.preventDefault();
 
-    const chars = pasted.split("");
-    otp.value = [
-        chars[0] ?? "",
-        chars[1] ?? "",
-        chars[2] ?? "",
-        chars[3] ?? "",
-        chars[4] ?? "",
-        chars[5] ?? "",
-    ];
+    const chars = normalized.split("");
+    otp.value = Array.from({ length: OTP_LENGTH }, (_, index) => chars[index] ?? "");
 
-    const nextEmptyIndex = otp.value.findIndex((digit) => !digit);
-    focusOtp(nextEmptyIndex === -1 ? 5 : nextEmptyIndex);
+    const nextEmptyIndex = otp.value.findIndex((char) => !char);
+    focusOtp(nextEmptyIndex === -1 ? OTP_LENGTH - 1 : nextEmptyIndex);
+}
+
+async function resendCodeFromVerify() {
+    stage.value = STAGES.CODE_SENT;
+    await sendResetCode();
+    if (stage.value === STAGES.CODE_SENT) {
+        goToVerifyStage();
+    }
 }
 
 async function verifyOtp() {
     clearMessages();
 
-    if (otpCode.value.length !== 6) {
-        errorMessage.value = "Voer de volledige 6-cijferige code in.";
+    if (otpCode.value.length !== OTP_LENGTH) {
+        errorMessage.value = "Voer de volledige verificatiecode in.";
         return;
     }
 
     loading.value = true;
 
     try {
-        const response = await axios.post("http://localhost:8000/api/verify-otp", {
-            email: email.value,
-            otp: otpCode.value,
-        });
-
-        router.push({
-            path: "/auth/reset-password",
-            query: {
+        await axios.post(
+            "http://localhost:8000/api/verify-otp",
+            {
                 email: email.value,
                 otp: otpCode.value,
-                token: response.data?.token ?? "",
             },
-        });
+            {
+                withCredentials: true,
+            }
+        );
+
+        router.push({ path: "/auth/reset-password" });
     } catch (error) {
-        if (error.response?.status === 422 || error.response?.status === 400) {
-            errorMessage.value = "De verificatiecode is ongeldig of verlopen.";
-        } else {
-            errorMessage.value = "Er is een onverwachte fout opgetreden.";
-            console.error(error);
-        }
+        handleRequestError(error, {
+            defaultMessage: "Er is een onverwachte fout opgetreden.",
+            invalidCodeMessage: "De verificatiecode is ongeldig of verlopen.",
+        });
     } finally {
         loading.value = false;
     }
 }
 
-function goToLogin() {
-    router.push({ name: "login" }).catch(() => {});
+function handleRequestError(error, messages = {}) {
+    const status = error?.response?.status;
+
+    if (status === 422) {
+        errorMessage.value =
+            messages.notFoundMessage ||
+            messages.invalidCodeMessage ||
+            "De ingevoerde gegevens zijn ongeldig.";
+        return;
+    }
+
+    if (status === 400 || status === 401) {
+        errorMessage.value =
+            messages.invalidCodeMessage ||
+            "De verificatiecode is ongeldig of verlopen.";
+        return;
+    }
+
+    if (status === 429) {
+        errorMessage.value = "Te veel pogingen. Probeer het later opnieuw.";
+        return;
+    }
+
+    errorMessage.value = messages.defaultMessage || "Er is een onverwachte fout opgetreden.";
+    console.error(error);
 }
 
-function goToRegister() {
-    router.push({ name: "register" }).catch(() => {});
+function goToLogin() {
+    router.push({ name: "login" }).catch(() => { });
 }
 </script>
 
@@ -319,5 +372,6 @@ function goToRegister() {
     text-align: center;
     font-size: 1.25rem;
     font-weight: 600;
+    text-transform: uppercase;
 }
 </style>
