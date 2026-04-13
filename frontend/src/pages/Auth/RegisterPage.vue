@@ -121,28 +121,28 @@ const showConfirm = ref(false)
 const router = useRouter()
 
 const nameRules = [
-    (v) => !!v || 'Name is required',
-    (v) => (v?.trim()?.length ?? 0) >= 2 || 'Name must be at least 2 characters',
+    (v) => !!v || 'Uw naam is verplicht.',
+    (v) => (v?.trim()?.length ?? 0) >= 2 || 'De naam moet minimaal 2 tekens lang zijn.',
 ]
 
 const emailRules = [
-    (v) => !!v || 'Email is required',
-    (v) => /.+@.+\..+/.test(v) || 'Enter a valid email',
+    (v) => !!v || 'Het invullen van een email is verplicht.',
+    (v) => /.+@.+\..+/.test(v) || 'Voer een geldig emailadres in',
 ]
 
 const passwordRules = [
-    (v) => !!v || 'Password is required',
-    (v) => (v?.length ?? 0) >= 8 || 'Password must be at least 8 characters',
-    (v) => /[A-Z]/.test(v) || 'Must contain an uppercase letter',
-    (v) => /[a-z]/.test(v) || 'Must contain a lowercase letter',
-    (v) => /[\d\W]/.test(v) || 'Must contain a number or special character',
+    (v) => !!v || 'Het invullen van een wachtwoord is verplicht.',
+    (v) => (v?.length ?? 0) >= 8 || 'Het wachtwoord moet minimaal 8 tekens lang zijn.',
+    (v) => /[A-Z]/.test(v) || 'Moet een hoofdletter bevatten',
+    (v) => /[a-z]/.test(v) || 'Moet een kleine letter bevatten',
+    (v) => /[\d\W]/.test(v) || 'Moet een getal of speciaal teken bevatten.',
 ]
 
 const confirmRules = computed(() => [
-    (v) => !!v || 'Please confirm your password',
-    (v) => v === password.value || 'Passwords do not match',
+    (v) => !!v || 'Bevestig uw wachtwoord',
+    (v) => v === password.value || 'Wachtwoorden komen niet overeen',
 ])
-const termsRules = [(v) => v === true || 'You must accept the terms to continue']
+const termsRules = [(v) => v === true || 'U moet de voorwaarden accepteren om verder te gaan.']
 
 function focusEmail() {
     emailField.value?.focus?.()
@@ -171,15 +171,15 @@ async function onSubmit() {
             password_confirmation: confirmPassword.value,
         })
 
-        console.log('Registered:', response.data)
+        console.log('Geregistreerd:', response.data)
 
         router.push({ name: 'login' })
     } catch (error) {
         if (error.response?.status === 422) {
             errors.value = error.response.data.errors ?? {}
-            errorMessage.value = 'Please check the fields and try again.'
+            errorMessage.value = 'Controleer ur velden en probeer opnieuw.'
         } else {
-            errorMessage.value = 'An unexpected error occurred.'
+            errorMessage.value = 'Er is een onverwachte fout opgetreden'
             console.error(error)
         }
     } finally {

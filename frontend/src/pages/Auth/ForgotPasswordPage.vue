@@ -83,14 +83,14 @@ const emailField = ref(null);
 
 const formValid = ref(false);
 const loading = ref(false);
-
+const errors = ref({});
 const email = ref("");
 const submitted = ref(false);
 const errorMessage = ref("");
 
 const emailRules = [
-    (v) => !!v || "Email is required",
-    (v) => /.+@.+\..+/.test(v) || "Enter a valid email",
+    (v) => !!v || "Het invullen van een email is verplicht.",
+    (v) => /.+@.+\..+/.test(v) || "Voer een geldige email in.",
 ];
 
 onMounted(() => {
@@ -98,8 +98,34 @@ onMounted(() => {
 });
 
 async function onSubmit() {
-    //forgot password logic
+    const { valid } = await 
+    formRef.value.validate();
+
+    if (!valid) return 
+
+    loading.value = true
+    errors.value = {}
+    errorMessage.value = ''
+
+try {
+    
+    await axios.post('http://localhost:8000/api/forgot-password', {
+        email: email.value,
+    });
+    } catch (error) {
+        if (error.response?.status === 422) {
+            errors.value = error.response.data.errors ?? {}
+            errorMessage.value = 'Email niet gevonden.'
+        } else {
+            errorMessage.value = 'Er is een onverwachte fout opgetreden.'
+            console.error(error)
+        } 
+        } finally {
+        loading.value = false
+    }
 }
+
+
 
 function goToLogin() {
     router.push({ name: "login" }).catch(() => { });

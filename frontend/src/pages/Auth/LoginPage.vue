@@ -93,18 +93,16 @@ const errorMessage = ref("");
 const router = useRouter();
 
 const emailRules = [
-    (v) => !!v || "Email is required",
-    (v) => /.+@.+\..+/.test(v) || "Enter a valid email",
+    (v) => !!v || "Het invullen van een email is verplicht.",
+    (v) => /.+@.+\..+/.test(v) || "Voer een emailadres in",
 ];
 
 const passwordRules = [
     (v) => !!v || "Password is required",
-    (v) => (v?.length ?? 0) >= 8 || "Password must be at least 8 characters",
-    (v) => /[A-Z]/.test(v) || "Password must contain at least one uppercase letter",
-    (v) => /[a-z]/.test(v) || "Password must contain at least one lowercase letter",
-    (v) =>
-        /[\d\W]/.test(v) ||
-        "Password must contain at least one number or special character",
+    (v) => (v?.length ?? 0) >= 8 || "Het wachtwoord moet minimaal 8 tekens lang zijn.",
+    (v) => /[A-Z]/.test(v) || "Het wachtwoord moet ten minste één hoofdletter bevatten.",
+    (v) => /[a-z]/.test(v) || "Het wachtwoord moet ten minste één kleine letter bevatten.",
+    (v) => /[\d\W]/.test(v) || "Het wachtwoord moet ten minste één cijfer of speciaal teken bevatten.",
 ];
 
 async function onSubmit() {
@@ -133,9 +131,9 @@ async function onSubmit() {
     } catch (error) {
         if (error.response?.status === 422) {
             errors.value = error.response.data.errors ?? {}
-            errorMessage.value = 'Invalid Credentials.'
+            errorMessage.value = 'Onjuiste gegevens.'
         } else {
-            errorMessage.value = 'An unexpected error occurred.'
+            errorMessage.value = 'Er is een onverwachte fout opgetreden.'
             console.error(error)
         } 
         } finally {
