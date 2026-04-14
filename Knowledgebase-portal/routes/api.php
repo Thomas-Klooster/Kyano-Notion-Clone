@@ -14,14 +14,16 @@ Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
-Route::post('/newPassword', [AuthController::class, 'newPassword']);
+Route::get('/reset-password/session', [AuthController::class, 'resetPasswordSession']);
+Route::post('/reset-password', [AuthController::class, 'newPassword']);
+// Route::post('/newPassword', [AuthController::class, 'newPassword']);
 Route::get('/workspace/invite/accept', [WorkspaceController::class, 'acceptInvite'])
 ->name('workspace.invite.accept');    
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', fn(Request $request) => $request->user());
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+    Route::post('/change-password', [AuthController::class, 'resetPassword']);
 
     Route::get('/workspaces', [WorkspaceController::class, 'index']);
     Route::get('/workspaces/{workspace}', [WorkspaceController::class, 'show']);

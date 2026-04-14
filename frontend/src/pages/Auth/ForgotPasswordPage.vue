@@ -365,7 +365,6 @@ function goToLogin() {
 <style scoped>
 .otp-input {
     max-width: 56px;
-    margin-inline: auto;
 }
 
 .otp-input :deep(input) {

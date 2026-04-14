@@ -112,56 +112,98 @@ public function logout(LogoutRequest $request) {
         return response()->json(['message' => 'Een verificatiecode is gestuurd naar jouw mail.']);
         }
 
-     public function verifyOtp(Request $request) {
-        $request->validate([
-            'email' => 'required|email',
-            'otp' => 'required',
-        ]);
+        public function verifyOtp(Request $request)
+        {
+            $request->validate([
+                'email' => 'required|email',
+                'otp' => 'required',
+            ]);
 
-        $user = User::where('email', $request->email)->first();
-        if (!$user) {
-            return response()->json([
-                'message' => 'Not Found.'    
-            ], 404);
-            
+            $user = User::where('email', $request->email)->first();
+
+            if (!$user) {
+                return response()->json(['message' => 'Not Found.'], 404);
+            }
+
+            $record = DB::table('password_reset_tokens')
+                ->where('user_id', $user->id)
+                ->where('expires_at', '>=', Carbon::now())
+                ->first();
+
+            if (!$record || !Hash::check($request->otp, $record->token)) {
+                return response()->json(['message' => 'Onjuist of verlopen.'], 422);
+            }
+
+            $request->session()->put('password_reset_user_id', $user->id);
+            $request->session()->put('password_reset_verified_at', now()->timestamp);
+
+            return response()->json(['message' => 'Code geverifieerd.']);
         }
         
-        $record = DB::table('password_reset_tokens')
-        ->where('user_id', $user->id)
-        ->where('expires_at', '>=', Carbon::now())->first();
+        public function newPassword(Request $request)
+        {
+            $request->validate([
+                'password' => 'required|min:8|confirmed',
+            ]);
+
+            $userId = $request->session()->get('password_reset_user_id');
+            $verifiedAt = $request->session()->get('password_reset_verified_at');
+
+            if (!$userId || !$verifiedAt) {
+                return response()->json(['message' => 'Reset session missing or expired.'], 403);
+            }
+
+            if (Carbon::createFromTimestamp($verifiedAt)->addMinutes(10)->isPast()) {
+                $request->session()->forget([
+                    'password_reset_user_id',
+                    'password_reset_verified_at',
+                ]);
+
+                return response()->json(['message' => 'Reset session expired.'], 403);
+            }
+
+            $user = User::find($userId);
+
+            if (!$user) {
+                return response()->json(['message' => 'User not found.'], 404);
+            }
+
+            $user->password = Hash::make($request->password);
+            $user->save();
+
+            DB::table('password_reset_tokens')
+                ->where('user_id', $user->id)
+                ->delete();
+
+            $request->session()->forget([
+                'password_reset_user_id',
+                'password_reset_verified_at',
+            ]);
+
+            $request->session()->regenerate();
+
+            return response()->json(['message' => 'Je wachtwoord is gereset.']);
+        }
+
         
-        if (!$record || !Hash::check($request->otp, $record->token)) {
-            return response()->json(['message' => 'Onjuist of verlopen.'], 422);
-        }
-        return response()->json(['message' => 'Code geverifieerd.']);
-        }
-        public function newPassword(Request $request) {
-        $request->validate([
-        'email' => 'required|email|exists:users,email',
-        'otp' => 'required',
-        'password' => 'required|min:8|confirmed'
-        ]);
-                                   
-       $user = User::where('email', $request->email)->first();
-          
-                // !DEBUGGING
-                // Laat de otp code zien, hoef je niet op je telefoon te kijken
-                // var_dump($otp);
+        public function resetPasswordSession(Request $request)
+        {
+            $userId = $request->session()->get('password_reset_user_id');
+            $verifiedAt = $request->session()->get('password_reset_verified_at');
 
-        $record = DB::table('password_reset_tokens')
-        ->where('user_id', $user->id)
-        ->where('expires_at', '>=', Carbon::now())
-        ->first();
+            if (!$userId || !$verifiedAt) {
+                return response()->json(['message' => 'No active reset session.'], 403);
+            }
 
+            if (Carbon::createFromTimestamp($verifiedAt)->addMinutes(10)->isPast()) {
+                $request->session()->forget([
+                    'password_reset_user_id',
+                    'password_reset_verified_at',
+                ]);
 
-        if (!$record || !Hash::check($request->otp, $record->token)) {
-        return response()->json(['message' => 'Invalid code or expired.'], 422);
-         }
+                return response()->json(['message' => 'Reset session expired.'], 403);
+            }
 
-        $user->update(['password' => Hash::make($request->password)]);
-        DB::table('password_reset_tokens')->where('user_id')->delete();
-        Mail::to($user->email)->send(new ForgotMail());  
-        return response()->json(['message' => 'Je wachtwoord is gereset.']);
-           
+            return response()->json(['message' => 'Reset session active.']);
         }
 }
