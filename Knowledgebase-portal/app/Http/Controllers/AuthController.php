@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 use App\Mail\ForgotMail;
-use App\Mail\ResetMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -84,7 +83,7 @@ public function logout(LogoutRequest $request) {
 
         $user->update(['password' => Hash::make($request->password)]);
         // Email
-        Mail::to($user->email)->send(new ResetMail());
+        Mail::to($user->email)->send(new ForgotMail());
 
         return response()->json(['message' => 'Wachtwoord is gereset.']);
     }
