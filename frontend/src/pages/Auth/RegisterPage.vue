@@ -121,86 +121,93 @@ const showConfirm = ref(false)
 const router = useRouter()
 
 const nameRules = [
-    (v) => !!v || 'Uw naam is verplicht.',
-    (v) => (v?.trim()?.length ?? 0) >= 2 || 'De naam moet minimaal 2 tekens lang zijn.',
+  (v) => !!v || 'Uw naam is verplicht.',
+  (v) => (v?.trim()?.length ?? 0) >= 2 || 'De naam moet minimaal 2 tekens lang zijn.',
 ]
 
 const emailRules = [
-    (v) => !!v || 'Het invullen van een email is verplicht.',
-    (v) => /.+@.+\..+/.test(v) || 'Voer een geldig emailadres in',
+  (v) => !!v || 'Het invullen van een email is verplicht.',
+  (v) => /.+@.+\..+/.test(v) || 'Voer een geldig emailadres in',
 ]
 
 const passwordRules = [
-    (v) => !!v || 'Het invullen van een wachtwoord is verplicht.',
-    (v) => (v?.length ?? 0) >= 8 || 'Het wachtwoord moet minimaal 8 tekens lang zijn.',
-    (v) => /[A-Z]/.test(v) || 'Moet een hoofdletter bevatten',
-    (v) => /[a-z]/.test(v) || 'Moet een kleine letter bevatten',
-    (v) => /[\d\W]/.test(v) || 'Moet een getal of speciaal teken bevatten.',
+  (v) => !!v || 'Het invullen van een wachtwoord is verplicht.',
+  (v) => (v?.length ?? 0) >= 8 || 'Het wachtwoord moet minimaal 8 tekens lang zijn.',
+  (v) => /[A-Z]/.test(v) || 'Moet een hoofdletter bevatten',
+  (v) => /[a-z]/.test(v) || 'Moet een kleine letter bevatten',
+  (v) => /[\d\W]/.test(v) || 'Moet een getal of speciaal teken bevatten.',
 ]
 
 const confirmRules = computed(() => [
-    (v) => !!v || 'Bevestig uw wachtwoord',
-    (v) => v === password.value || 'Wachtwoorden komen niet overeen',
+  (v) => !!v || 'Bevestig uw wachtwoord',
+  (v) => v === password.value || 'Wachtwoorden komen niet overeen',
 ])
 const termsRules = [(v) => v === true || 'U moet de voorwaarden accepteren om verder te gaan.']
 
 function focusEmail() {
-    emailField.value?.focus?.()
+  emailField.value?.focus?.()
 }
 
 function focusPassword() {
-    passwordField.value?.focus?.()
+  passwordField.value?.focus?.()
 }
 
 function focusConfirm() {
-    confirmField.value?.focus?.()
+  confirmField.value?.focus?.()
 }
 
 async function onSubmit() {
-    const { valid } = await formRef.value.validate()
-    if (!valid) return
-    loading.value = true
-    errors.value = {}
-    errorMessage.value = ''
+  const { valid } = await formRef.value.validate()
+  if (!valid) return
+  loading.value = true
+  errors.value = {}
+  errorMessage.value = ''
 
-    try {
-        const response = await axios.post('/api/register', {
-            name: fullName.value,
-            email: email.value,
-            password: password.value,
-            password_confirmation: confirmPassword.value,
-        })
+  await axios.get('/sanctum/csrf-cookie')
 
-        console.log('Geregistreerd:', response.data)
+  try {
+    await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true })
 
-        router.push({ name: 'login' })
-    } catch (error) {
-        if (error.response?.status === 422) {
-            errors.value = error.response.data.errors ?? {}
-            errorMessage.value = 'Controleer ur velden en probeer opnieuw.'
-        } else {
-            errorMessage.value = 'Er is een onverwachte fout opgetreden'
-            console.error(error)
-        }
-    } finally {
-        loading.value = false
+    const response = await axios.post(
+      'http://localhost:8000/api/register',
+      {
+        name: fullName.value,
+        email: email.value,
+        password: password.value,
+        password_confirmation: confirmPassword.value,
+      },
+      { withCredentials: true },
+    )
+    console.log('Geregistreerd:', response.data)
+
+    router.push({ name: 'login' })
+  } catch (error) {
+    if (error.response?.status === 422) {
+      errors.value = error.response.data.errors ?? {}
+      errorMessage.value = 'Controleer ur velden en probeer opnieuw.'
+    } else {
+      errorMessage.value = 'Er is een onverwachte fout opgetreden'
+      console.error(error)
     }
+  } finally {
+    loading.value = false
+  }
 }
 
 function onSocial(provider) {
-    errorMessage.value = `Social signup (${provider}) is not connected yet.`
+  errorMessage.value = `Social signup (${provider}) is not connected yet.`
 }
 
 function goToLogin() {
-    router.push({ name: 'login' }).catch(() => { })
+  router.push({ name: 'login' }).catch(() => {})
 }
 
 function onOpenTerms() {
-    console.log('Open terms')
+  console.log('Open terms')
 }
 
 function onOpenPrivacy() {
-    console.log('Open privacy')
+  console.log('Open privacy')
 }
 </script>
 
