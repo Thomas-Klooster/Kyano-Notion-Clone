@@ -165,6 +165,11 @@ public function logout(LogoutRequest $request) {
             $user = User::find($userId);
 
             if (!$user) {
+                $request->session()->forget([
+                    'password_reset_user_id',
+                    'password_reset_verified_at',
+                ]);
+
                 return response()->json(['message' => 'User not found.'], 404);
             }
 
@@ -182,10 +187,14 @@ public function logout(LogoutRequest $request) {
 
             $request->session()->regenerate();
 
-            return response()->json(['message' => 'Je wachtwoord is gereset.']);
+            Mail::to($user->email)->send(new ForgotMail());
+
+            return response()->json([
+                'message' => 'Je wachtwoord is gereset.',
+            ]);
         }
 
-        
+
         public function resetPasswordSession(Request $request)
         {
             $userId = $request->session()->get('password_reset_user_id');
