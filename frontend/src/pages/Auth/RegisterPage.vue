@@ -166,10 +166,10 @@ async function onSubmit() {
   await axios.get('/sanctum/csrf-cookie')
 
   try {
-    await axios.get('http://localhost:8000/sanctum/csrf-cookie', { withCredentials: true })
+    await axios.get('/sanctum/csrf-cookie', { withCredentials: true })
 
     const response = await axios.post(
-      'http://localhost:8000/api/register',
+      '/api/register',
       {
         name: fullName.value,
         email: email.value,

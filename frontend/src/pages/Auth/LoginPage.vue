@@ -116,10 +116,10 @@ async function onSubmit() {
     errorMessage.value = ''
 
         try {
-        await axios.get('http://localhost:8000/sanctum/csrf-cookie');
+        await axios.get('/sanctum/csrf-cookie');
 
         const response =
-        await axios.post('http://localhost:8000/api/login', {
+        await axios.post('/api/login', {
             email: email.value,
             password: password.value,
             remember: remember.value,

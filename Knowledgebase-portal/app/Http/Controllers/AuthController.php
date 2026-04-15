@@ -25,48 +25,51 @@ class AuthController extends Controller
             'email'=> $data['email'],
             'password'=> Hash::make($data['password']),
         ]);
+        Auth::login($user);
+
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
         
         return response()->json([
             'message' => 'Geregistreerd!',
             'user'=> $user,
-        ]);
+        ], 201);
     }
+
    public function login(LoginRequest $request)
 {
     $credentials = $request->only('email', 'password');
     if (!Auth::attempt($credentials, $request->filled('remember'))) {
         return response()->json(['message' => 'Ongeldige inloggegevens.'], 401);
     }
-    $user = Auth::user();
-    $token = $user->createToken('auth_token')->plainTextToken;        
-
-        
-    //  $request->session()->regenerate();
+     if ($request->hasSession()) {
+         $request->session()->regenerate();
+     }
     
     return response()->json([
         'message' => 'Ingelogd!',
         'user' => Auth::user(),
-        'token' => $token,
         ]);
 
 }
 
 public function logout(LogoutRequest $request) {
+    Auth::guard('web')->logout();
 
-    $user = $request->user();
-    if (! $user) {
-    return response()->json([
-    'success' => false,    
-    'message'=> 'Onbevoegd!'],401);
-}
-    
-    $user->currentAccessToken()->delete();
+    if ($request->hasSession()) {
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+    }
 
     return response()->json([
         'success' => true,
         'message' => 'Succesvol uitgelogd!'
-        ],200);
-}
+        ]);
+
+    }    
+
+
 
     /* ---------------------------------------------------------------------------------------------------
         ? PASSWORD RESET
