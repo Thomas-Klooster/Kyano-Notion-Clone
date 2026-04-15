@@ -89,9 +89,3 @@ function handleIconClick() {
 }
 </script>
 
-<style scoped>
-:deep(.v-list-item--density-compact) {
-  min-height: 0 !important;
-  padding-block: 2px;
-}
-</style>

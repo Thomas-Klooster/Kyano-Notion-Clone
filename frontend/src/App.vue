@@ -191,19 +191,3 @@ const isHovering = ref(false)
   </v-app>
 </template>
 
-<style scoped>
-:deep(.v-list-item__spacer) {
-  width: 0.5rem !important;
-}
-
-.function-buttons-container {
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0s, opacity 0.2s;
-}
-
-.v-list-item:hover .function-buttons-container {
-  visibility: visible;
-  opacity: 1;
-}
-</style>

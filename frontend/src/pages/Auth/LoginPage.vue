@@ -49,7 +49,7 @@
                             Sign in
                         </v-btn>
 
-                        <div class="divider my-6">
+                        <div class="u-divider my-6">
                             <span class="text-body-2 text-medium-emphasis">or continue with</span>
                         </div>
 
@@ -160,18 +160,3 @@ function onSocial(provider) {
 }
 </script>
 
-<style scoped>
-.divider {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 12px;
-}
-
-.divider::before,
-.divider::after {
-    content: "";
-    height: 1px;
-    background: rgba(0, 0, 0, 0.12);
-}
-</style>

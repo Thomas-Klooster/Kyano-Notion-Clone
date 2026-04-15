@@ -97,6 +97,3 @@ const filteredWorkspaces = computed(() => {
 })
 </script>
 
-<style scoped>
-@import '../shared-admin-list.css';
-</style>

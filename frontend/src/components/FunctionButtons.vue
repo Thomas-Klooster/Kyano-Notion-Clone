@@ -1,19 +1,3 @@
-<style>
-.function-buttons-container {
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0s, opacity 0.2s;
-}
-
-.v-list-item:hover .function-buttons-container {
-    visibility: visible;
-    opacity: 1;
-}
-
-.v-list-item__prepend .v-list-item__spacer {
-    width: 8px !important;
-}
-</style>
 
 <template>
     <div class="function-buttons-container">
