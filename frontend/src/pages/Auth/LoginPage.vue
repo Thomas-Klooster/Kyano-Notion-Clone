@@ -131,9 +131,9 @@ async function onSubmit() {
     } catch (error) {
         if (error.response?.status === 422) {
             errors.value = error.response.data.errors ?? {}
-            errorMessage.value = 'Onjuiste gegevens.'
+            errorMessage.value = 'Oeps, er is iets verkeerds gegaan..'
         } else {
-            errorMessage.value = 'Er is een onverwachte fout opgetreden.'
+            errorMessage.value = 'Onjuiste gegevens.'
             console.error(error)
         } 
         } finally {
