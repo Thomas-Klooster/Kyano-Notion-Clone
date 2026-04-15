@@ -37,13 +37,17 @@ class AuthController extends Controller
     if (!Auth::attempt($credentials, $request->filled('remember'))) {
         return response()->json(['message' => 'Ongeldige inloggegevens.'], 401);
     }
+    $user = Auth::user();
+    $token = $user->createToken('auth_token')->plainTextToken;        
+
         
-    $request->session()->regenerate();
+    //  $request->session()->regenerate();
     
     return response()->json([
         'message' => 'Ingelogd!',
         'user' => Auth::user(),
-    ]);
+        'token' => $token,
+        ]);
 
 }
 
