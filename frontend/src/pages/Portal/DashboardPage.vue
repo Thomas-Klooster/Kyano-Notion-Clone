@@ -8,7 +8,7 @@
                         <span class="hero-meta-separator">•</span>
                         <span>{{ filteredWorkspaces.length }} workspaces</span>
                     </div>
-
+                    
                     <h1 class="hero-title">Jouw workspaces</h1>
 
                     <p class="hero-subtitle">
@@ -33,7 +33,17 @@
                     </div>
                 </div>
 
-                <div v-if="filteredWorkspaces.length" class="tree-list">
+                <div v-if="loading" class="empty-state">
+                    <v-icon size="24">mdi-loading mdi-spin</v-icon>
+                    <p>Workspaces zijn aan het laden...</p>
+                </div>
+
+                <div v-else-if="error" class="empty-state">
+                    <v-icon size="24">mdi-alert-circle-outline</v-icon>
+                    <p>{{ error }}</p>
+                </div>
+
+                <div v-else-if="filteredWorkspaces.length" class="tree-list">
                     <div v-for="workspace in filteredWorkspaces" :key="workspace.id" class="tree-group">
                         <div class="tree-row tree-row-workspace">
                             <router-link :to="workspaceRoute(workspace)" class="tree-row-main tree-link">
@@ -142,6 +152,7 @@
                         </div>
                     </div>
                 </div>
+                
 
                 <div v-else class="empty-state">
                     <div class="empty-state-icon">
@@ -156,82 +167,31 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 const search = ref('')
+const workspaces = ref([])
+const loading = ref(false)
+const error = ref(false)
 
 const expandedWorkspaces = ref([1])
 const expandedCategories = ref([11])
 const expandedProjects = ref([111])
 
-const workspaces = ref([
-    {
-        id: 1,
-        name: 'Kyano',
-        categories: [
-            {
-                id: 1,
-                name: 'Development',
-                projects: [
-                    {
-                        id: 111,
-                        name: 'Frontend',
-                        updatedAt: 'Vandaag bijgewerkt',
-                        articles: [
-                            { id: 1111, title: 'Design system richtlijnen', tags: ['Design', 'UI'] },
-                            { id: 1112, title: 'Component structuur', tags: ['Vue', 'Frontend'] },
-                        ],
-                    },
-                    {
-                        id: 112,
-                        name: 'Backend',
-                        updatedAt: 'Gisteren bijgewerkt',
-                        articles: [
-                            { id: 1121, title: 'API authenticatie', tags: ['Laravel', 'Auth'] },
-                            { id: 1122, title: 'Database structuur', tags: ['Database', 'Backend'] },
-                        ],
-                    },
-                ],
-            },
-            {
-                id: 2,
-                name: 'Documentatie',
-                projects: [
-                    {
-                        id: 121,
-                        name: 'Handleidingen',
-                        updatedAt: '2 dagen geleden',
-                        articles: [
-                            { id: 1211, title: 'Installatie handleiding', tags: ['Setup'] },
-                            { id: 1212, title: 'Content beheer', tags: ['CMS'] },
-                        ],
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        id: 2,
-        name: 'Client Portal',
-        categories: [
-            {
-                id: 3,
-                name: 'Support',
-                projects: [
-                    {
-                        id: 211,
-                        name: 'Kennisbank',
-                        updatedAt: 'Vorige week',
-                        articles: [
-                            { id: 2111, title: 'Veelgestelde vragen', tags: ['FAQ'] },
-                            { id: 2112, title: 'Toegang en rechten', tags: ['Rechten', 'Users'] },
-                        ],
-                    },
-                ],
-            },
-        ],
-    },
-])
+onMounted(async () => {
+    loading.value = true
+    try {
+        const response = await axios.get('/api/workspaces')
+        workspaces.value = response.data
+    } catch (err) {
+        error.value = 'Kan workspaces niet laden.'
+    } finally {
+        loading.value = false
+    }
+})
+
+
+
 
 const filteredWorkspaces = computed(() => {
     const query = search.value.trim().toLowerCase()
