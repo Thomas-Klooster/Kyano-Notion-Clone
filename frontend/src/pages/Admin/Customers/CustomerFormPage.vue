@@ -1,10 +1,10 @@
 <template>
   <div class="entity-page">
-    <div class="entity-shell">
-      <section class="entity-hero">
-        <div class="hero-content">
-          <div class="hero-meta-line">
-            <span class="hero-pill">Admin</span>
+    <div class="entity-shell page-shell">
+      <section class="entity-hero hero">
+        <div class="hero-content u-min-w-0">
+          <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
+            <span class="hero-pill u-inline-flex u-items-center">Admin</span>
             <span class="hero-meta-separator">•</span>
             <span>{{ isEditMode ? 'Klant bewerken' : 'Nieuwe klant' }}</span>
           </div>
@@ -21,8 +21,8 @@
         </div>
       </section>
 
-      <section class="entity-card">
-        <div class="entity-card-head">
+      <section class="entity-card card card-elevated card-rounded-2xl">
+        <div class="entity-card-head card-head">
           <div>
             <div class="section-kicker">Klantaccount</div>
             <h2 class="section-title">
@@ -120,7 +120,7 @@
             </div>
           </div>
 
-          <div class="entity-form-actions" style="display: flex; align-items: center;">
+          <div class="entity-form-actions u-gap-12" style="display: flex; align-items: center;">
             <v-btn
               class="entity-create-btn"
               rounded="lg"

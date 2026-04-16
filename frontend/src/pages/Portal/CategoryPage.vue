@@ -1,10 +1,10 @@
 <template>
     <div class="dashboard-page">
-        <div class="dashboard-shell">
-            <section class="dashboard-hero">
-                <div class="hero-content">
-                    <div class="hero-meta-line">
-                        <span class="hero-pill">Categorie</span>
+        <div class="dashboard-shell page-shell">
+            <section class="dashboard-hero hero">
+                <div class="hero-content u-min-w-0">
+                    <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
+                        <span class="hero-pill u-inline-flex u-items-center">Categorie</span>
                         <span class="hero-meta-separator">•</span>
                         <span>{{ category.workspace }}</span>
                         <span class="hero-meta-separator">•</span>
@@ -19,14 +19,14 @@
                 </div>
             </section>
 
-            <section class="project-list-card">
-                <div class="project-list-head">
+            <section class="project-list-card card card-elevated card-rounded-2xl">
+                <div class="project-list-head card-head">
                     <div>
                         <div class="section-kicker">Overzicht</div>
                         <h2 class="section-title">Projecten</h2>
                     </div>
 
-                    <div class="project-list-controls">
+                    <div class="project-list-controls u-flex u-items-center u-wrap u-gap-12">
                         <div class="search-field">
                             <v-icon size="18">mdi-magnify</v-icon>
                             <input v-model="search" type="text" placeholder="Zoek een project..." />
@@ -39,8 +39,8 @@
                         <div class="project-row project-row-clickable" role="button" tabindex="0"
                             @click="goToProject(project.id)" @keydown.enter="goToProject(project.id)"
                             @keydown.space.prevent="goToProject(project.id)">
-                            <div class="project-row-main">
-                                <div class="project-icon">
+                            <div class="project-row-main u-min-w-0">
+                                <div class="project-icon icon-box">
                                     <v-icon size="18">mdi-briefcase-outline</v-icon>
                                 </div>
 
@@ -54,7 +54,7 @@
                                 </div>
                             </div>
 
-                            <button class="project-row-right tree-toggle" type="button"
+                            <button class="project-row-right u-gap-12 tree-toggle" type="button"
                                 @click.stop="toggleProject(project.id)">
                                 <v-icon size="18" class="project-arrow">
                                     {{ expandedProjects.includes(project.id) ? 'mdi-chevron-down' : 'mdi-chevron-right'
@@ -65,7 +65,7 @@
 
                         <div v-if="expandedProjects.includes(project.id)" class="article-list">
                             <div v-for="article in project.articles" :key="article.id" class="article-row">
-                                <div class="article-row-main">
+                                <div class="article-row-main u-min-w-0">
                                     <div class="article-icon">
                                         <v-icon size="18">mdi-file-document-outline</v-icon>
                                     </div>
@@ -83,7 +83,7 @@
                 </div>
 
                 <div v-else class="empty-state">
-                    <div class="empty-state-icon">
+                    <div class="empty-state-icon icon-box">
                         <v-icon size="24">mdi-folder-search-outline</v-icon>
                     </div>
                     <h3>Geen projecten gevonden</h3>

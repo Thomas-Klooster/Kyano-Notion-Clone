@@ -1,10 +1,10 @@
 <template>
     <div class="dashboard-page">
-        <div class="dashboard-shell">
-            <section class="dashboard-hero">
-                <div class="hero-content">
-                    <div class="hero-meta-line">
-                        <span class="hero-pill">Klantportaal</span>
+        <div class="dashboard-shell page-shell">
+            <section class="dashboard-hero hero">
+                <div class="hero-content u-min-w-0">
+                    <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
+                        <span class="hero-pill u-inline-flex u-items-center">Klantportaal</span>
                         <span class="hero-meta-separator">•</span>
                         <span>{{ filteredWorkspaces.length }} workspaces</span>
                     </div>
@@ -18,14 +18,14 @@
                 </div>
             </section>
 
-            <section class="project-list-card">
-                <div class="project-list-head">
+            <section class="project-list-card card card-elevated card-rounded-2xl">
+                <div class="project-list-head card-head">
                     <div>
                         <div class="section-kicker">Overzicht</div>
                         <h2 class="section-title">Alle workspaces</h2>
                     </div>
 
-                    <div class="project-list-controls">
+                    <div class="project-list-controls u-flex u-items-center u-wrap u-gap-12">
                         <div class="search-field">
                             <v-icon size="18">mdi-magnify</v-icon>
                             <input v-model="search" type="text" placeholder="Zoeken..." />
@@ -46,8 +46,8 @@
                 <div v-else-if="filteredWorkspaces.length" class="tree-list">
                     <div v-for="workspace in filteredWorkspaces" :key="workspace.id" class="tree-group">
                         <div class="tree-row tree-row-workspace">
-                            <router-link :to="workspaceRoute(workspace)" class="tree-row-main tree-link">
-                                <div class="tree-icon">
+                            <router-link :to="workspaceRoute(workspace)" class="tree-row-main u-min-w-0 tree-link">
+                                <div class="tree-icon icon-box">
                                     <v-icon size="18">mdi-view-dashboard-outline</v-icon>
                                 </div>
 
@@ -75,8 +75,8 @@
                             <div v-for="category in workspace.categories" :key="category.id" class="tree-group">
                                 <div class="tree-row tree-row-category">
                                     <router-link :to="categoryRoute(workspace, category)"
-                                        class="tree-row-main tree-link">
-                                        <div class="tree-icon">
+                                        class="tree-row-main u-min-w-0 tree-link">
+                                        <div class="tree-icon icon-box">
                                             <v-icon size="18">mdi-folder-outline</v-icon>
                                         </div>
 
@@ -101,8 +101,8 @@
                                 <div v-if="expandedCategories.includes(category.id)" class="tree-children">
                                     <div v-for="project in category.projects" :key="project.id" class="tree-group">
                                         <div class="tree-row tree-row-project">
-                                            <router-link :to="projectRoute(project)" class="tree-row-main tree-link">
-                                                <div class="tree-icon">
+                                            <router-link :to="projectRoute(project)" class="tree-row-main u-min-w-0 tree-link">
+                                                <div class="tree-icon icon-box">
                                                     <v-icon size="18">mdi-briefcase-outline</v-icon>
                                                 </div>
 
@@ -130,8 +130,8 @@
                                             <router-link v-for="article in project.articles" :key="article.id"
                                                 :to="articleRoute(project, article)"
                                                 class="tree-row tree-row-article tree-link">
-                                                <div class="tree-row-main">
-                                                    <div class="tree-icon">
+                                                <div class="tree-row-main u-min-w-0">
+                                                    <div class="tree-icon icon-box">
                                                         <v-icon size="18">mdi-file-document-outline</v-icon>
                                                     </div>
 
@@ -155,7 +155,7 @@
                 
 
                 <div v-else class="empty-state">
-                    <div class="empty-state-icon">
+                    <div class="empty-state-icon icon-box">
                         <v-icon size="24">mdi-folder-search-outline</v-icon>
                     </div>
                     <h3>Niets gevonden</h3>

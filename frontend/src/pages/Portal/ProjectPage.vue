@@ -1,10 +1,10 @@
 <template>
     <div class="dashboard-page">
-        <div class="dashboard-shell">
-            <section class="dashboard-hero">
-                <div class="hero-content">
-                    <div class="hero-meta-line">
-                        <span class="hero-pill">Project</span>
+        <div class="dashboard-shell page-shell">
+            <section class="dashboard-hero hero">
+                <div class="hero-content u-min-w-0">
+                    <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
+                        <span class="hero-pill u-inline-flex u-items-center">Project</span>
                         <span class="hero-meta-separator">•</span>
                         <span>{{ project.workspace }}</span>
                         <span class="hero-meta-separator">•</span>
@@ -21,14 +21,14 @@
                 </div>
             </section>
 
-            <section class="project-list-card">
-                <div class="project-list-head">
+            <section class="project-list-card card card-elevated card-rounded-2xl">
+                <div class="project-list-head card-head">
                     <div>
                         <div class="section-kicker">Overzicht</div>
                         <h2 class="section-title">Artikelen</h2>
                     </div>
 
-                    <div class="project-list-controls">
+                    <div class="project-list-controls u-flex u-items-center u-wrap u-gap-12">
                         <div class="search-field">
                             <v-icon size="18">mdi-magnify</v-icon>
                             <input v-model="search" type="text" placeholder="Zoek een artikel..." />
@@ -42,8 +42,8 @@
                             class="project-row project-row-clickable" role="button" tabindex="0"
                             @click="goToArticle(article.id)" @keydown.enter="goToArticle(article.id)"
                             @keydown.space.prevent="goToArticle(article.id)">
-                            <div class="project-row-main">
-                                <div class="project-icon">
+                            <div class="project-row-main u-min-w-0">
+                                <div class="project-icon icon-box">
                                     <v-icon size="18">mdi-file-document-outline</v-icon>
                                 </div>
 
@@ -61,7 +61,7 @@
                 </div>
 
                 <div v-else class="empty-state">
-                    <div class="empty-state-icon">
+                    <div class="empty-state-icon icon-box">
                         <v-icon size="24">mdi-file-search-outline</v-icon>
                     </div>
                     <h3>Geen artikelen gevonden</h3>

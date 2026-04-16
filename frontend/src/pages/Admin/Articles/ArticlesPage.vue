@@ -1,10 +1,10 @@
 <template>
   <div class="entity-page">
-    <div class="entity-shell">
-      <section class="entity-hero">
-        <div class="hero-content">
-          <div class="hero-meta-line">
-            <span class="hero-pill">Admin</span>
+    <div class="entity-shell page-shell">
+      <section class="entity-hero hero">
+        <div class="hero-content u-min-w-0">
+          <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
+            <span class="hero-pill u-inline-flex u-items-center">Admin</span>
             <span class="hero-meta-separator">•</span>
             <span>{{ filteredArticles.length }} artikelen</span>
           </div>
@@ -17,8 +17,8 @@
         </div>
       </section>
 
-      <section class="entity-card">
-        <div class="entity-card-head article-card-head">
+      <section class="entity-card card card-elevated card-rounded-2xl">
+        <div class="entity-card-head card-head article-card-head">
           <div class="article-head-top">
             <div>
               <div class="section-kicker">Overzicht</div>
@@ -35,7 +35,7 @@
             </v-btn>
           </div>
 
-          <div class="article-filters-row">
+          <div class="article-filters-row u-gap-12">
             <div class="search-field article-search-field">
               <v-icon size="18">mdi-magnify</v-icon>
               <input
@@ -80,8 +80,8 @@
             :key="article.id"
             class="entity-row article-row"
           >
-            <div class="entity-row-main article-row-main">
-              <div class="entity-icon">
+            <div class="entity-row-main article-row-main u-min-w-0">
+              <div class="entity-icon icon-box">
                 <v-icon size="18">mdi-file-document-outline</v-icon>
               </div>
 
@@ -112,7 +112,7 @@
               </div>
             </div>
 
-            <div class="entity-actions article-actions">
+            <div class="entity-actions u-flex u-items-center u-wrap u-gap-10 article-actions">
               <v-btn
                 size="small"
                 variant="text"
@@ -125,7 +125,7 @@
         </div>
 
         <div v-else class="empty-state">
-          <div class="empty-state-icon">
+          <div class="empty-state-icon icon-box">
             <v-icon size="24">mdi-file-document-outline</v-icon>
           </div>
           <h3>Geen artikelen gevonden</h3>

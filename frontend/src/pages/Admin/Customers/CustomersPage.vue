@@ -1,10 +1,10 @@
 <template>
   <div class="entity-page">
-    <div class="entity-shell">
-      <section class="entity-hero">
-        <div class="hero-content">
-          <div class="hero-meta-line">
-            <span class="hero-pill">Admin</span>
+    <div class="entity-shell page-shell">
+      <section class="entity-hero hero">
+        <div class="hero-content u-min-w-0">
+          <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
+            <span class="hero-pill u-inline-flex u-items-center">Admin</span>
             <span class="hero-meta-separator">•</span>
             <span>{{ filteredCustomers.length }} klanten</span>
           </div>
@@ -17,14 +17,14 @@
         </div>
       </section>
 
-      <section class="entity-card">
-        <div class="entity-card-head">
+      <section class="entity-card card card-elevated card-rounded-2xl">
+        <div class="entity-card-head card-head">
           <div>
             <div class="section-kicker">Overzicht</div>
             <h2 class="section-title">Alle klanten</h2>
           </div>
 
-          <div class="entity-controls">
+          <div class="entity-controls u-flex u-items-center u-wrap u-gap-14">
             <div class="search-field">
               <v-icon size="18">mdi-magnify</v-icon>
               <input
@@ -52,7 +52,7 @@
             class="entity-row entity-row-rich"
           >
             <div class="entity-row-main">
-              <div class="entity-icon entity-icon-soft">
+              <div class="entity-icon icon-box entity-icon-soft">
                 <v-icon size="18">mdi-domain</v-icon>
               </div>
 
@@ -63,10 +63,7 @@
                   <v-chip
                     size="small"
                     class="entity-chip"
-                    :class="{
-                      'entity-chip-admin': customer.role === 'admin',
-                      'entity-chip-customer': customer.role === 'customer'
-                    }"
+                    :class="{ 'entity-chip-admin': customer.role === 'admin', 'entity-chip-customer': 'customer' }"
                   >
                     {{ customer.role }}
                   </v-chip>
@@ -89,7 +86,7 @@
               </div>
             </div>
 
-            <div class="entity-actions">
+            <div class="entity-actions u-flex u-items-center u-wrap u-gap-10">
               <v-btn
                 size="small"
                 variant="text"
@@ -111,7 +108,7 @@
         </div>
 
         <div v-else class="empty-state">
-          <div class="empty-state-icon">
+          <div class="empty-state-icon icon-box">
             <v-icon size="24">mdi-domain-off</v-icon>
           </div>
           <h3>Geen klanten gevonden</h3>

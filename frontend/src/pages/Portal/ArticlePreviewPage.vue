@@ -1,15 +1,15 @@
 <template>
-    <div class="article-preview-page">
-        <div class="preview-topbar">
-            <div class="preview-topbar-inner">
-                <div class="preview-topbar-left">
-                    <div class="preview-badge">
+    <div class="article-page">
+        <div class="article-topbar">
+            <div class="article-topbar-inner">
+                <div class="article-topbar-left">
+                    <div class="article-badge">
                         <v-icon size="16">mdi-eye-outline</v-icon>
                         <span>Preview</span>
                     </div>
                 </div>
 
-                <div class="preview-topbar-right">
+                <div class="article-topbar-right">
                     <v-btn variant="text" rounded="lg" prepend-icon="mdi-arrow-left" :to="backToEditorRoute">
                         Terug naar editor
                     </v-btn>
@@ -17,9 +17,9 @@
             </div>
         </div>
 
-        <div class="preview-shell">
-            <aside class="preview-sidebar">
-                <div class="sidebar-card">
+        <div class="entity-shell page-shell article-grid">
+            <aside class="article-sidebar">
+                <div class="sidebar-card card card-soft card-rounded-lg">
                     <div class="sidebar-label">In dit artikel</div>
 
                     <nav class="toc-nav">
@@ -31,28 +31,28 @@
                     </nav>
                 </div>
 
-                <div class="sidebar-card">
+                <div class="sidebar-card card card-soft card-rounded-lg">
                     <div class="sidebar-label">Artikelinformatie</div>
 
-                    <div class="sidebar-meta-list">
-                        <div class="sidebar-meta-row">
+                    <div class="sidebar-meta-list u-flex-col u-gap-12">
+                        <div class="sidebar-meta-row u-flex-between u-gap-12">
                             <span>Project</span>
                             <strong>Knowledgebase Portal</strong>
                         </div>
 
-                        <div class="sidebar-meta-row">
+                        <div class="sidebar-meta-row u-flex-between u-gap-12">
                             <span>Status</span>
                             <strong>Gepubliceerd</strong>
                         </div>
 
-                        <div class="sidebar-meta-row">
+                        <div class="sidebar-meta-row u-flex-between u-gap-12">
                             <span>Bijgewerkt</span>
                             <strong>Vandaag</strong>
                         </div>
                     </div>
                 </div>
 
-                <div class="sidebar-card feedback-card">
+                <div class="sidebar-card card card-soft card-rounded-lg feedback-card">
                     <div class="sidebar-label">Was Dit Artikel Nuttig?</div>
 
                     <div class="useful-button-box">
@@ -64,7 +64,7 @@
                         </button>
                     </div>
                 </div>
-                <form class="sidebar-card feedback-card" @submit.prevent="submitFeedback">
+                <form class="sidebar-card card card-soft card-rounded-lg feedback-card" @submit.prevent="submitFeedback">
                     <div class="sidebar-label">Extra feedback</div>
 
                     <textarea ref="feedbackTextarea" v-model="feedbackTitle" class="feedback-input feedback-textarea"
@@ -76,13 +76,13 @@
                 </form>
             </aside>
 
-            <main class="preview-content">
-                <div class="preview-cover"></div>
+            <main class="article-content">
+                <div class="article-cover"></div>
 
-                <article class="article-card">
-                    <div class="article-head">
-                        <div class="article-meta-line">
-                            <span class="article-pill">Handleiding</span>
+                <article class="article-card card card-elevated card-rounded-2xl">
+                    <div class="article-head card-head">
+                        <div class="article-meta-line u-flex-center u-wrap u-gap-8">
+                            <span class="article-pill u-inline-flex u-items-center">Handleiding</span>
                             <span class="article-meta-separator">•</span>
                             <span>Vandaag bijgewerkt</span>
                         </div>
@@ -93,8 +93,8 @@
                             Dit is de preview van een artikel. deze pagina is de pagina die klanten in het portaal zien.
                         </p>
 
-                        <div class="article-author-row">
-                            <div class="author-avatar">K</div>
+                        <div class="article-author-row u-flex-center u-gap-12">
+                            <div class="author-avatar icon-box">K</div>
 
                             <div>
                                 <div class="author-name">Kyano Team</div>

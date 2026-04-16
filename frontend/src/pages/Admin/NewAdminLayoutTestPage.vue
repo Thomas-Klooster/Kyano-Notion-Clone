@@ -1,10 +1,10 @@
 <template>
   <div class="entity-page admin-studio-page">
-    <div class="entity-shell admin-studio-shell">
-      <section class="entity-hero">
-        <div class="hero-content">
-          <div class="hero-meta-line">
-            <span class="hero-pill">Admin</span>
+    <div class="entity-shell page-shell admin-studio-shell">
+      <section class="entity-hero hero">
+        <div class="hero-content u-min-w-0">
+          <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
+            <span class="hero-pill u-inline-flex u-items-center">Admin</span>
             <span class="hero-meta-separator">•</span>
             <span>{{ totalRecords }} records</span>
             <span class="hero-meta-separator">•</span>
@@ -20,35 +20,35 @@
       </section>
 
       <section class="stats-grid">
-        <article class="stat-card">
+        <article class="stat-card card card-elevated card-rounded-xl">
           <div class="stat-label">Workspaces</div>
           <div class="stat-value">{{ counts.workspaces }}</div>
         </article>
 
-        <article class="stat-card">
+        <article class="stat-card card card-elevated card-rounded-xl">
           <div class="stat-label">Categorieën</div>
           <div class="stat-value">{{ counts.categories }}</div>
         </article>
 
-        <article class="stat-card">
+        <article class="stat-card card card-elevated card-rounded-xl">
           <div class="stat-label">Projecten</div>
           <div class="stat-value">{{ counts.projects }}</div>
         </article>
 
-        <article class="stat-card">
+        <article class="stat-card card card-elevated card-rounded-xl">
           <div class="stat-label">Artikelen</div>
           <div class="stat-value">{{ counts.articles }}</div>
         </article>
       </section>
 
-      <section class="entity-card studio-card">
-        <div class="entity-card-head studio-head">
+      <section class="entity-card card card-elevated card-rounded-2xl studio-card">
+        <div class="entity-card-head card-head studio-head">
           <div>
             <div class="section-kicker">Overzicht</div>
             <h2 class="section-title">Content structuur</h2>
           </div>
 
-          <div class="entity-controls studio-controls">
+          <div class="entity-controls u-flex u-items-center u-wrap u-gap-14 studio-controls">
             <v-select
               v-model="selectedCustomer"
               :items="customerOptions"
@@ -112,12 +112,12 @@
               <article
                 v-for="workspace in filteredWorkspaces"
                 :key="workspace.id"
-                class="tree-card"
+                class="tree-card card card-elevated card-rounded-xl"
               >
                 <div class="tree-row tree-row-root">
                   <button class="tree-row-trigger" @click="selectEntity('workspace', workspace.id)">
-                    <div class="tree-row-main">
-                      <div class="entity-icon">
+                    <div class="tree-row-main u-min-w-0">
+                      <div class="entity-icon icon-box">
                         <v-icon size="18">mdi-view-dashboard-outline</v-icon>
                       </div>
 
@@ -151,8 +151,8 @@
                   >
                     <div class="tree-row tree-row-child">
                       <button class="tree-row-trigger" @click="selectEntity('category', category.id)">
-                        <div class="tree-row-main">
-                          <div class="entity-icon entity-icon-soft">
+                        <div class="tree-row-main u-min-w-0">
+                          <div class="entity-icon icon-box entity-icon-soft">
                             <v-icon size="18">mdi-shape-outline</v-icon>
                           </div>
                           <div class="tree-row-info">
@@ -182,8 +182,8 @@
                       >
                         <div class="tree-row tree-row-child">
                           <button class="tree-row-trigger" @click="selectEntity('project', project.id)">
-                            <div class="tree-row-main">
-                              <div class="entity-icon entity-icon-soft project-icon">
+                            <div class="tree-row-main u-min-w-0">
+                              <div class="entity-icon icon-box entity-icon-soft project-icon">
                                 <v-icon size="18">mdi-briefcase-outline</v-icon>
                               </div>
                               <div class="tree-row-info">
@@ -212,8 +212,8 @@
                             class="tree-row tree-row-leaf"
                             @click="selectEntity('article', article.id)"
                           >
-                            <div class="tree-row-main">
-                              <div class="entity-icon entity-icon-soft article-icon">
+                            <div class="tree-row-main u-min-w-0">
+                              <div class="entity-icon icon-box entity-icon-soft article-icon">
                                 <v-icon size="18">mdi-file-document-outline</v-icon>
                               </div>
                               <div class="tree-row-info">
@@ -235,7 +235,7 @@
             </div>
 
             <div v-else class="empty-state compact-empty">
-              <div class="empty-state-icon">
+              <div class="empty-state-icon icon-box">
                 <v-icon size="24">mdi-file-tree-outline</v-icon>
               </div>
               <h3>Niets gevonden</h3>
@@ -252,7 +252,7 @@
                   <p class="detail-subtitle">{{ selectedEntityDescription }}</p>
                 </div>
 
-                <div class="entity-actions detail-actions">
+                <div class="entity-actions u-flex u-items-center u-wrap u-gap-10 detail-actions">
                   <v-btn v-if="selectedEntityType !== 'article'" size="small" variant="tonal" @click="openCreateChildDialog" class="entity-create-btn">
                     {{ createChildButtonLabel }}
                   </v-btn>
@@ -266,7 +266,7 @@
               </div>
 
               <div class="detail-grid">
-                <article class="detail-card">
+                <article class="detail-card card card-rounded-xl">
                   <div class="detail-card-head">
                     <div>
                       <div class="panel-kicker">Basisinformatie</div>
@@ -298,7 +298,7 @@
                   </div>
                 </article>
 
-                <article v-if="showsSummaryCard" class="detail-card">
+                <article v-if="showsSummaryCard" class="detail-card card card-rounded-xl">
                   <div class="detail-card-head">
                     <div>
                       <div class="panel-kicker">Inhoud</div>
@@ -312,7 +312,7 @@
                 </article>
               </div>
 
-              <article v-if="showsRelationsCard" class="detail-card child-list-card">
+              <article v-if="showsRelationsCard" class="detail-card card card-rounded-xl child-list-card">
                 <div class="detail-card-head child-list-head">
                   <div>
                     <div class="panel-kicker">Relaties</div>
@@ -327,7 +327,7 @@
                 <div v-if="childRows.length" class="child-rows">
                   <div v-for="child in childRows" :key="`${child.type}-${child.id}`" class="child-row">
                     <div class="child-row-main">
-                      <div class="entity-icon entity-icon-soft">
+                      <div class="entity-icon icon-box entity-icon-soft">
                         <v-icon size="18">{{ iconForType(child.type) }}</v-icon>
                       </div>
 
@@ -343,7 +343,7 @@
                       </div>
                     </div>
 
-                    <div class="entity-actions">
+                    <div class="entity-actions u-flex u-items-center u-wrap u-gap-10">
                       <v-btn size="small" variant="text" @click="selectEntity(child.type, child.id)">
                         Openen
                       </v-btn>
@@ -355,7 +355,7 @@
                 </div>
 
                 <div v-else class="empty-state compact-empty child-empty">
-                  <div class="empty-state-icon">
+                  <div class="empty-state-icon icon-box">
                     <v-icon size="24">mdi-plus-box-outline</v-icon>
                   </div>
                   <h3>Nog geen gekoppelde items</h3>
@@ -365,7 +365,7 @@
             </template>
 
             <div v-else class="empty-detail-state">
-              <div class="empty-state-icon">
+              <div class="empty-state-icon icon-box">
                 <v-icon size="24">mdi-cursor-default-click-outline</v-icon>
               </div>
               <h3>Selecteer een item</h3>
@@ -379,7 +379,7 @@
     </div>
 
     <v-dialog v-model="editorOpen" max-width="680">
-      <v-card class="dialog-card" rounded="xl">
+      <v-card class="dialog-card card card-rounded-xl" rounded="xl">
         <div class="dialog-head">
           <div>
             <div class="section-kicker">{{ dialogMode === 'create' ? 'Nieuw item' : 'Bewerken' }}</div>
@@ -481,7 +481,7 @@
           </template>
         </div>
 
-        <div class="dialog-actions">
+        <div class="dialog-actions u-gap-12">
           <v-btn variant="text" @click="editorOpen = false">Annuleren</v-btn>
           <v-btn color="primary" rounded="xl" @click="saveDraft">Opslaan</v-btn>
         </div>
@@ -489,7 +489,7 @@
     </v-dialog>
 
     <v-dialog v-model="deleteOpen" max-width="520">
-      <v-card class="dialog-card" rounded="xl">
+      <v-card class="dialog-card card card-rounded-xl" rounded="xl">
         <div class="dialog-head">
           <div>
             <div class="section-kicker">Verwijderen</div>
@@ -504,7 +504,7 @@
           </p>
         </div>
 
-        <div class="dialog-actions">
+        <div class=" u-gap-12">
           <v-btn variant="text" @click="deleteOpen = false">Annuleren</v-btn>
           <v-btn color="error" rounded="xl" @click="confirmDelete">Verwijderen</v-btn>
         </div>

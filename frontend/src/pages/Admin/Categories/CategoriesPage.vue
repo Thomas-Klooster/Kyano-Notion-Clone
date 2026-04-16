@@ -1,10 +1,10 @@
 <template>
   <div class="entity-page">
-    <div class="entity-shell">
-      <section class="entity-hero">
-        <div class="hero-content">
-          <div class="hero-meta-line">
-            <span class="hero-pill">Admin</span>
+    <div class="entity-shell page-shell">
+      <section class="entity-hero hero">
+        <div class="hero-content u-min-w-0">
+          <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
+            <span class="hero-pill u-inline-flex u-items-center">Admin</span>
             <span class="hero-meta-separator">•</span>
             <span>{{ filteredCategories.length }} categorieën</span>
           </div>
@@ -17,14 +17,14 @@
         </div>
       </section>
 
-      <section class="entity-card">
-        <div class="entity-card-head">
+      <section class="entity-card card card-elevated card-rounded-2xl">
+        <div class="entity-card-head card-head">
           <div>
             <div class="section-kicker">Overzicht</div>
             <h2 class="section-title">Alle categorieën</h2>
           </div>
 
-          <div class="entity-controls">
+          <div class="entity-controls u-flex u-items-center u-wrap u-gap-14">
             <div class="search-field">
               <v-icon size="18">mdi-magnify</v-icon>
               <input v-model="search" type="text" placeholder="Zoek een categorie..." />
@@ -39,7 +39,7 @@
         <div v-if="filteredCategories.length" class="entity-list">
           <div v-for="category in filteredCategories" :key="category.id" class="entity-row">
             <div class="entity-row-main">
-              <div class="entity-icon entity-icon-soft">
+              <div class="entity-icon icon-box entity-icon-soft">
                 <v-icon size="18">mdi-shape-outline</v-icon>
               </div>
 
@@ -55,7 +55,7 @@
               </div>
             </div>
 
-            <div class="entity-actions">
+            <div class="entity-actions u-flex u-items-center u-wrap u-gap-10">
               <v-btn size="small" variant="text" :to="`/admin/categories/${category.id}/edit`">Bewerken</v-btn>
               <v-btn size="small" variant="text" class="delete-btn">Verwijderen</v-btn>
             </div>
@@ -63,7 +63,7 @@
         </div>
 
         <div v-else class="empty-state">
-          <div class="empty-state-icon">
+          <div class="empty-state-icon icon-box">
             <v-icon size="24">mdi-shape-outline</v-icon>
           </div>
           <h3>Geen categorieën gevonden</h3>

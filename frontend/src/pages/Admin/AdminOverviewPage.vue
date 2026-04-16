@@ -1,10 +1,10 @@
 <template>
   <div class="admin-dashboard-page">
-    <div class="admin-dashboard-shell">
-      <section class="admin-hero">
+    <div class="entity-shell page-shell">
+      <section class="admin-hero hero">
         <div class="admin-hero-content">
-          <div class="hero-meta-line">
-            <span class="hero-pill">Admin</span>
+          <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
+            <span class="hero-pill u-inline-flex u-items-center">Admin</span>
             <span class="hero-meta-separator">•</span>
             <span>{{ totalEntities }} records</span>
             <span class="hero-meta-separator">•</span>
@@ -20,15 +20,15 @@
       </section>
 
       <section class="stats-grid">
-        <article v-for="stat in stats" :key="stat.label" class="stat-card">
+        <article v-for="stat in stats" :key="stat.label" class="stat-card card card-elevated card-rounded-xl">
           <div class="stat-label">{{ stat.label }}</div>
           <div class="stat-value">{{ stat.value }}</div>
           <div class="stat-meta">{{ stat.meta }}</div>
         </article>
       </section>
 
-      <section class="module-card">
-        <div class="module-card-head">
+      <section class="module-card card card-elevated card-rounded-2xl">
+        <div class="module-card-head card-head">
           <div>
             <div class="section-kicker">Overzicht</div>
             <h2 class="section-title">Admin modules</h2>
@@ -38,7 +38,7 @@
         <div class="module-grid">
           <router-link v-for="module in modules" :key="module.title" :to="module.to" class="module-tile">
             <div class="module-tile-top">
-              <div class="module-icon">
+              <div class="module-icon icon-box">
                 <v-icon size="20">{{ module.icon }}</v-icon>
               </div>
 

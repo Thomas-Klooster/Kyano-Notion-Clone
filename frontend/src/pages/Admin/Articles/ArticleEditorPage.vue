@@ -1,15 +1,15 @@
 <template>
-  <div class="article-editor-page">
-    <div class="editor-topbar">
-      <div class="editor-topbar-inner">
-        <div class="editor-topbar-left">
-          <div class="editor-badge">
+  <div class="article-page">
+    <div class="article-topbar">
+      <div class="article-topbar-inner">
+        <div class="article-topbar-left">
+          <div class="article-badge">
             <v-icon size="16">mdi-file-document-edit-outline</v-icon>
             <span>Artikel editor</span>
           </div>
         </div>
 
-        <div class="editor-topbar-right">
+        <div class="article-topbar-right">
           <v-btn variant="text" rounded="lg" prepend-icon="mdi-open-in-new" :to="previewRoute">
             Preview
           </v-btn>
@@ -17,35 +17,35 @@
       </div>
     </div>
 
-    <div class="editor-shell">
-      <aside class="editor-sidebar">
-        <div class="sidebar-card">
+    <div class="article-grid entity-shell page-shell">
+      <aside class="article-sidebar">
+        <div class="sidebar-card card card-soft card-rounded-lg">
           <div class="sidebar-label">Pagina-instellingen</div>
 
-          <div class="sidebar-meta-list">
+          <div class="sidebar-meta-list u-flex-col u-gap-12">
 
-            <div class="sidebar-meta-row">
+            <div class="sidebar-meta-row u-flex-between u-gap-12">
               <span>Project</span>
               <strong>Knowledgebase Portal</strong>
             </div>
 
-            <div class="sidebar-meta-row">
+            <div class="sidebar-meta-row u-flex-between u-gap-12">
               <span>Status</span>
               <strong>{{ status }}</strong>
             </div>
 
-            <div class="sidebar-meta-row">
+            <div class="sidebar-meta-row u-flex-between u-gap-12">
               <span>Bijgewerkt</span>
               <strong>Vandaag</strong>
             </div>
           </div>
         </div>
 
-        <div class="sidebar-card">
+        <div class="sidebar-card card card-soft card-rounded-lg">
           <div class="sidebar-label">Reacties</div>
 
           <div class="comment-row">
-            <div class="comment-avatar">K</div>
+            <div class="comment-avatar icon-box">K</div>
             <div>
               <div class="comment-meta">
                 Klooster Thomas <span>Zojuist</span>
@@ -55,24 +55,24 @@
           </div>
 
           <div class="comment-row muted add-comment-row">
-            <div class="comment-avatar">K</div>
+            <div class="comment-avatar icon-box">K</div>
             <div class="comment-placeholder">Voeg een reactie toe...</div>
           </div>
         </div>
       </aside>
 
-      <main class="editor-content">
-        <div class="editor-cover">
+      <main class="article-content">
+        <div class="article-cover">
           <div class="cover-actions">
             <v-btn size="small">Change</v-btn>
           </div>
         </div>
 
-        <section class="article-card">
-          <div class="article-head">
+        <section class="article-card card card-elevated card-rounded-2xl">
+          <div class="article-head card-head">
 
-            <div class="article-meta-line">
-              <span class="article-pill">Handleiding</span>
+            <div class="article-meta-line u-flex-center u-wrap u-gap-8">
+              <span class="article-pill u-inline-flex u-items-center">Handleiding</span>
               <span class="article-meta-separator">•</span>
               <span>Concept artikel</span>
             </div>
@@ -82,8 +82,8 @@
             <textarea v-model="summary" class="article-summary-input" placeholder="Voeg een korte samenvatting toe..."
               rows="2" />
 
-            <div class="article-author-row">
-              <div class="author-avatar">K</div>
+            <div class="article-author-row u-flex-center u-gap-12">
+              <div class="author-avatar icon-box">K</div>
 
               <div>
                 <div class="author-name">Kyano Team</div>

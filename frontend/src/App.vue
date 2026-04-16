@@ -169,7 +169,7 @@ const isHovering = ref(false)
     </v-navigation-drawer>
 
     <v-main @mouseenter="drawer = false">
-      <div class="admin-page-shell">
+      <div>
         <v-app-bar :elevation="0" density="compact">
           <template v-slot:prepend>
             <v-app-bar-nav-icon @mouseenter="drawer = true"></v-app-bar-nav-icon>
