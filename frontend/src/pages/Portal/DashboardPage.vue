@@ -189,7 +189,7 @@ onMounted(async () => {
         const response = await axios.get('/api/workspaces')
         workspaces.value = response.data
     } catch (err) {
-        error.value = 'Kan workspaces niet laden.'
+        error.value = 'Geen workspaces gevonden.'
     } finally {
         loading.value = false
     }
@@ -202,27 +202,41 @@ const filteredWorkspaces = computed(() => {
 
     return workspaces.value
         .map(workspace => {
-            const workspaceMatches = workspace.name.toLowerCase().includes(query)
+            const workspaceName = (workspace.name ?? '').toLowerCase()
+            const workspaceMatches = workspaceName.includes(query)
 
-            const categories = workspace.categories
+            const categories = (workspace.categories ?? [])
                 .map(category => {
-                    const categoryMatches = category.name.toLowerCase().includes(query)
+                    const categoryName = (category.name ?? '').toLowerCase()
+                    const categoryMatches = categoryName.includes(query)
 
-                    const projects = category.projects
+                    const projects = (category.projects ?? [])
                         .map(project => {
-                            const projectMatches =
-                                project.name.toLowerCase().includes(query) ||
-                                project.updatedAt.toLowerCase().includes(query)
+                            const projectName = (project.name ?? '').toLowerCase()
+                            const updatedAt = String(
+                                project.updatedAt ?? project.updated_at ?? ''
+                            ).toLowerCase()
 
-                            const articles = project.articles.filter(article =>
-                                article.title.toLowerCase().includes(query) ||
-                                article.tags.some(tag => tag.toLowerCase().includes(query))
-                            )
+                            const projectMatches =
+                                projectName.includes(query) ||
+                                updatedAt.includes(query)
+
+                            const articles = (project.articles ?? []).filter(article => {
+                                const title = (article.title ?? '').toLowerCase()
+                                const tags = Array.isArray(article.tags) ? article.tags : []
+
+                                return (
+                                    title.includes(query) ||
+                                    tags.some(tag =>
+                                        String(tag).toLowerCase().includes(query)
+                                    )
+                                )
+                            })
 
                             if (projectMatches || articles.length) {
                                 return {
                                     ...project,
-                                    articles: projectMatches ? project.articles : articles,
+                                    articles: projectMatches ? (project.articles ?? []) : articles,
                                 }
                             }
 
@@ -233,7 +247,7 @@ const filteredWorkspaces = computed(() => {
                     if (categoryMatches || projects.length) {
                         return {
                             ...category,
-                            projects: categoryMatches ? category.projects : projects,
+                            projects: categoryMatches ? (category.projects ?? []) : projects,
                         }
                     }
 
@@ -244,7 +258,7 @@ const filteredWorkspaces = computed(() => {
             if (workspaceMatches || categories.length) {
                 return {
                     ...workspace,
-                    categories: workspaceMatches ? workspace.categories : categories,
+                    categories: workspaceMatches ? (workspace.categories ?? []) : categories,
                 }
             }
 
