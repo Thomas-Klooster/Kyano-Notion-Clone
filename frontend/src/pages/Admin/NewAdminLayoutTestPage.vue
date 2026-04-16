@@ -71,7 +71,11 @@
 
             <div class="search-field studio-search-field">
               <v-icon size="18">mdi-magnify</v-icon>
-              <input v-model="search" type="text" placeholder="Zoek in workspaces, categorieën, projecten of artikelen..." />
+              <input
+                v-model="search"
+                type="text"
+                placeholder="Zoek in workspaces, categorieën, projecten of artikelen..."
+              />
             </div>
 
             <v-menu location="bottom end">
@@ -85,13 +89,19 @@
                 <v-list-item @click="openCreateDialog('workspace')">
                   <v-list-item-title>Nieuwe workspace</v-list-item-title>
                 </v-list-item>
-                <v-list-item @click="openCreateDialog('category', selectedWorkspaceId ? { workspaceId: selectedWorkspaceId } : null)">
+                <v-list-item
+                  @click="openCreateDialog('category', selectedWorkspaceId ? { workspaceId: selectedWorkspaceId } : null)"
+                >
                   <v-list-item-title>Nieuwe categorie</v-list-item-title>
                 </v-list-item>
-                <v-list-item @click="openCreateDialog('project', selectedCategoryId ? { categoryId: selectedCategoryId } : null)">
+                <v-list-item
+                  @click="openCreateDialog('project', selectedCategoryId ? { categoryId: selectedCategoryId } : null)"
+                >
                   <v-list-item-title>Nieuw project</v-list-item-title>
                 </v-list-item>
-                <v-list-item @click="openCreateDialog('article', selectedProjectId ? { projectId: selectedProjectId } : null)">
+                <v-list-item
+                  @click="openCreateDialog('article', selectedProjectId ? { projectId: selectedProjectId } : null)"
+                >
                   <v-list-item-title>Nieuw artikel</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -136,8 +146,16 @@
 
                   <div class="tree-row-side">
                     <v-chip size="small" class="entity-chip">Workspace</v-chip>
-                    <v-btn icon size="small" variant="text" class="tree-toggle-btn" @click.stop="toggleWorkspace(workspace.id)">
-                      <v-icon size="18">{{ isExpanded(expandedWorkspaces, workspace.id) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                    <v-btn
+                      icon
+                      size="small"
+                      variant="text"
+                      class="tree-toggle-btn"
+                      @click.stop="toggleWorkspace(workspace.id)"
+                    >
+                      <v-icon size="18">
+                        {{ isExpanded(expandedWorkspaces, workspace.id) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                      </v-icon>
                     </v-btn>
                   </div>
                 </div>
@@ -167,8 +185,16 @@
                       </button>
 
                       <div class="tree-row-side">
-                        <v-btn icon size="small" variant="text" class="tree-toggle-btn" @click.stop="toggleCategory(category.id)">
-                          <v-icon size="18">{{ isExpanded(expandedCategories, category.id) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                        <v-btn
+                          icon
+                          size="small"
+                          variant="text"
+                          class="tree-toggle-btn"
+                          @click.stop="toggleCategory(category.id)"
+                        >
+                          <v-icon size="18">
+                            {{ isExpanded(expandedCategories, category.id) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                          </v-icon>
                         </v-btn>
                       </div>
                     </div>
@@ -198,8 +224,16 @@
                           </button>
 
                           <div class="tree-row-side">
-                            <v-btn icon size="small" variant="text" class="tree-toggle-btn" @click.stop="toggleProject(project.id)">
-                              <v-icon size="18">{{ isExpanded(expandedProjects, project.id) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
+                            <v-btn
+                              icon
+                              size="small"
+                              variant="text"
+                              class="tree-toggle-btn"
+                              @click.stop="toggleProject(project.id)"
+                            >
+                              <v-icon size="18">
+                                {{ isExpanded(expandedProjects, project.id) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+                              </v-icon>
                             </v-btn>
                           </div>
                         </div>
@@ -253,13 +287,24 @@
                 </div>
 
                 <div class="entity-actions u-flex u-items-center u-wrap u-gap-10 detail-actions">
-                  <v-btn v-if="selectedEntityType !== 'article'" size="small" variant="tonal" @click="openCreateChildDialog" class="entity-create-btn">
+                  <v-btn
+                    v-if="selectedEntityType !== 'article'"
+                    size="small"
+                    variant="tonal"
+                    @click="openCreateChildDialog"
+                    class="entity-create-btn"
+                  >
                     {{ createChildButtonLabel }}
                   </v-btn>
                   <v-btn size="small" variant="text" @click="openEditDialog(selectedEntityType, selectedEntity.id)">
                     Bewerken
                   </v-btn>
-                  <v-btn size="small" variant="text" class="delete-btn" @click="openDeleteDialog(selectedEntityType, selectedEntity.id)">
+                  <v-btn
+                    size="small"
+                    variant="text"
+                    class="delete-btn"
+                    @click="openDeleteDialog(selectedEntityType, selectedEntity.id)"
+                  >
                     Verwijderen
                   </v-btn>
                 </div>
@@ -376,6 +421,209 @@
           </section>
         </div>
       </section>
+
+      <section class="entity-card card card-elevated card-rounded-2xl studio-card">
+        <div class="entity-card-head card-head studio-head">
+          <div>
+            <div class="section-kicker">Klantenbeheer</div>
+            <h2 class="section-title">Klanten</h2>
+          </div>
+
+          <div class="entity-controls u-flex u-items-center u-wrap u-gap-14 studio-controls">
+            <div class="search-field studio-search-field">
+              <v-icon size="18">mdi-magnify</v-icon>
+              <input
+                v-model="customerSearch"
+                type="text"
+                placeholder="Zoek op bedrijfsnaam, contactpersoon, e-mail of telefoon..."
+              />
+            </div>
+
+            <v-btn rounded="xl" prepend-icon="mdi-plus" class="entity-create-btn" @click="openCustomerCreateDialog">
+              Nieuwe klant
+            </v-btn>
+          </div>
+        </div>
+
+        <div class="studio-layout">
+          <aside class="studio-tree-panel">
+            <div class="panel-section-head">
+              <div>
+                <div class="panel-kicker">Lijst</div>
+                <h3 class="panel-title">Klanten</h3>
+              </div>
+            </div>
+
+            <div v-if="filteredCustomers.length" class="tree-list">
+              <article
+                v-for="customer in filteredCustomers"
+                :key="customer.id"
+                class="tree-card card card-elevated card-rounded-xl"
+              >
+                <div class="tree-row tree-row-root">
+                  <button class="tree-row-trigger" @click="selectCustomer(customer.id)">
+                    <div class="tree-row-main u-min-w-0">
+                      <div class="entity-icon icon-box">
+                        <v-icon size="18">mdi-domain</v-icon>
+                      </div>
+
+                      <div class="tree-row-info">
+                        <div class="tree-row-title">{{ customer.companyName }}</div>
+                        <div class="tree-row-meta">
+                          <span>{{ customer.name }}</span>
+                          <span class="dot">•</span>
+                          <span>{{ customer.email }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+
+                  <div class="tree-row-side">
+                    <v-chip size="small" class="entity-chip">
+                      {{ customer.role === 'admin' ? 'Admin' : 'Klant' }}
+                    </v-chip>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div v-else class="empty-state compact-empty">
+              <div class="empty-state-icon icon-box">
+                <v-icon size="24">mdi-domain-off</v-icon>
+              </div>
+              <h3>Geen klanten gevonden</h3>
+              <p>Pas je zoekopdracht aan of maak een nieuwe klant aan.</p>
+            </div>
+          </aside>
+
+          <section class="studio-detail-panel">
+            <template v-if="selectedCustomerRecord">
+              <div class="detail-head">
+                <div>
+                  <div class="section-kicker">Klant</div>
+                  <h3 class="detail-title">{{ selectedCustomerRecord.companyName }}</h3>
+                  <p class="detail-subtitle">Beheer klantgegevens en contactinformatie.</p>
+                </div>
+
+                <div class="entity-actions u-flex u-items-center u-wrap u-gap-10 detail-actions">
+                  <v-btn size="small" variant="text" @click="openCustomerEditDialog(selectedCustomerRecord.id)">
+                    Bewerken
+                  </v-btn>
+                  <v-btn
+                    size="small"
+                    variant="text"
+                    class="delete-btn"
+                    @click="openCustomerDeleteDialog(selectedCustomerRecord.id)"
+                  >
+                    Verwijderen
+                  </v-btn>
+                </div>
+              </div>
+
+              <div class="detail-grid">
+                <article class="detail-card card card-rounded-xl">
+                  <div class="detail-card-head">
+                    <div>
+                      <div class="panel-kicker">Basisinformatie</div>
+                      <h4 class="panel-title">Klantgegevens</h4>
+                    </div>
+                  </div>
+
+                  <div class="detail-meta-grid">
+                    <div class="meta-item">
+                      <span class="meta-label">Bedrijf</span>
+                      <span class="meta-value">{{ selectedCustomerRecord.companyName }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <span class="meta-label">Contactpersoon</span>
+                      <span class="meta-value">{{ selectedCustomerRecord.name }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <span class="meta-label">E-mail</span>
+                      <span class="meta-value">{{ selectedCustomerRecord.email }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <span class="meta-label">Telefoon</span>
+                      <span class="meta-value">{{ selectedCustomerRecord.tel }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <span class="meta-label">Rol</span>
+                      <span class="meta-value">{{ selectedCustomerRecord.role }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <span class="meta-label">Workspaces</span>
+                      <span class="meta-value">{{ customerWorkspaceCount(selectedCustomerRecord.companyName) }}</span>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="detail-card card card-rounded-xl">
+                  <div class="detail-card-head">
+                    <div>
+                      <div class="panel-kicker">Adres</div>
+                      <h4 class="panel-title">Vestigingsinformatie</h4>
+                    </div>
+                  </div>
+
+                  <p class="detail-description">
+                    {{ selectedCustomerRecord.address || 'Nog geen adres ingevuld.' }}
+                  </p>
+                </article>
+              </div>
+
+              <article class="detail-card card card-rounded-xl child-list-card">
+                <div class="detail-card-head child-list-head">
+                  <div>
+                    <div class="panel-kicker">Relaties</div>
+                    <h4 class="panel-title">Gekoppelde workspaces</h4>
+                  </div>
+                </div>
+
+                <div v-if="customerWorkspaces.length" class="child-rows">
+                  <div v-for="workspace in customerWorkspaces" :key="workspace.id" class="child-row">
+                    <div class="child-row-main">
+                      <div class="entity-icon icon-box entity-icon-soft">
+                        <v-icon size="18">mdi-view-dashboard-outline</v-icon>
+                      </div>
+
+                      <div>
+                        <div class="entity-name">{{ workspace.name }}</div>
+                        <div class="entity-meta">
+                          <span>Workspace</span>
+                          <span class="dot">•</span>
+                          <span>{{ workspace.categories.length }} categorieën</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="entity-actions u-flex u-items-center u-wrap u-gap-10">
+                      <v-btn size="small" variant="text" @click="selectEntity('workspace', workspace.id)">
+                        Openen
+                      </v-btn>
+                    </div>
+                  </div>
+                </div>
+
+                <div v-else class="empty-state compact-empty child-empty">
+                  <div class="empty-state-icon icon-box">
+                    <v-icon size="24">mdi-view-dashboard-outline</v-icon>
+                  </div>
+                  <h3>Geen gekoppelde workspaces</h3>
+                  <p>Deze klant heeft nog geen workspace in de structuur.</p>
+                </div>
+              </article>
+            </template>
+
+            <div v-else class="empty-detail-state">
+              <div class="empty-state-icon icon-box">
+                <v-icon size="24">mdi-account-box-outline</v-icon>
+              </div>
+              <h3>Selecteer een klant</h3>
+              <p>Kies links een klant om de gegevens te bekijken en te bewerken.</p>
+            </div>
+          </section>
+        </div>
+      </section>
     </div>
 
     <v-dialog v-model="editorOpen" max-width="680">
@@ -384,7 +632,11 @@
           <div>
             <div class="section-kicker">{{ dialogMode === 'create' ? 'Nieuw item' : 'Bewerken' }}</div>
             <h3 class="dialog-title">
-              {{ dialogMode === 'create' ? `Nieuwe ${labelForType(dialogType).toLowerCase()}` : `Bewerk ${labelForType(dialogType).toLowerCase()}` }}
+              {{
+                dialogMode === 'create'
+                  ? `Nieuwe ${labelForType(dialogType).toLowerCase()}`
+                  : `Bewerk ${labelForType(dialogType).toLowerCase()}`
+              }}
             </h3>
           </div>
         </div>
@@ -504,9 +756,119 @@
           </p>
         </div>
 
-        <div class=" u-gap-12">
+        <div class="u-gap-12">
           <v-btn variant="text" @click="deleteOpen = false">Annuleren</v-btn>
           <v-btn color="error" rounded="xl" @click="confirmDelete">Verwijderen</v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="customerEditorOpen" max-width="680">
+      <v-card class="dialog-card card card-rounded-xl" rounded="xl">
+        <div class="dialog-head">
+          <div>
+            <div class="section-kicker">{{ customerDialogMode === 'create' ? 'Nieuwe klant' : 'Klant bewerken' }}</div>
+            <h3 class="dialog-title">
+              {{ customerDialogMode === 'create' ? 'Nieuwe klant aanmaken' : 'Klantgegevens aanpassen' }}
+            </h3>
+          </div>
+        </div>
+
+        <div class="dialog-body">
+          <v-text-field
+            v-model="customerDraft.companyName"
+            label="Bedrijfsnaam"
+            variant="solo-filled"
+            flat
+            hide-details
+            class="notion-soft-input mb-4"
+          />
+
+          <v-text-field
+            v-model="customerDraft.name"
+            label="Contactpersoon"
+            variant="solo-filled"
+            flat
+            hide-details
+            class="notion-soft-input mb-4"
+          />
+
+          <v-text-field
+            v-model="customerDraft.email"
+            label="E-mail"
+            variant="solo-filled"
+            flat
+            hide-details
+            class="notion-soft-input mb-4"
+          />
+
+          <v-text-field
+            v-model="customerDraft.tel"
+            label="Telefoon"
+            variant="solo-filled"
+            flat
+            hide-details
+            class="notion-soft-input mb-4"
+          />
+
+          <v-textarea
+            v-model="customerDraft.address"
+            label="Adres"
+            variant="solo-filled"
+            flat
+            hide-details
+            rows="3"
+            class="notion-soft-input mb-4"
+          />
+
+          <v-select
+            v-model="customerDraft.role"
+            :items="customerRoleOptions"
+            label="Rol"
+            variant="solo-filled"
+            flat
+            hide-details
+            class="notion-soft-input mb-4"
+          />
+
+          <v-text-field
+            v-model="customerDraft.password"
+            label="Wachtwoord"
+            type="password"
+            variant="solo-filled"
+            flat
+            hide-details
+            class="notion-soft-input"
+          />
+        </div>
+
+        <div class="dialog-actions u-gap-12">
+          <v-btn variant="text" @click="customerEditorOpen = false">Annuleren</v-btn>
+          <v-btn color="primary" rounded="xl" @click="saveCustomerDraft">Opslaan</v-btn>
+        </div>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="customerDeleteOpen" max-width="520">
+      <v-card class="dialog-card card card-rounded-xl" rounded="xl">
+        <div class="dialog-head">
+          <div>
+            <div class="section-kicker">Verwijderen</div>
+            <h3 class="dialog-title">Deze klant verwijderen?</h3>
+          </div>
+        </div>
+
+        <div class="dialog-body">
+          <p class="detail-description mb-0">
+            Je staat op het punt om
+            <strong>{{ customerDeleteTarget?.companyName }}</strong>
+            te verwijderen.
+          </p>
+        </div>
+
+        <div class="u-gap-12">
+          <v-btn variant="text" @click="customerDeleteOpen = false">Annuleren</v-btn>
+          <v-btn color="error" rounded="xl" @click="confirmCustomerDelete">Verwijderen</v-btn>
         </div>
       </v-card>
     </v-dialog>
@@ -518,6 +880,7 @@ import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const search = ref('')
+const customerSearch = ref('')
 const selectedCustomer = ref('Alle klanten')
 const selectedKind = ref('Alles')
 const router = useRouter()
@@ -533,6 +896,12 @@ const dialogType = ref('workspace')
 const deleteType = ref(null)
 const deleteId = ref(null)
 
+const customerEditorOpen = ref(false)
+const customerDeleteOpen = ref(false)
+const customerDialogMode = ref('create')
+const selectedCustomerCrudId = ref(1)
+const customerDeleteId = ref(null)
+
 const selectedEntityType = ref('workspace')
 const selectedWorkspaceId = ref(1)
 const selectedCategoryId = ref(null)
@@ -543,6 +912,7 @@ const workspaceId = ref(3)
 const categoryId = ref(5)
 const projectId = ref(6)
 const articleId = ref(8)
+const customerId = ref(4)
 
 const draft = reactive({
   id: null,
@@ -555,6 +925,47 @@ const draft = reactive({
   status: '',
   slug: '',
 })
+
+const customerDraft = reactive({
+  id: null,
+  companyName: '',
+  name: '',
+  email: '',
+  tel: '',
+  address: '',
+  role: 'customer',
+  password: '',
+})
+
+const customersData = ref([
+  {
+    id: 1,
+    companyName: 'Kyano Digital',
+    name: 'Kyano Team',
+    email: 'info@kyano.nl',
+    tel: '+31 6 12345678',
+    address: 'Moermanskweg 2-25, 9723 HM Groningen',
+    role: 'admin',
+  },
+  {
+    id: 2,
+    companyName: 'Studio North',
+    name: 'Mila de Vries',
+    email: 'hello@studionorth.nl',
+    tel: '+31 50 123 4567',
+    address: 'Atoomweg 6, 9743 AK Groningen',
+    role: 'customer',
+  },
+  {
+    id: 3,
+    companyName: 'Kawasaki',
+    name: 'Yasuhiko Hashimoto',
+    email: 'hello@kawasaki.jp',
+    tel: '+81 3-3435-2111',
+    address: '1 Chome-14-5 Kaigan, Minato City, Tokyo 105-0022, Japan',
+    role: 'customer',
+  },
+])
 
 const workspaceData = ref([
   {
@@ -671,13 +1082,14 @@ const workspaceData = ref([
 const customerOnlyOptions = computed(() => [...new Set(workspaceData.value.map((workspace) => workspace.customer))])
 const customerOptions = computed(() => ['Alle klanten', ...customerOnlyOptions.value])
 const kindOptions = ['Alles', 'Workspaces', 'Categorieën', 'Projecten', 'Artikelen']
+const customerRoleOptions = ['admin', 'customer']
 const articleStatusOptions = ['Draft', 'Published', 'Archived']
 
 const workspaceSelectOptions = computed(() =>
   workspaceData.value.map((workspace) => ({
     label: `${workspace.name} · ${workspace.customer}`,
     value: workspace.id,
-  }))
+  })),
 )
 
 const categorySelectOptions = computed(() =>
@@ -685,8 +1097,8 @@ const categorySelectOptions = computed(() =>
     workspace.categories.map((category) => ({
       label: `${category.name} · ${workspace.name}`,
       value: category.id,
-    }))
-  )
+    })),
+  ),
 )
 
 const projectSelectOptions = computed(() =>
@@ -695,12 +1107,44 @@ const projectSelectOptions = computed(() =>
       category.projects.map((project) => ({
         label: `${project.name} · ${category.name}`,
         value: project.id,
-      }))
-    )
-  )
+      })),
+    ),
+  ),
 )
 
 const normalizedSearch = computed(() => search.value.trim().toLowerCase())
+const normalizedCustomerSearch = computed(() => customerSearch.value.trim().toLowerCase())
+
+const filteredCustomers = computed(() => {
+  if (!normalizedCustomerSearch.value) return customersData.value
+
+  return customersData.value.filter((customer) => {
+    const q = normalizedCustomerSearch.value
+    return (
+      customer.companyName.toLowerCase().includes(q) ||
+      customer.name.toLowerCase().includes(q) ||
+      customer.email.toLowerCase().includes(q) ||
+      customer.tel.toLowerCase().includes(q) ||
+      customer.address.toLowerCase().includes(q) ||
+      customer.role.toLowerCase().includes(q)
+    )
+  })
+})
+
+const selectedCustomerRecord = computed(() => {
+  return customersData.value.find((customer) => customer.id === selectedCustomerCrudId.value) ?? null
+})
+
+const customerDeleteTarget = computed(() => {
+  return customersData.value.find((customer) => customer.id === customerDeleteId.value) ?? null
+})
+
+const customerWorkspaces = computed(() => {
+  if (!selectedCustomerRecord.value) return []
+  return workspaceData.value.filter(
+    (workspace) => workspace.customer === selectedCustomerRecord.value.companyName,
+  )
+})
 
 const filteredWorkspaces = computed(() => {
   return workspaceData.value
@@ -940,6 +1384,10 @@ function matchesEntity(...values) {
 
 function countArticlesInCategory(category) {
   return category.projects.reduce((sum, project) => sum + project.articles.length, 0)
+}
+
+function customerWorkspaceCount(companyName) {
+  return workspaceData.value.filter((workspace) => workspace.customer === companyName).length
 }
 
 function isExpanded(list, id) {
@@ -1377,6 +1825,109 @@ function confirmDelete() {
   deleteOpen.value = false
 }
 
+function resetCustomerDraft() {
+  customerDraft.id = null
+  customerDraft.companyName = ''
+  customerDraft.name = ''
+  customerDraft.email = ''
+  customerDraft.tel = ''
+  customerDraft.address = ''
+  customerDraft.role = 'customer'
+  customerDraft.password = ''
+}
+
+function selectCustomer(id) {
+  selectedCustomerCrudId.value = id
+}
+
+function openCustomerCreateDialog() {
+  customerDialogMode.value = 'create'
+  resetCustomerDraft()
+  customerEditorOpen.value = true
+}
+
+function openCustomerEditDialog(id) {
+  const customer = customersData.value.find((item) => item.id === id)
+  if (!customer) return
+
+  customerDialogMode.value = 'edit'
+  resetCustomerDraft()
+
+  customerDraft.id = customer.id
+  customerDraft.companyName = customer.companyName
+  customerDraft.name = customer.name
+  customerDraft.email = customer.email
+  customerDraft.tel = customer.tel
+  customerDraft.address = customer.address
+  customerDraft.role = customer.role
+  customerEditorOpen.value = true
+}
+
+function saveCustomerDraft() {
+  if (customerDialogMode.value === 'create') {
+    const newCustomer = {
+      id: customerId.value++,
+      companyName: customerDraft.companyName,
+      name: customerDraft.name,
+      email: customerDraft.email,
+      tel: customerDraft.tel,
+      address: customerDraft.address,
+      role: customerDraft.role,
+    }
+
+    customersData.value.unshift(newCustomer)
+    selectedCustomerCrudId.value = newCustomer.id
+  } else {
+    const customer = customersData.value.find((item) => item.id === customerDraft.id)
+    if (!customer) return
+
+    const previousCompanyName = customer.companyName
+
+    customer.companyName = customerDraft.companyName
+    customer.name = customerDraft.name
+    customer.email = customerDraft.email
+    customer.tel = customerDraft.tel
+    customer.address = customerDraft.address
+    customer.role = customerDraft.role
+
+    workspaceData.value.forEach((workspace) => {
+      if (workspace.customer === previousCompanyName) {
+        workspace.customer = customer.companyName
+      }
+    })
+
+    if (selectedCustomer.value === previousCompanyName) {
+      selectedCustomer.value = customer.companyName
+    }
+
+    selectedCustomerCrudId.value = customer.id
+  }
+
+  customerEditorOpen.value = false
+}
+
+function openCustomerDeleteDialog(id) {
+  customerDeleteId.value = id
+  customerDeleteOpen.value = true
+}
+
+function confirmCustomerDelete() {
+  const target = customerDeleteTarget.value
+  if (!target) return
+
+  customersData.value = customersData.value.filter((customer) => customer.id !== target.id)
+
+  if (selectedCustomerCrudId.value === target.id) {
+    selectedCustomerCrudId.value = customersData.value[0]?.id ?? null
+  }
+
+  if (selectedCustomer.value === target.companyName) {
+    selectedCustomer.value = 'Alle klanten'
+  }
+
+  customerDeleteOpen.value = false
+}
+
 function slugify(value) {
   return String(value)
     .toLowerCase()
@@ -1387,5 +1938,5 @@ function slugify(value) {
 }
 
 selectEntity('workspace', 1)
+selectCustomer(1)
 </script>
-
