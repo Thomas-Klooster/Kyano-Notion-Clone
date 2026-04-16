@@ -18,14 +18,13 @@ class WorkspaceController extends Controller
 {
     use AuthorizesRequests;
 
-
     public function index() {
-    $this->authorize('viewAny', Workspace::class);
-    $workspaces = Workspace::visibleTo(auth()->user())->with('projects')
-    ->latest()->get();
-    return response()->json($workspaces);
-
+        $this->authorize('viewAny', Workspace::class);
+        $workspaces = Workspace::visibleTo(auth()->user())
+        ->with('categories.projects.articles')->latest()->get();
+        return response()->json($workspaces);
     }
+    
     public function store(WorkspaceRequest $request) {
         $this->authorize('create', Workspace::class);
         $request->validated();

@@ -8,9 +8,9 @@ import '@/assets/fonts/fonts.css'
 
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://localhost:8000'
 axios.defaults.withCredentials = true
 axios.defaults.withXSRFToken = true
+axios.defaults.baseURL = 'http://localhost:8000'
 axios.defaults.headers.common['Accept'] = 'application/json'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 window.axios = axios
@@ -38,8 +38,10 @@ import '@fontsource/roboto/900.css'
 const app = createApp(App)
 app.component('QuillEditor', QuillEditor)
 
-app.use(createPinia())
+const pinia = createPinia()
+app.use(pinia)
 app.use(router)
+
 const vuetify = createVuetify({
   components,
   directives,
@@ -52,5 +54,9 @@ const vuetify = createVuetify({
   },
 })
 app.use(vuetify)
+import { useAuthStore } from '@/stores/auth'
 
-app.mount('#app')
+const auth = useAuthStore()
+auth.fetchUser().finally(() => {
+app.mount('#app')  
+})

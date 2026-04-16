@@ -39,7 +39,7 @@
                 </div>
 
                 <div v-else-if="error" class="empty-state">
-                    <v-icon size="24">mdi-alert-circle-outline</v-icon>
+                    <v-icon size="30">mdi-alert-circle-outline</v-icon>
                     <p>{{ error }}</p>
                 </div>
 
@@ -167,8 +167,11 @@
 </template>
 
 <script setup>
+import axios from 'axios'
 import { computed, onMounted, ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
+const auth = useAuthStore()
 const search = ref('')
 const workspaces = ref([])
 const loading = ref(false)
@@ -179,8 +182,10 @@ const expandedCategories = ref([11])
 const expandedProjects = ref([111])
 
 onMounted(async () => {
+    if (!auth.initialized) return 
     loading.value = true
     try {
+        await axios.get('/sanctum/csrf-cookie');
         const response = await axios.get('/api/workspaces')
         workspaces.value = response.data
     } catch (err) {
@@ -189,9 +194,6 @@ onMounted(async () => {
         loading.value = false
     }
 })
-
-
-
 
 const filteredWorkspaces = computed(() => {
     const query = search.value.trim().toLowerCase()
