@@ -27,6 +27,8 @@ class RegisterRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:8',
+            'company' => 'nullable|max:255',
+            'phone_number' => 'nullable|string|max:10'
         ];
 }
         public function messages(): array

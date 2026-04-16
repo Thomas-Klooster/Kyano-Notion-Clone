@@ -29,6 +29,16 @@
                             :rules="emailRules" hide-details="auto" class="mb-3"
                             @keydown.enter.prevent="focusPassword" />
 
+                            <v-text-field ref="companyField" v-model="company" label="Company name" placeholder="optioneel"
+                            autocomplete="company" variant="outlined" density="comfortable" 
+                            prepend-inner-icon="mdi-briefcase-outline" hide-details="auto" class="mb-3"
+                            @keydown.enter.prevent="focusCompany" />
+
+                            <v-text-field ref="phoneNumberField" v-model="phone_number" label="Phone number" placeholder="optioneel"
+                            autocomplete="phonenumber" variant="outlined" density="comfortable"
+                            prepend-inner-icon="mdi-phone-outline" :rules="phoneRules" hide-details="auto" class="mb-3"
+                            @keydown.enter.prevent="focusPhoneNumber" />
+
                         <v-text-field ref="passwordField" v-model="password" label="Password" placeholder="••••••••"
                             autocomplete="new-password" :type="showPassword ? 'text' : 'password'" variant="outlined"
                             density="comfortable" prepend-inner-icon="mdi-lock-outline"
@@ -42,6 +52,7 @@
                             :append-inner-icon="showConfirm ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
                             :rules="confirmRules" hide-details="auto" @click:append-inner="showConfirm = !showConfirm"
                             @keydown.enter.prevent="onSubmit" />
+
 
                         <div class="mt-3">
                             <v-checkbox v-model="acceptTerms" density="compact" hide-details="auto" :rules="termsRules">
@@ -98,7 +109,6 @@
     </v-row>
 </template>
 
-<!-- API CONNECTION -->
 <script setup>
 import axios from 'axios'
 import { computed, ref } from 'vue'
@@ -106,6 +116,8 @@ import { useRouter } from 'vue-router'
 const formRef = ref(null)
 const emailField = ref(null)
 const passwordField = ref(null)
+const companyField = ref(null)
+const phoneNumberField = ref(null)
 const confirmField = ref(null)
 const formValid = ref(false)
 const loading = ref(false)
@@ -113,6 +125,8 @@ const errorMessage = ref('')
 const errors = ref({})
 const fullName = ref('')
 const email = ref('')
+const company = ref('')
+const phone_number = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const acceptTerms = ref(false)
@@ -128,6 +142,11 @@ const nameRules = [
 const emailRules = [
   (v) => !!v || 'Het invullen van een email is verplicht.',
   (v) => /.+@.+\..+/.test(v) || 'Voer een geldig emailadres in',
+]
+
+const phoneRules = [
+  (v) => (v?.trim()?.length ?? 0) >= 3 || 'Het telefoonnummer moet minimaal 3 cijfers lang zijn.',
+  (v) => /^\d+$/.test(v?.trim() ?? '') || 'Het telefoonnummer mag alleen uit cijfers bestaan.'
 ]
 
 const passwordRules = [
@@ -148,6 +167,14 @@ function focusEmail() {
   emailField.value?.focus?.()
 }
 
+function focusCompany() {
+  companyField.value?.focus?.()
+}
+
+function focusPhoneNumber() {
+  phoneNumberField.value?.focus?.()
+}
+
 function focusPassword() {
   passwordField.value?.focus?.()
 }
@@ -155,6 +182,8 @@ function focusPassword() {
 function focusConfirm() {
   confirmField.value?.focus?.()
 }
+
+
 
 async function onSubmit() {
   const { valid } = await formRef.value.validate()
@@ -173,6 +202,8 @@ async function onSubmit() {
       {
         name: fullName.value,
         email: email.value,
+        company: company.value,
+        phone_number: phone_number.value,
         password: password.value,
         password_confirmation: confirmPassword.value,
       },

@@ -29,6 +29,8 @@ class UserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', "unique:users,email,{$userId}",
+            'company' => ['nullable', 'string', 'max:255'],
+            'phone_number' => ['nullable', 'string', 'max:10'],
             ],
             'remember' => ['nullable', 'boolean'],
 
