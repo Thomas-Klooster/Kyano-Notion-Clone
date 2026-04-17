@@ -29,15 +29,22 @@
                             :rules="emailRules" hide-details="auto" class="mb-3"
                             @keydown.enter.prevent="focusPassword" />
 
-                            <v-text-field ref="companyField" v-model="company" label="Company name" placeholder="optioneel"
+                              <!-- <-- STAGE TWO CONTENT -->
+
+                              <!-- <v-text-field ref="companyField" v-model="company" label="Company name" placeholder="optioneel"
                             autocomplete="company" variant="outlined" density="comfortable" 
                             prepend-inner-icon="mdi-briefcase-outline" hide-details="auto" class="mb-3"
-                            @keydown.enter.prevent="focusCompany" />
+                            @keydown.enter.prevent="focusCompany" /> -->
 
-                            <v-text-field ref="phoneNumberField" v-model="phone_number" label="Phone number" placeholder="optioneel"
+                            <!-- <-- STAGE TWO CONTENT -->
+
+                            <!-- <-- STAGE TWO CONTENT -->
+                            <!-- <v-text-field ref="phoneNumberField" v-model="phone_number" label="Phone number" placeholder="optioneel"
                             autocomplete="phonenumber" variant="outlined" density="comfortable"
                             prepend-inner-icon="mdi-phone-outline" :rules="phoneRules" hide-details="auto" class="mb-3"
-                            @keydown.enter.prevent="focusPhoneNumber" />
+                            @keydown.enter.prevent="focusPhoneNumber" /> -->
+
+                            <!-- <-- STAGE TWO CONTENT -->
 
                         <v-text-field ref="passwordField" v-model="password" label="Password" placeholder="••••••••"
                             autocomplete="new-password" :type="showPassword ? 'text' : 'password'" variant="outlined"
@@ -106,6 +113,7 @@
                 </v-card-text>
             </v-card>
         </v-col>
+
     </v-row>
 </template>
 
@@ -116,8 +124,12 @@ import { useRouter } from 'vue-router'
 const formRef = ref(null)
 const emailField = ref(null)
 const passwordField = ref(null)
-const companyField = ref(null)
-const phoneNumberField = ref(null)
+
+    // <-- STAGE TWO CONTENT -->
+// const companyField = ref(null)
+// const phoneNumberField = ref(null)
+    // <-- STAGE TWO CONTENT -->
+
 const confirmField = ref(null)
 const formValid = ref(false)
 const loading = ref(false)
@@ -127,6 +139,7 @@ const fullName = ref('')
 const email = ref('')
 const company = ref('')
 const phone_number = ref('')
+const address = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const acceptTerms = ref(false)
@@ -144,10 +157,12 @@ const emailRules = [
   (v) => /.+@.+\..+/.test(v) || 'Voer een geldig emailadres in',
 ]
 
-const phoneRules = [
-  (v) => (v?.trim()?.length ?? 0) >= 3 || 'Het telefoonnummer moet minimaal 3 cijfers lang zijn.',
-  (v) => /^\d+$/.test(v?.trim() ?? '') || 'Het telefoonnummer mag alleen uit cijfers bestaan.'
-]
+    // <-- STAGE TWO CONTENT -->
+// const phoneRules = [
+//   (v) => (v?.trim()?.length ?? 0) >= 3 || 'Het telefoonnummer moet minimaal 3 cijfers lang zijn.',
+//   (v) => /^\d+$/.test(v?.trim() ?? '') || 'Het telefoonnummer mag alleen uit cijfers bestaan.'
+// ]
+    // <-- STAGE TWO CONTENT -->
 
 const passwordRules = [
   (v) => !!v || 'Het invullen van een wachtwoord is verplicht.',
@@ -167,13 +182,17 @@ function focusEmail() {
   emailField.value?.focus?.()
 }
 
-function focusCompany() {
-  companyField.value?.focus?.()
-}
+    // <-- STAGE TWO CONTENT -->
+// function focusCompany() {
+//   companyField.value?.focus?.()
+// }
 
-function focusPhoneNumber() {
-  phoneNumberField.value?.focus?.()
-}
+// function focusPhoneNumber() {
+//   phoneNumberField.value?.focus?.()
+// }
+    // <-- STAGE TWO CONTENT -->
+
+
 
 function focusPassword() {
   passwordField.value?.focus?.()
@@ -204,6 +223,7 @@ async function onSubmit() {
         email: email.value,
         company: company.value,
         phone_number: phone_number.value,
+        address: address.value,
         password: password.value,
         password_confirmation: confirmPassword.value,
       },
