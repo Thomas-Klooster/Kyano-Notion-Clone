@@ -12,9 +12,9 @@ class CategoryController extends Controller
   
 use AuthorizesRequests;
   public function index() {
-    $categories = Category::visibleTo(auth()->user())->with(['projects'])
-    ->latest()->get();
-    return response()->json($categories);
+  $categories = Category::visibleTo(auth()->user())->with(['projects.articles'])
+  ->latest()->get();
+        return response()->json($categories);
   }
   public function store(CategoryRequest $request)
   {

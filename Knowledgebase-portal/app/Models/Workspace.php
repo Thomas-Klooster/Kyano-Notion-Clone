@@ -19,9 +19,6 @@ class Workspace extends Model
         return $this->belongsToMany(User::class, 'user_workspace')
         ->withPivot('role')->withTimestamps(); 
     }
-    public function WorkspaceInvite() {
-        return $this->hasMany(WorkspaceInvite::class);
-    }
     public function categories() {
         return $this->hasMany(Category::class);
     }

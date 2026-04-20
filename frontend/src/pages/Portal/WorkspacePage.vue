@@ -13,7 +13,7 @@
                         <span>{{ totalArticles }} artikelen</span>
                     </div>
 
-                    <h1 class="hero-title">Workspace: {{ workspace.name }}</h1>
+                    <h1 class="hero-title">{{ workspace.name }}</h1>
 
                     <p class="hero-subtitle">
                         Bekijk alle categorieën, projecten en artikelen binnen deze workspace.
@@ -192,14 +192,20 @@ onMounted(async () => {
     loading.value = true
     try {
         await axios.get('/sanctum/csrf-cookie');
-        const response = await axios.get('/api/categories')
-        categories.value = response.data
+        const [categoriesRes, workspaceRes, articlesRes] = await Promise.all([
+            axios.get('/api/categories'),
+            axios.get('/api/workspaces'),
+            // axios.get('/api/articles')
+        ])
+        categories.value = categoriesRes.data
+        workspace.value = workspaceRes.data[0]
+        // article.value = articlesRes.data
     } catch (err) {
         error.value = 'Geen categorieen gevonden'
     } finally {
         loading.value = false
     }
-});
+})
 
 
 /* 
@@ -227,19 +233,32 @@ const filteredCategories = computed(() => {
 
             const projects = category.projects
                 .map(project => {
-                    const projectMatches =
-                        project.name.toLowerCase().includes(query) ||
-                        String(project.updatedAt).toLowerCase().includes(query)
+                   const projectName = (project.name ?? '').toLowerCase()
+                   const updatedAt = String(
+                    project.updatedAt ?? project.updated_at ?? ''
+                   ).toLowerCase()
 
-                    const articles = project.articles.filter(article =>
-                        article.title.toLowerCase().includes(query) ||
-                        article.tags.some(tag => tag.toLowerCase().includes(query))
-                    )
+                   const projectMatches = 
+                   projectName.includes(query) ||
+                   updatedAt.includes(query)
+
+
+                    const articles = (project.articles ?? []).filter(article =>{
+                        const title = (article.title ?? '').toLowerCase()
+                        const tags = Array.isArray(article.tags) ? article.tags : []
+
+                        return (
+                            title.includes(query) ||
+                            tags.some(tag =>
+                                String(tag).toLowerCase().includes(query)
+                            )
+                        )
+                    })
 
                     if (projectMatches || articles.length) {
                         return {
                             ...project,
-                            articles: projectMatches ? project.articles : articles,
+                            articles: projectMatches ? (project.articles ?? []) : articles,
                         }
                     }
 
@@ -250,7 +269,7 @@ const filteredCategories = computed(() => {
             if (categoryMatches || projects.length) {
                 return {
                     ...category,
-                    projects: categoryMatches ? category.projects : projects,
+                    projects: categoryMatches ? (category.projects ?? []) : projects,
                 }
             }
 
