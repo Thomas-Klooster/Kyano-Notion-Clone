@@ -41,6 +41,14 @@ public function manage(User $user, Workspace $workspace): bool {
     public function invite(User $user, Workspace $workspace): bool {
     return $this->manage($user, $workspace);
 }
+
+public function addMember(User $authUser, Workspace $workspace): bool
+{
+    return $workspace->members()
+        ->where('user_id', $authUser->id)
+        ->whereIn('workspace_role', ['owner', 'admin'])
+        ->exists();
+}
     private function hasWorkspaceRole(User $user, Workspace $workspace, array $roles): bool {
     return $workspace->members()
         ->where('user_id', $user->id)

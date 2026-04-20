@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class WorkspaceInviteRequest extends FormRequest
+class addMemberRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,13 +22,9 @@ class WorkspaceInviteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email',
-            'role' => 'sometimes|in:member,admin',
-        ];
-    }
-    public function messages() {
-        return [
-            'email.required' => 'Vul jouw lids email in.'
+        'user_id' => ['required', 'integer', 'exists:user,id'],
+        'role' => ['nullable', 'string', 'in:owner,admin,member'],
+
         ];
     }
 }

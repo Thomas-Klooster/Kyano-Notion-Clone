@@ -28,7 +28,7 @@ class ForgotMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Wachtwoord vergeten',
+            subject: 'Wachtwoord wijziging plaatsgevonden',
         );
     }
 

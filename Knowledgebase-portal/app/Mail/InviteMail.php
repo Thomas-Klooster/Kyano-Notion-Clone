@@ -29,7 +29,7 @@ class InviteMail extends Mailable
     {
         $appName = config('app.name');
         $workspaceName = e($this->workspace->name);
-        $acceptUrl = e($this->acceptUrl);
+        // $acceptUrl = e($this->acceptUrl);
         $year = date('Y');
 
         $html = <<<HTML
@@ -38,7 +38,7 @@ class InviteMail extends Mailable
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Uitnodiging</title>
+            <title>Toegevoegd bij een workspace</title>
             <style>
                 body {
                     margin: 0;
@@ -83,16 +83,14 @@ class InviteMail extends Mailable
                         <span>{$appName}</span>
                     </div>
                     <div class="body">
-                        <h1>Je bent uitgenodigd</h1>
+                        <h1>U bent uitgenodigd bij <strong>{$workspaceName}</strong>!</h1>
                         <p>
-                            Je bent uitgenodigd om lid te worden van <strong>{$workspaceName}</strong>.<br>
-                            Klik op de knop hieronder om de uitnodiging te accepteren. De link is 7 dagen geldig.
+                            U bent uitgenodigd om lid te worden van <strong>{$workspaceName}</strong>.
                         </p>
-                        <a href="{$acceptUrl}" class="btn">Uitnodiging accepteren</a>
                         <hr class="divider">
                         <p style="margin:0;font-size:13px;color:#a1a1aa;">
-                            Als je deze uitnodiging niet verwacht, kun je deze e-mail negeren.
-                        </p>
+                        U krijgt deze mail omdat u bent toegevoegd aan een workspace bij een beheerder.
+                    </p>
                     </div>
                     <div class="footer">
                         &copy; {$year} {$appName}

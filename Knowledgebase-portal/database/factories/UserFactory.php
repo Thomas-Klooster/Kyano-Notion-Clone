@@ -28,9 +28,9 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'company' => $this->faker->company(),
-            'phone_number' => $this->faker->phoneNumber(),
-            'address' => $this->faker->address(),
+            // 'company' => $this->faker->company(),
+            // 'phone_number' => $this->faker->phoneNumber(),
+            // 'address' => $this->faker->address(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),

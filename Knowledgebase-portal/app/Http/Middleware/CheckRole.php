@@ -13,16 +13,17 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $role): Response
-    {   
-        /*
-        1. If user request doesnt match required parameter role return
-        2. Role isn't admin? response forbidden (403)
-        */
+      public function handle(Request $request, Closure $next, $role) {
+        $user = $request->user();
 
-        if ($request->user()->role !== $role)
-             return response()->json(['message' => 'Forbidden', 403]);
-
-        return $next($request);
-    }
+        if (!$user) {
+            return response()->json(['message' => 'Niet ingelogd.'], 401);
+        }
+    
+        if ($user->role !== $role) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+    
+    return $next($request);
+}
 }

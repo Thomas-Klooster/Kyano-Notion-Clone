@@ -7,7 +7,6 @@ use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
-use App\Models\User;
 use App\Http\Controllers\UserController;
 
 Route::post('/register', [AuthController::class, 'register'])->name('register');
@@ -21,7 +20,7 @@ Route::get('/workspace/invite/accept', [WorkspaceController::class, 'acceptInvit
 ->name('workspace.invite.accept');    
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/me', fn(Request $request) => $request->user());
+    Route::get('/me', fn(Request $request) => $request->user()); 
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/change-password', [AuthController::class, 'resetPassword']);
 
@@ -50,13 +49,12 @@ Route::middleware(['auth:sanctum', 'checkrole:owner'])->group(function () {
     Route::middleware(['auth:sanctum', 'checkrole:admin'])->prefix('admin')->group(function () {        
         
         /* --------------------------Admin CRUD-------------------------- */
-        
-        
         Route::apiResource('projects', ProjectsController::class)->except(['AdminIndex']);
         Route::apiResource('categories', CategoryController::class)->except(['AdminIndex']);
         Route::apiResource('articles', ArticleController::class)->except(['AdminIndex']);
         Route::apiResource('workspaces', WorkspaceController::class);
-        Route::post('/workspaces/{workspace}/invite', [WorkspaceController::class, 'invite']);
+        Route::post('/workspaces/{workspace}/members', [WorkspaceController::class, 'addMember']);
+        Route::get('/workspaces/{workspace}/available-users', [WorkspaceController::class, 'availableUsers']);
         Route::delete('/workspaces/{workspace}/members/{user}', [WorkspaceController::class, 'removeMember']);
         Route::apiResource('users', UserController::class);
         // Route::post('/articles/attachment', [ArticleController::class, 'store']);
