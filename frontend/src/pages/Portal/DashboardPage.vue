@@ -9,7 +9,7 @@
                         <span>{{ filteredWorkspaces.length }} workspaces</span>
                     </div>
                     
-                    <h1 class="hero-title">Jouw workspaces</h1>
+                    <h1 class="hero-title">Dashboard</h1>
 
                     <p class="hero-subtitle">
                         Bekijk alle workspaces waar je toegang toe hebt en navigeer direct door categorieën,
@@ -301,7 +301,7 @@ function countArticlesInCategory(category) {
 
 function workspaceRoute(workspace) {
     return {
-        name: '',
+        name: 'workspace',
         params: {
             id: workspace.id,
         },

@@ -52,21 +52,19 @@
             <v-select
               v-model="selectedCustomer"
               :items="customerOptions"
-              variant="plain"
+              variant="solo-filled"
               density="comfortable"
-              hide-details
               flat
-              class="studio-select"
+              hide-details
             />
 
             <v-select
               v-model="selectedKind"
-              :items="kindOptions"
-              variant="plain"
+              :items="kindOptions"  
+              variant="solo-filled"
               density="comfortable"
-              hide-details
               flat
-              class="studio-select"
+              hide-details
             />
 
             <div class="search-field studio-search-field">
@@ -136,7 +134,7 @@
                           {{ workspace.name }}
                         </div>
                         <div class="tree-row-meta">
-                          <span>{{ workspace.customer }}</span>
+                          <span>{{ formatWorkspaceCustomers(workspace) }}</span>
                           <span class="dot">•</span>
                           <span>{{ workspace.categories.length }} categorieën</span>
                         </div>
@@ -320,7 +318,27 @@
                   </div>
 
                   <div class="detail-meta-grid">
-                    <div class="meta-item">
+                    <div v-if="selectedEntityType === 'workspace'" class="meta-item meta-item-full">
+                      <span class="meta-label">Toegang klanten</span>
+
+                      <div class="workspace-access-menu">
+                        <v-select
+                          :model-value="selectedEntity.customerAccess || []"
+                          :items="customerOnlyOptions"
+                          label="Selecteer klanten met toegang"
+                          multiple
+                          chips
+                          closable-chips
+                          variant="solo-filled"
+                          flat
+                          hide-details
+                          class="notion-soft-input"
+                          @update:model-value="updateWorkspaceCustomerAccess(selectedEntity.id, $event)"
+                        />
+                      </div>
+                    </div>
+
+                    <div v-else class="meta-item">
                       <span class="meta-label">Klant</span>
                       <span class="meta-value">{{ selectedEntityCustomer }}</span>
                     </div>
@@ -664,9 +682,12 @@
 
           <v-select
             v-if="dialogType === 'workspace'"
-            v-model="draft.customer"
+            v-model="draft.customerAccess"
             :items="customerOnlyOptions"
-            label="Klant"
+            label="Klanten met toegang"
+            multiple
+            chips
+            closable-chips
             variant="solo-filled"
             flat
             hide-details
@@ -1305,6 +1326,19 @@ const deleteTarget = computed(() => {
   if (!deleteType.value || deleteId.value == null) return null
   return getEntity(deleteType.value, deleteId.value)
 })
+
+function updateWorkspaceCustomerAccess(workspaceId, customers) {
+  const workspace = workspaces.value.find((item) => item.id === workspaceId)
+  if (!workspace) return
+
+  workspace.customerAccess = customers || []
+}
+
+function formatWorkspaceCustomers(workspace) {
+  if (!workspace?.customerAccess?.length) return 'Geen klanten'
+  if (workspace.customerAccess.length === 1) return workspace.customerAccess[0]
+  return `${workspace.customerAccess.length} klanten`
+}
 
 function workspaceMatchesSearch(workspace) {
   const q = normalizedSearch.value

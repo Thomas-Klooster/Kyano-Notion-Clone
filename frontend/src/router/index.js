@@ -43,6 +43,12 @@ const router = createRouter({
       meta: { requiresAuth: true, breadcrumb: 'Category' },
     },
     {
+      path: '/workspace/:id',
+      name: 'workspace',
+      component: () => import('@/pages/Portal/WorkspacePage.vue'),
+      meta: { requiresAuth: true, breadcrumb: 'Workspace' },
+    },
+    {
       path: '/project/:id',
       name: 'project',
       component: () => import('@/pages/Portal/ProjectPage.vue'),
