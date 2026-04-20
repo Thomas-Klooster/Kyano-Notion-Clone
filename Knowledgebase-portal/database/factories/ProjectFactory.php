@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use App\Models\Category;
 use App\Models\Workspace;
-// use App\Models\Article;
+use App\Models\Article;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Project>
  */
@@ -31,8 +31,9 @@ public function definition(): array
         'projectname' => $projectname,
         'description' => $this->faker->paragraph(4, true),
         'slug' => Str::slug($projectname),
+        'article_id' => Article::inRandomOrder()->first()->id ?? Article::factory(),
         'workspace_id' => Workspace::inRandomOrder()->first()->id ?? Workspace::factory(),
-        'category_id' => Category::inRandomOrder()->first()?->id ?? Category::factory(),
+        'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory(),
         'user_id' => User::factory(),
     ];
 }

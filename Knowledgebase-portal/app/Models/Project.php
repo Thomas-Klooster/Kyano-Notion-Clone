@@ -17,6 +17,7 @@ class Project extends Model
         'description',
         'slug',
         'user_id',
+        'article_id',
         'category_id',
         'workspace_id',
     ];

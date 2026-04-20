@@ -36,7 +36,17 @@
                     </div>
                 </div>
 
-                <div v-if="filteredCategories.length" class="project-table">
+                <div v-if="loading" class="empty-state">
+                <v-icon size="24">mdi-loading mdi-spin</v-icon>
+                <p>Categorieën zijn aan het laden...</p>    
+                </div>
+
+                <div v-else-if="error" class="empty-state">
+                    <v-icon size="30">mdi-alert-circle-outline</v-icon>
+                    <p>{{ error }}</p>
+                </div>
+
+                <div v-else-if="filteredCategories.length" class="project-table">
                     <div
                         v-for="category in filteredCategories"
                         :key="category.id"
@@ -161,67 +171,57 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
-
+const auth = useAuthStore()
 const search = ref('')
+const workspace = ref({ name: '' })
+const loading = ref(false)
+const error = ref(false)
 const expandedCategories = ref([11])
 const expandedProjects = ref([111])
 
-const workspace = ref({
-    id: 1,
-    name: 'Kyano',
-    categories: [
-        {
-            id: 11,
-            name: 'Development',
-            projects: [
-                {
-                    id: 111,
-                    name: 'Frontend',
-                    updatedAt: 'Vandaag bijgewerkt',
-                    articles: [
-                        { id: 1111, title: 'Design system richtlijnen', tags: ['Design', 'UI'] },
-                        { id: 1112, title: 'Component structuur', tags: ['Vue', 'Frontend'] },
-                    ],
-                },
-                {
-                    id: 112,
-                    name: 'Backend',
-                    updatedAt: 'Gisteren bijgewerkt',
-                    articles: [
-                        { id: 1121, title: 'API authenticatie', tags: ['Laravel', 'Auth'] },
-                        { id: 1122, title: 'Database structuur', tags: ['Database', 'Backend'] },
-                    ],
-                },
-            ],
-        },
-        {
-            id: 12,
-            name: 'Marketing',
-            projects: [
-                {
-                    id: 121,
-                    name: 'Campagnes',
-                    updatedAt: '2 dagen geleden',
-                    articles: [
-                        { id: 1211, title: 'Q2 campagneplan', tags: ['Marketing', 'Planning'] },
-                        { id: 1212, title: 'Social media richtlijnen', tags: ['Social', 'Branding'] },
-                    ],
-                },
-            ],
-        },
-    ],
-})
+const categories = ref([])
+
+
+onMounted(async () => {
+    if (!auth.initialized) return
+    loading.value = true
+    try {
+        await axios.get('/sanctum/csrf-cookie');
+        const response = await axios.get('/api/categories')
+        categories.value = response.data
+    } catch (err) {
+        error.value = 'Geen categorieen gevonden'
+    } finally {
+        loading.value = false
+    }
+});
+
+
+/* 
+
+1. Onmounted async
+2. if auth not initialized return loading.value  tue
+3. attempt to try to axios get sanctum csrf cookie route
+4. call a repose to get the route of the api afterwards call the value and make it a data response
+5. catch any errors on the way and give it a value that nothing is found
+6. finally loading value = false
+
+*/
+
+
+
 
 const filteredCategories = computed(() => {
     const query = search.value.trim().toLowerCase()
 
-    if (!query) return workspace.value.categories
+    if (!query) return categories.value
 
-    return workspace.value.categories
+    return categories.value
         .map(category => {
             const categoryMatches = category.name.toLowerCase().includes(query)
 

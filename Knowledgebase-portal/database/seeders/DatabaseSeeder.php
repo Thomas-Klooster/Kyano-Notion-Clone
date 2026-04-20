@@ -56,16 +56,23 @@ class DatabaseSeeder extends Seeder
         }}}
                 
         Category::factory()
-        ->count(7)
+        ->count(8)
+        ->create();
+
+        Article::factory()
+        ->count(15)
         ->create();
 
         Project::factory()
-        ->count(6)
+        ->count(15)
         ->create();
+
+        Article::all()->each(function ($article) {
+            $article->update([
+                'project_id' => Project::inRandomOrder()->first()->id
+            ]);
+        });
         
-        Article::factory()
-        ->count(9)
-        ->create();
         
          DB::table('tags')->insert([
             [
