@@ -49,31 +49,16 @@
           </div>
 
           <div class="entity-controls u-flex u-items-center u-wrap u-gap-14 studio-controls">
-            <v-select
-              v-model="selectedCustomer"
-              :items="customerOptions"
-              variant="solo-filled"
-              density="comfortable"
-              flat
-              hide-details
-            />
+            <v-select v-model="selectedCustomer" :items="customerOptions" variant="solo-filled" density="comfortable"
+              flat hide-details />
 
-            <v-select
-              v-model="selectedKind"
-              :items="kindOptions"  
-              variant="solo-filled"
-              density="comfortable"
-              flat
-              hide-details
-            />
+            <v-select v-model="selectedKind" :items="kindOptions" variant="solo-filled" density="comfortable" flat
+              hide-details />
 
             <div class="search-field studio-search-field">
               <v-icon size="18">mdi-magnify</v-icon>
-              <input
-                v-model="search"
-                type="text"
-                placeholder="Zoek in workspaces, categorieën, projecten of artikelen..."
-              />
+              <input v-model="search" type="text"
+                placeholder="Zoek in workspaces, categorieën, projecten of artikelen..." />
             </div>
 
             <v-menu location="bottom end">
@@ -88,18 +73,15 @@
                   <v-list-item-title>Nieuwe workspace</v-list-item-title>
                 </v-list-item>
                 <v-list-item
-                  @click="openCreateDialog('category', selectedWorkspaceId ? { workspaceId: selectedWorkspaceId } : null)"
-                >
+                  @click="openCreateDialog('category', selectedWorkspaceId ? { workspaceId: selectedWorkspaceId } : null)">
                   <v-list-item-title>Nieuwe categorie</v-list-item-title>
                 </v-list-item>
                 <v-list-item
-                  @click="openCreateDialog('project', selectedCategoryId ? { categoryId: selectedCategoryId } : null)"
-                >
+                  @click="openCreateDialog('project', selectedCategoryId ? { categoryId: selectedCategoryId } : null)">
                   <v-list-item-title>Nieuw project</v-list-item-title>
                 </v-list-item>
                 <v-list-item
-                  @click="openCreateDialog('article', selectedProjectId ? { projectId: selectedProjectId } : null)"
-                >
+                  @click="openCreateDialog('article', selectedProjectId ? { projectId: selectedProjectId } : null)">
                   <v-list-item-title>Nieuw artikel</v-list-item-title>
                 </v-list-item>
               </v-list>
@@ -117,11 +99,8 @@
             </div>
 
             <div v-if="filteredWorkspaces.length" class="tree-list">
-              <article
-                v-for="workspace in filteredWorkspaces"
-                :key="workspace.id"
-                class="tree-card card card-elevated card-rounded-xl"
-              >
+              <article v-for="workspace in filteredWorkspaces" :key="workspace.id"
+                class="tree-card card card-elevated card-rounded-xl">
                 <div class="tree-row tree-row-root">
                   <button class="tree-row-trigger" @click="selectEntity('workspace', workspace.id)">
                     <div class="tree-row-main u-min-w-0">
@@ -144,13 +123,8 @@
 
                   <div class="tree-row-side">
                     <v-chip size="small" class="entity-chip">Workspace</v-chip>
-                    <v-btn
-                      icon
-                      size="small"
-                      variant="text"
-                      class="tree-toggle-btn"
-                      @click.stop="toggleWorkspace(workspace.id)"
-                    >
+                    <v-btn icon size="small" variant="text" class="tree-toggle-btn"
+                      @click.stop="toggleWorkspace(workspace.id)">
                       <v-icon size="18">
                         {{ isExpanded(expandedWorkspaces, workspace.id) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
                       </v-icon>
@@ -159,12 +133,8 @@
                 </div>
 
                 <div class="tree-children" v-show="isExpanded(expandedWorkspaces, workspace.id)">
-                  <article
-                    v-for="category in workspace.categories"
-                    :key="category.id"
-                    class="tree-branch"
-                    v-show="matchesEntity(category.name, workspace.name) && (selectedKind === 'Alles' || selectedKind === 'Categorieën') || selectedKind === 'Alles'"
-                  >
+                  <article v-for="category in workspace.categories" :key="category.id" class="tree-branch"
+                    v-show="matchesEntity(category.name, workspace.name) && (selectedKind === 'Alles' || selectedKind === 'Categorieën') || selectedKind === 'Alles'">
                     <div class="tree-row tree-row-child">
                       <button class="tree-row-trigger" @click="selectEntity('category', category.id)">
                         <div class="tree-row-main u-min-w-0">
@@ -183,13 +153,8 @@
                       </button>
 
                       <div class="tree-row-side">
-                        <v-btn
-                          icon
-                          size="small"
-                          variant="text"
-                          class="tree-toggle-btn"
-                          @click.stop="toggleCategory(category.id)"
-                        >
+                        <v-btn icon size="small" variant="text" class="tree-toggle-btn"
+                          @click.stop="toggleCategory(category.id)">
                           <v-icon size="18">
                             {{ isExpanded(expandedCategories, category.id) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
                           </v-icon>
@@ -198,12 +163,8 @@
                     </div>
 
                     <div class="tree-children nested-level" v-show="isExpanded(expandedCategories, category.id)">
-                      <article
-                        v-for="project in category.projects"
-                        :key="project.id"
-                        class="tree-branch"
-                        v-show="projectVisible(project, category, workspace)"
-                      >
+                      <article v-for="project in category.projects" :key="project.id" class="tree-branch"
+                        v-show="projectVisible(project, category, workspace)">
                         <div class="tree-row tree-row-child">
                           <button class="tree-row-trigger" @click="selectEntity('project', project.id)">
                             <div class="tree-row-main u-min-w-0">
@@ -222,13 +183,8 @@
                           </button>
 
                           <div class="tree-row-side">
-                            <v-btn
-                              icon
-                              size="small"
-                              variant="text"
-                              class="tree-toggle-btn"
-                              @click.stop="toggleProject(project.id)"
-                            >
+                            <v-btn icon size="small" variant="text" class="tree-toggle-btn"
+                              @click.stop="toggleProject(project.id)">
                               <v-icon size="18">
                                 {{ isExpanded(expandedProjects, project.id) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
                               </v-icon>
@@ -236,14 +192,11 @@
                           </div>
                         </div>
 
-                        <div class="tree-children nested-level articles-level" v-show="isExpanded(expandedProjects, project.id)">
-                          <button
-                            v-for="article in project.articles"
-                            :key="article.id"
+                        <div class="tree-children nested-level articles-level"
+                          v-show="isExpanded(expandedProjects, project.id)">
+                          <button v-for="article in project.articles" :key="article.id"
                             v-show="articleVisible(article, project, category, workspace)"
-                            class="tree-row tree-row-leaf"
-                            @click="selectEntity('article', article.id)"
-                          >
+                            class="tree-row tree-row-leaf" @click="selectEntity('article', article.id)">
                             <div class="tree-row-main u-min-w-0">
                               <div class="entity-icon icon-box entity-icon-soft article-icon">
                                 <v-icon size="18">mdi-file-document-outline</v-icon>
@@ -285,24 +238,15 @@
                 </div>
 
                 <div class="entity-actions u-flex u-items-center u-wrap u-gap-10 detail-actions">
-                  <v-btn
-                    v-if="selectedEntityType !== 'article'"
-                    size="small"
-                    variant="tonal"
-                    @click="openCreateChildDialog"
-                    class="entity-create-btn"
-                  >
+                  <v-btn v-if="selectedEntityType !== 'article'" size="small" variant="tonal"
+                    @click="openCreateChildDialog" class="entity-create-btn">
                     {{ createChildButtonLabel }}
                   </v-btn>
                   <v-btn size="small" variant="text" @click="openEditDialog(selectedEntityType, selectedEntity.id)">
                     Bewerken
                   </v-btn>
-                  <v-btn
-                    size="small"
-                    variant="text"
-                    class="delete-btn"
-                    @click="openDeleteDialog(selectedEntityType, selectedEntity.id)"
-                  >
+                  <v-btn size="small" variant="text" class="delete-btn"
+                    @click="openDeleteDialog(selectedEntityType, selectedEntity.id)">
                     Verwijderen
                   </v-btn>
                 </div>
@@ -322,19 +266,10 @@
                       <span class="meta-label">Toegang klanten</span>
 
                       <div class="workspace-access-menu">
-                        <v-select
-                          :model-value="selectedEntity.customerAccess || []"
-                          :items="customerOnlyOptions"
-                          label="Selecteer klanten met toegang"
-                          multiple
-                          chips
-                          closable-chips
-                          variant="solo-filled"
-                          flat
-                          hide-details
-                          class="notion-soft-input"
-                          @update:model-value="updateWorkspaceCustomerAccess(selectedEntity.id, $event)"
-                        />
+                        <v-select :model-value="selectedEntity.customerAccess || []" :items="customerOnlyOptions"
+                          label="Selecteer klanten met toegang" multiple chips closable-chips variant="solo-filled" flat
+                          hide-details class="notion-soft-input"
+                          @update:model-value="updateWorkspaceCustomerAccess(selectedEntity.id, $event)" />
                       </div>
                     </div>
 
@@ -450,11 +385,8 @@
           <div class="entity-controls u-flex u-items-center u-wrap u-gap-14 studio-controls">
             <div class="search-field studio-search-field">
               <v-icon size="18">mdi-magnify</v-icon>
-              <input
-                v-model="customerSearch"
-                type="text"
-                placeholder="Zoek op bedrijfsnaam, contactpersoon, e-mail of telefoon..."
-              />
+              <input v-model="customerSearch" type="text"
+                placeholder="Zoek op bedrijfsnaam, contactpersoon, e-mail of telefoon..." />
             </div>
 
             <v-btn rounded="xl" prepend-icon="mdi-plus" class="entity-create-btn" @click="openCustomerCreateDialog">
@@ -473,11 +405,8 @@
             </div>
 
             <div v-if="filteredCustomers.length" class="tree-list">
-              <article
-                v-for="customer in filteredCustomers"
-                :key="customer.id"
-                class="tree-card card card-elevated card-rounded-xl"
-              >
+              <article v-for="customer in filteredCustomers" :key="customer.id"
+                class="tree-card card card-elevated card-rounded-xl">
                 <div class="tree-row tree-row-root">
                   <button class="tree-row-trigger" @click="selectCustomer(customer.id)">
                     <div class="tree-row-main u-min-w-0">
@@ -527,12 +456,8 @@
                   <v-btn size="small" variant="text" @click="openCustomerEditDialog(selectedCustomerRecord.id)">
                     Bewerken
                   </v-btn>
-                  <v-btn
-                    size="small"
-                    variant="text"
-                    class="delete-btn"
-                    @click="openCustomerDeleteDialog(selectedCustomerRecord.id)"
-                  >
+                  <v-btn size="small" variant="text" class="delete-btn"
+                    @click="openCustomerDeleteDialog(selectedCustomerRecord.id)">
                     Verwijderen
                   </v-btn>
                 </div>
@@ -660,97 +585,34 @@
         </div>
 
         <div class="dialog-body">
-          <v-text-field
-            v-model="draft.name"
-            :label="dialogType === 'article' ? 'Titel' : 'Naam'"
-            variant="solo-filled"
-            flat
-            hide-details
-            class="notion-soft-input mb-4"
-          />
+          <v-text-field v-model="draft.name" :label="dialogType === 'article' ? 'Titel' : 'Naam'" variant="solo-filled"
+            flat hide-details class="notion-soft-input mb-4" />
 
-          <v-textarea
-            v-if="dialogType === 'project' || dialogType === 'article'"
-            v-model="draft.summary"
-            :label="dialogType === 'article' ? 'Samenvatting' : 'Beschrijving'"
-            variant="solo-filled"
-            flat
-            hide-details
-            rows="4"
-            class="notion-soft-input mb-4"
-          />
+          <v-textarea v-if="dialogType === 'project' || dialogType === 'article'" v-model="draft.summary"
+            :label="dialogType === 'article' ? 'Samenvatting' : 'Beschrijving'" variant="solo-filled" flat hide-details
+            rows="4" class="notion-soft-input mb-4" />
 
-          <v-select
-            v-if="dialogType === 'workspace'"
-            v-model="draft.customerAccess"
-            :items="customerOnlyOptions"
-            label="Klanten met toegang"
-            multiple
-            chips
-            closable-chips
-            variant="solo-filled"
-            flat
-            hide-details
-            class="notion-soft-input mb-4"
-          />
+          <v-select v-if="dialogType === 'workspace'" v-model="draft.customerAccess" :items="customerOnlyOptions"
+            label="Klanten met toegang" multiple chips closable-chips variant="solo-filled" flat hide-details
+            class="notion-soft-input mb-4" />
 
-          <v-select
-            v-if="dialogType === 'category'"
-            v-model="draft.workspaceId"
-            :items="workspaceSelectOptions"
-            item-title="label"
-            item-value="value"
-            label="Workspace"
-            variant="solo-filled"
-            flat
-            hide-details
-            class="notion-soft-input mb-4"
-          />
+          <v-select v-if="dialogType === 'category'" v-model="draft.workspaceId" :items="workspaceSelectOptions"
+            item-title="label" item-value="value" label="Workspace" variant="solo-filled" flat hide-details
+            class="notion-soft-input mb-4" />
 
-          <v-select
-            v-if="dialogType === 'project'"
-            v-model="draft.categoryId"
-            :items="categorySelectOptions"
-            item-title="label"
-            item-value="value"
-            label="Categorie"
-            variant="solo-filled"
-            flat
-            hide-details
-            class="notion-soft-input mb-4"
-          />
+          <v-select v-if="dialogType === 'project'" v-model="draft.categoryId" :items="categorySelectOptions"
+            item-title="label" item-value="value" label="Categorie" variant="solo-filled" flat hide-details
+            class="notion-soft-input mb-4" />
 
           <template v-if="dialogType === 'article'">
-            <v-select
-              v-model="draft.projectId"
-              :items="projectSelectOptions"
-              item-title="label"
-              item-value="value"
-              label="Project"
-              variant="solo-filled"
-              flat
-              hide-details
-              class="notion-soft-input mb-4"
-            />
+            <v-select v-model="draft.projectId" :items="projectSelectOptions" item-title="label" item-value="value"
+              label="Project" variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
 
-            <v-text-field
-              v-model="draft.slug"
-              label="Slug"
-              variant="solo-filled"
-              flat
-              hide-details
-              class="notion-soft-input mb-4"
-            />
+            <v-text-field v-model="draft.slug" label="Slug" variant="solo-filled" flat hide-details
+              class="notion-soft-input mb-4" />
 
-            <v-select
-              v-model="draft.status"
-              :items="articleStatusOptions"
-              label="Status"
-              variant="solo-filled"
-              flat
-              hide-details
-              class="notion-soft-input"
-            />
+            <v-select v-model="draft.status" :items="articleStatusOptions" label="Status" variant="solo-filled" flat
+              hide-details class="notion-soft-input" />
           </template>
         </div>
 
@@ -796,71 +658,26 @@
         </div>
 
         <div class="dialog-body">
-          <v-text-field
-            v-model="customerDraft.companyName"
-            label="Bedrijfsnaam"
-            variant="solo-filled"
-            flat
-            hide-details
-            class="notion-soft-input mb-4"
-          />
+          <v-text-field v-model="customerDraft.companyName" label="Bedrijfsnaam" variant="solo-filled" flat hide-details
+            class="notion-soft-input mb-4" />
 
-          <v-text-field
-            v-model="customerDraft.name"
-            label="Contactpersoon"
-            variant="solo-filled"
-            flat
-            hide-details
-            class="notion-soft-input mb-4"
-          />
+          <v-text-field v-model="customerDraft.name" label="Contactpersoon" variant="solo-filled" flat hide-details
+            class="notion-soft-input mb-4" />
 
-          <v-text-field
-            v-model="customerDraft.email"
-            label="E-mail"
-            variant="solo-filled"
-            flat
-            hide-details
-            class="notion-soft-input mb-4"
-          />
+          <v-text-field v-model="customerDraft.email" label="E-mail" variant="solo-filled" flat hide-details
+            class="notion-soft-input mb-4" />
 
-          <v-text-field
-            v-model="customerDraft.tel"
-            label="Telefoon"
-            variant="solo-filled"
-            flat
-            hide-details
-            class="notion-soft-input mb-4"
-          />
+          <v-text-field v-model="customerDraft.tel" label="Telefoon" variant="solo-filled" flat hide-details
+            class="notion-soft-input mb-4" />
 
-          <v-textarea
-            v-model="customerDraft.address"
-            label="Adres"
-            variant="solo-filled"
-            flat
-            hide-details
-            rows="3"
-            class="notion-soft-input mb-4"
-          />
+          <v-textarea v-model="customerDraft.address" label="Adres" variant="solo-filled" flat hide-details rows="3"
+            class="notion-soft-input mb-4" />
 
-          <v-select
-            v-model="customerDraft.role"
-            :items="customerRoleOptions"
-            label="Rol"
-            variant="solo-filled"
-            flat
-            hide-details
-            class="notion-soft-input mb-4"
-          />
+          <v-select v-model="customerDraft.role" :items="customerRoleOptions" label="Rol" variant="solo-filled" flat
+            hide-details class="notion-soft-input mb-4" />
 
-          <v-text-field
-            v-model="customerDraft.password"
-            label="Wachtwoord"
-            type="password"
-            variant="solo-filled"
-            flat
-            hide-details
-            class="notion-soft-input"
-          />
+          <v-text-field v-model="customerDraft.password" label="Wachtwoord" type="password" variant="solo-filled" flat
+            hide-details class="notion-soft-input" />
         </div>
 
         <div class="dialog-actions u-gap-12">
@@ -1003,7 +820,6 @@ const workspaceData = ref([
           {
             id: 1,
             name: 'Knowledgebase Portal',
-            status: 'Actief',
             description: 'Documentatieportal voor klanten met projectspecifieke content.',
             articles: [
               {
@@ -1027,7 +843,6 @@ const workspaceData = ref([
           {
             id: 2,
             name: 'Customer Dashboard',
-            status: 'Concept',
             description: 'Dashboard voor klantnavigatie en projecttoegang.',
             articles: [
               {
@@ -1050,7 +865,6 @@ const workspaceData = ref([
           {
             id: 3,
             name: 'Support Center',
-            status: 'Actief',
             description: 'Supportdocumentatie voor veelgestelde vragen.',
             articles: [
               {
@@ -1081,7 +895,6 @@ const workspaceData = ref([
           {
             id: 4,
             name: 'Client Onboarding',
-            status: 'Actief',
             description: 'Onboardingproject voor nieuwe klanten.',
             articles: [
               {

@@ -334,9 +334,6 @@ body {
 }
 
 .entity-shell, .dashboard-shell { max-width: 1200px; }
-
-.entity-hero { }
-
 .hero-content, .admin-hero-content { max-width: 760px; }
 
 .hero-meta-line {
@@ -1845,7 +1842,7 @@ body {
 .tree-row-root { padding: 16px; }
 
 .tree-row-child, .tree-row-leaf {
-  padding: 12px 14px;
+  padding-inline: 4px  !important;
   border-radius: 14px;
 }
 
@@ -1883,11 +1880,11 @@ body {
   align-items: center;
 }
 
-.tree-children { padding: 0 16px 16px; }
+.tree-children { padding: 0 12px !important; }
 
-.nested-level { padding: 8px 0 0 24px; }
+.nested-level { padding: 0 0 0 12px !important; }
 
-.articles-level { padding-left: 18px; }
+.articles-level { padding: 4px 0 0 12px !important; }
 
 .project-icon {
   background: var(--color-bg-page);
@@ -2432,8 +2429,9 @@ body {
 .project-row-main, .article-row-main, .tree-row-main {
   min-width: 0;
   display: flex;
-  align-items: center;
+  align-items: start;
   gap: 14px;
+  padding-top: 16px;
 }
 
 .tree-row-main { flex: 1; }
