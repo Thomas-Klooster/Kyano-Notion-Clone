@@ -253,60 +253,118 @@
               </div>
 
               <div class="detail-grid">
-                <article class="detail-card card card-rounded-xl">
+                <article class="detail-card card card-rounded-xl"
+                  :class="{ 'detail-card-full': selectedEntityType === 'workspace' }">
                   <div class="detail-card-head">
                     <div>
                       <div class="panel-kicker">Basisinformatie</div>
-                      <h4 class="panel-title">Eigenschappen</h4>
+                      <h4 class="panel-title">
+                        {{ selectedEntityType === 'workspace' ? 'Toegang klanten' : 'Eigenschappen' }}
+                      </h4>
                     </div>
                   </div>
 
-                  <div class="detail-meta-grid">
-                    <div v-if="selectedEntityType === 'workspace'" class="meta-item meta-item-full">
-                      <span class="meta-label">Toegang klanten</span>
+                  <template v-if="selectedEntityType === 'workspace'">
+                    <div class="workspace-access-card">
+                      <div class="workspace-access-header">
+                        <div class="workspace-access-header-copy">
+                          <span class="meta-label">Toegangsoverzicht</span>
+                          <span class="meta-value">
+                            {{ selectedEntity.customerAccess?.length || 0 }} van {{ customerOnlyRecords.length }}
+                            klanten hebben toegang
+                          </span>
+                        </div>
 
-                      <div class="workspace-access-menu">
-                        <v-select :model-value="selectedEntity.customerAccess || []" :items="customerOnlyOptions"
-                          label="Selecteer klanten met toegang" multiple chips closable-chips variant="solo-filled" flat
-                          hide-details class="notion-soft-input"
-                          @update:model-value="updateWorkspaceCustomerAccess(selectedEntity.id, $event)" />
+                        <div class="workspace-access-header-actions">
+                          <div class="search-field ">
+                            <v-icon size="18">mdi-magnify</v-icon>
+                            <input v-model="search" type="text" placeholder="Zoek klant" />
+                          </div>
+
+                          <v-btn variant="text" size="small" @click="updateWorkspaceCustomerAccess(
+                            selectedEntity.id,
+                            customerOnlyRecords.map(customer => customer.companyName)
+                          )">
+                            Alles selecteren
+                          </v-btn>
+
+                          <v-btn variant="text" size="small" color="red"
+                            @click="updateWorkspaceCustomerAccess(selectedEntity.id, [])">
+                            Alles wissen
+                          </v-btn>
+                        </div>
+                      </div>
+
+                      <div class="workspace-access-table-shell">
+                        <v-data-table :headers="workspaceCustomerHeaders" :items="customerOnlyRecords"
+                          :search="workspaceCustomerSearch" items-per-page="-1" fixed-header height="360" hover
+                          class="workspace-access-table">
+                          <template #item.access="{ item }">
+                            <div class="workspace-access-check">
+                              <v-checkbox-btn
+                                :model-value="(selectedEntity.customerAccess || []).includes(item.companyName)"
+                                @update:model-value="toggleWorkspaceCustomerAccess(selectedEntity.id, item.companyName, $event)" />
+                            </div>
+                          </template>
+
+                          <template #item.name="{ item }">
+                            <div class="workspace-access-name-cell">
+                              <div class="workspace-access-name">{{ item.name }}</div>
+                              <div class="workspace-access-email">{{ item.email }}</div>
+                            </div>
+                          </template>
+
+                          <template #item.companyName="{ item }">
+                            <span>{{ item.companyName }}</span>
+                          </template>
+
+                          <template #item.address="{ item }">
+                            <span class="workspace-access-address">{{ item.address }}</span>
+                          </template>
+
+                          <template #item.tel="{ item }">
+                            <span class="workspace-access-tel">{{ item.tel }}</span>
+                          </template>
+
+                          <template #item.role="{ item }">
+                            <v-chip size="small" variant="tonal" class="entity-chip"
+                              :class="item.role === 'admin' ? 'entity-chip-admin' : 'entity-chip-customer'">
+                              {{ item.role }}
+                            </v-chip>
+                          </template>
+
+                          <template #bottom></template>
+                        </v-data-table>
                       </div>
                     </div>
+                  </template>
 
-                    <div v-else class="meta-item">
+                  <div v-else class="detail-meta-grid">
+                    <div class="meta-item">
                       <span class="meta-label">Klant</span>
                       <span class="meta-value">{{ selectedEntityCustomer }}</span>
                     </div>
+
                     <div class="meta-item" v-if="selectedEntityType !== 'workspace'">
                       <span class="meta-label">Bovenliggend item</span>
                       <span class="meta-value">{{ selectedParentLabel }}</span>
                     </div>
+
                     <div class="meta-item" v-if="selectedEntityType === 'project'">
                       <span class="meta-label">Status</span>
                       <span class="meta-value">{{ selectedEntity.status }}</span>
                     </div>
+
                     <div class="meta-item" v-if="selectedEntityType === 'article'">
                       <span class="meta-label">Slug</span>
                       <span class="meta-value">/{{ selectedEntity.slug }}</span>
                     </div>
+
                     <div class="meta-item" v-if="selectedEntityType === 'article'">
                       <span class="meta-label">Laatst gewijzigd</span>
                       <span class="meta-value">{{ selectedEntity.updatedAt }}</span>
                     </div>
                   </div>
-                </article>
-
-                <article v-if="showsSummaryCard" class="detail-card card card-rounded-xl">
-                  <div class="detail-card-head">
-                    <div>
-                      <div class="panel-kicker">Inhoud</div>
-                      <h4 class="panel-title">Samenvatting</h4>
-                    </div>
-                  </div>
-
-                  <p class="detail-description">
-                    {{ selectedEntity.summary || selectedEntity.description || defaultEntityDescription }}
-                  </p>
                 </article>
               </div>
 
@@ -803,6 +861,33 @@ const customersData = ref([
     address: '1 Chome-14-5 Kaigan, Minato City, Tokyo 105-0022, Japan',
     role: 'customer',
   },
+  {
+    id: 4,
+    companyName: 'Yamaha',
+    name: 'yamaha',
+    email: 'info@yamaha.jp',
+    tel: '+31 6 12345678',
+    address: 'Japan somwhere Tokyo',
+    role: 'customer',
+  },
+  {
+    id: 5,
+    companyName: 'Honda',
+    name: 'Honda',
+    email: 'hello@honda.jp',
+    tel: '+31 50 123 4567',
+    address: 'JAPAN',
+    role: 'customer',
+  },
+  {
+    id: 6,
+    companyName: 'suzuki',
+    name: 'suzuki',
+    email: 'hello@suzuki.jp',
+    tel: '+81 3-3435-2111',
+    address: '1 Chome-14-5 Kaigan, Minato City, Tokyo 105-0022, Japan',
+    role: 'customer',
+  },
 ])
 
 const workspaceData = ref([
@@ -913,11 +998,38 @@ const workspaceData = ref([
   },
 ])
 
-const customerOnlyOptions = computed(() => [...new Set(workspaceData.value.map((workspace) => workspace.customer))])
+const customerOnlyOptions = computed(() => customersData.value.map((c) => c.companyName))
 const customerOptions = computed(() => ['Alle klanten', ...customerOnlyOptions.value])
 const kindOptions = ['Alles', 'Workspaces', 'Categorieën', 'Projecten', 'Artikelen']
 const customerRoleOptions = ['admin', 'customer']
 const articleStatusOptions = ['Draft', 'Published', 'Archived']
+
+const workspaceCustomerSearch = ref('')
+
+const customerOnlyRecords = computed(() =>
+  customersData.value.filter((customer) => customer.role !== 'admin')
+)
+
+const workspaceCustomerHeaders = [
+  { title: '', key: 'access', sortable: false, width: 72 },
+  { title: 'Klant', key: 'name', width: 240 },
+  { title: 'Bedrijf', key: 'companyName', width: 180 },
+  { title: 'Adres', key: 'address', width: 320 },
+  { title: 'Tel.', key: 'tel', width: 160 },
+]
+
+function toggleWorkspaceCustomerAccess(workspaceId, companyName, enabled) {
+  const workspace = workspaceData.value.find((item) => item.id === workspaceId)
+  if (!workspace) return
+
+  const currentAccess = workspace.customerAccess || []
+
+  workspace.customerAccess = enabled
+    ? currentAccess.includes(companyName)
+      ? currentAccess
+      : [...currentAccess, companyName]
+    : currentAccess.filter((name) => name !== companyName)
+}
 
 const workspaceSelectOptions = computed(() =>
   workspaceData.value.map((workspace) => ({
@@ -1141,7 +1253,7 @@ const deleteTarget = computed(() => {
 })
 
 function updateWorkspaceCustomerAccess(workspaceId, customers) {
-  const workspace = workspaces.value.find((item) => item.id === workspaceId)
+  const workspace = workspaceData.value.find((item) => item.id === workspaceId)
   if (!workspace) return
 
   workspace.customerAccess = customers || []

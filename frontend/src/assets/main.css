@@ -1842,7 +1842,7 @@ body {
 .tree-row-root { padding: 16px; }
 
 .tree-row-child, .tree-row-leaf {
-  padding-inline: 4px  !important;
+  padding-inline: 8px  !important;
   border-radius: 14px;
 }
 
@@ -1921,6 +1921,200 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+/* Span full width of the meta grid */
+.meta-item-full {
+  grid-column: 1 / -1;
+}
+.detail-card-full {
+  grid-column: 1 / -1;
+}
+/* _______________________________________________________ */
+/* _______________________________________________________ */
+/* _______________________________________________________ */
+.workspace-access-card {
+  display: grid;
+  gap: 18px;
+}
+
+.workspace-access-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.workspace-access-header-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.workspace-access-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+.workspace-access-search {
+  min-width: 240px;
+  max-width: 280px;
+  border: 1px solid var(--color-border-input);
+  border-radius: 14px;
+  background: var(--color-bg-surface-soft);
+  padding-inline: 12px;
+}
+
+.workspace-access-search .v-field {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.workspace-access-search .v-field__input {
+  min-height: 42px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  font-size: 0.94rem;
+}
+
+.workspace-access-table-shell {
+  border: 1px solid var(--color-border-default);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--color-white);
+}
+
+.workspace-access-table {
+  background: var(--color-white);
+}
+
+.workspace-access-table .v-table__wrapper {
+  overflow: auto;
+}
+
+.workspace-access-table table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.workspace-access-table thead th {
+  height: 46px !important;
+  padding: 0 16px !important;
+  background: #fafaf9 !important;
+  border-bottom: 1px solid var(--color-border-soft) !important;
+  color: var(--color-text-muted) !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.workspace-access-table tbody td {
+  padding: 14px 16px !important;
+  border-bottom: 1px solid #f1efec !important;
+  color: var(--color-text-primary);
+  font-size: 0.94rem;
+  vertical-align: middle;
+}
+
+.workspace-access-table tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+.workspace-access-table tbody tr:hover {
+  background: #fbfbfa !important;
+}
+
+.workspace-access-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.workspace-access-check .v-selection-control {
+  min-height: auto !important;
+}
+
+.workspace-access-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 180px;
+}
+
+.workspace-access-name {
+  color: var(--color-text-strong);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.workspace-access-email {
+  color: var(--color-text-muted);
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.workspace-access-address {
+  color: var(--color-text-muted-2);
+  line-height: 1.5;
+}
+
+.workspace-access-tel {
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .workspace-access-header-actions {
+    width: 100%;
+  }
+
+  .workspace-access-search {
+    min-width: 100%;
+    max-width: none;
+  }
+}
+/* _______________________________________________________ */
+/* _______________________________________________________ */
+/* _______________________________________________________ */
+
+
+
+.workspace-access-select {
+  max-width: 360px;
+}
+
+.workspace-access-select :deep(.v-field) {
+  border-radius: 12px !important;
+  background: var(--color-bg-surface) !important;
+  border: 1px solid var(--color-border-input) !important;
+  box-shadow: none !important;
+  min-height: 40px;
+}
+
+.workspace-access-select :deep(.v-field__input) {
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  min-height: 40px;
+  font-size: 0.9rem;
+}
+
+.workspace-access-select :deep(.v-label) {
+  font-size: 0.88rem !important;
+  color: var(--color-text-muted) !important;
+}
+
+.workspace-access-select :deep(.v-chip) {
+  background: var(--color-bg-chip) !important;
+  color: var(--color-text-primary) !important;
+  border-radius: 8px !important;
+  font-size: 0.82rem !important;
+  font-weight: 500;
 }
 
 .meta-label {
@@ -2431,7 +2625,7 @@ body {
   display: flex;
   align-items: start;
   gap: 14px;
-  padding-top: 16px;
+  padding-top: 12px;
 }
 
 .tree-row-main { flex: 1; }
