@@ -1,47 +1,92 @@
 <template>
   <div class="entity-page admin-studio-page">
     <div class="entity-shell page-shell admin-studio-shell">
-      <section class="entity-hero hero">
+      <section class="entity-hero hero admin-hero">
+        <div class="admin-hero-bg-shapes" aria-hidden="true">
+          <div class="admin-hero-shape admin-hero-shape-1" />
+          <div class="admin-hero-shape admin-hero-shape-2" />
+        </div>
         <div class="hero-content u-min-w-0">
           <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
-            <span class="hero-pill u-inline-flex u-items-center">Admin</span>
+            <span class="hero-pill u-inline-flex u-items-center">
+              <span class="hero-pill-dot" />
+              Admin
+            </span>
             <span class="hero-meta-separator">•</span>
             <span>{{ totalRecords }} records</span>
             <span class="hero-meta-separator">•</span>
             <span>1 content studio</span>
           </div>
-          <h1 class="hero-title">Kyano Knowledgebase Admin</h1>
+          <h1 class="hero-title">Kyano Knowledgebase</h1>
           <p class="hero-subtitle">Beheer je workspaces, categorieën, projecten en artikelen.</p>
+          <div class="hero-quick-stats">
+            <div class="hero-quick-stat">
+              <span class="hero-quick-stat-value">{{ counts.workspaces }}</span>
+              <span class="hero-quick-stat-label">workspaces</span>
+            </div>
+            <div class="hero-quick-stat-divider" />
+            <div class="hero-quick-stat">
+              <span class="hero-quick-stat-value">{{ counts.articles }}</span>
+              <span class="hero-quick-stat-label">artikelen</span>
+            </div>
+            <div class="hero-quick-stat-divider" />
+            <div class="hero-quick-stat">
+              <span class="hero-quick-stat-value">{{ counts.projects }}</span>
+              <span class="hero-quick-stat-label">projecten</span>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section class="stats-grid">
-        <article class="stat-card card card-elevated card-rounded-xl">
-          <div class="stat-label">Workspaces</div>
+      <section class="stats-grid admin-stats-grid">
+        <article class="stat-card admin-stat-card card card-elevated card-rounded-xl admin-stat-card--ws">
+          <div class="admin-stat-icon-wrap">
+            <v-icon size="18">mdi-view-dashboard-outline</v-icon>
+          </div>
           <div class="stat-value">{{ counts.workspaces }}</div>
+          <div class="stat-label">Workspaces</div>
         </article>
-        <article class="stat-card card card-elevated card-rounded-xl">
-          <div class="stat-label">Categorieën</div>
+        <article class="stat-card admin-stat-card card card-elevated card-rounded-xl admin-stat-card--cat">
+          <div class="admin-stat-icon-wrap">
+            <v-icon size="18">mdi-shape-outline</v-icon>
+          </div>
           <div class="stat-value">{{ counts.categories }}</div>
+          <div class="stat-label">Categorieën</div>
         </article>
-        <article class="stat-card card card-elevated card-rounded-xl">
-          <div class="stat-label">Projecten</div>
+        <article class="stat-card admin-stat-card card card-elevated card-rounded-xl admin-stat-card--proj">
+          <div class="admin-stat-icon-wrap">
+            <v-icon size="18">mdi-briefcase-outline</v-icon>
+          </div>
           <div class="stat-value">{{ counts.projects }}</div>
+          <div class="stat-label">Projecten</div>
         </article>
-        <article class="stat-card card card-elevated card-rounded-xl">
-          <div class="stat-label">Artikelen</div>
+        <article class="stat-card admin-stat-card card card-elevated card-rounded-xl admin-stat-card--art">
+          <div class="admin-stat-icon-wrap">
+            <v-icon size="18">mdi-file-document-outline</v-icon>
+          </div>
           <div class="stat-value">{{ counts.articles }}</div>
+          <div class="stat-label">Artikelen</div>
         </article>
       </section>
 
       <div class="admin-tabs">
-        <button class="admin-tab" :class="{ 'admin-tab--active': activeTab === 'content' }"
-          @click="activeTab = 'content'">
+        <button
+          class="admin-tab"
+          :class="{ 'admin-tab--active': activeTab === 'content' }"
+          @click="activeTab = 'content'"
+        >
+          <v-icon size="16" class="admin-tab-icon">mdi-file-tree-outline</v-icon>
           Content structuur
+          <span class="admin-tab-count">{{ totalRecords }}</span>
         </button>
-        <button class="admin-tab" :class="{ 'admin-tab--active': activeTab === 'customers' }"
-          @click="activeTab = 'customers'">
+        <button
+          class="admin-tab"
+          :class="{ 'admin-tab--active': activeTab === 'customers' }"
+          @click="activeTab = 'customers'"
+        >
+          <v-icon size="16" class="admin-tab-icon">mdi-account-group-outline</v-icon>
           Klantenbeheer
+          <span class="admin-tab-count">{{ customersData.length }}</span>
         </button>
       </div>
 
@@ -410,7 +455,7 @@
               placeholder="Zoek op bedrijfsnaam, contactpersoon, e-mail of telefoon..." />
           </div>
           <div class="studio-toolbar-spacer" />
-          <v-btn rounded="xl" prepend-icon="mdi-plus" class="entity-create-btn" @click="openCustomerCreateDialog">
+          <v-btn prepend-icon="mdi-plus" class="entity-create-btn" @click="openCustomerCreateDialog">
             Nieuwe klant
           </v-btn>
         </div>
@@ -610,7 +655,7 @@
         </div>
         <div class="dialog-actions u-gap-12">
           <v-btn variant="text" @click="editorOpen = false">Annuleren</v-btn>
-          <v-btn color="primary" rounded="xl" @click="saveDraft">Opslaan</v-btn>
+          <v-btn class="entity-create-btn" @click="saveDraft">Opslaan</v-btn>
         </div>
       </v-card>
     </v-dialog>
@@ -661,7 +706,7 @@
         </div>
         <div class="dialog-actions u-gap-12">
           <v-btn variant="text" @click="customerEditorOpen = false">Annuleren</v-btn>
-          <v-btn color="primary" rounded="xl" @click="saveCustomerDraft">Opslaan</v-btn>
+          <v-btn class="entity-create-btn" @click="saveCustomerDraft">Opslaan</v-btn>
         </div>
       </v-card>
     </v-dialog>
