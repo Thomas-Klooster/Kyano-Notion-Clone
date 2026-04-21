@@ -26,6 +26,11 @@
             </div>
             <div class="hero-quick-stat-divider" />
             <div class="hero-quick-stat">
+              <span class="hero-quick-stat-value">{{ counts.categories }}</span>
+              <span class="hero-quick-stat-label">categorieën</span>
+            </div>
+            <div class="hero-quick-stat-divider" />
+            <div class="hero-quick-stat">
               <span class="hero-quick-stat-value">{{ counts.articles }}</span>
               <span class="hero-quick-stat-label">artikelen</span>
             </div>
@@ -70,20 +75,14 @@
       </section>
 
       <div class="admin-tabs">
-        <button
-          class="admin-tab"
-          :class="{ 'admin-tab--active': activeTab === 'content' }"
-          @click="activeTab = 'content'"
-        >
+        <button class="admin-tab" :class="{ 'admin-tab--active': activeTab === 'content' }"
+          @click="activeTab = 'content'">
           <v-icon size="16" class="admin-tab-icon">mdi-file-tree-outline</v-icon>
           Content structuur
           <span class="admin-tab-count">{{ totalRecords }}</span>
         </button>
-        <button
-          class="admin-tab"
-          :class="{ 'admin-tab--active': activeTab === 'customers' }"
-          @click="activeTab = 'customers'"
-        >
+        <button class="admin-tab" :class="{ 'admin-tab--active': activeTab === 'customers' }"
+          @click="activeTab = 'customers'">
           <v-icon size="16" class="admin-tab-icon">mdi-account-group-outline</v-icon>
           Klantenbeheer
           <span class="admin-tab-count">{{ customersData.length }}</span>
@@ -163,7 +162,7 @@
                       @click.stop="toggleWorkspace(workspace.id)">
                       <v-icon size="18">{{ isExpanded(expandedWorkspaces, workspace.id) ? 'mdi-chevron-up' :
                         'mdi-chevron-down'
-                        }}</v-icon>
+                      }}</v-icon>
                     </v-btn>
                   </div>
                 </div>
