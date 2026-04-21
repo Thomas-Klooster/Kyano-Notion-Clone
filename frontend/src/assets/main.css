@@ -1079,9 +1079,9 @@ body {
 }
  
 .admin-stat-card--ws::after  { background: var(--color-brand-500); }
-.admin-stat-card--cat::after { background: #7c6cd4; }
-.admin-stat-card--proj::after { background: #d4853a; }
-.admin-stat-card--art::after { background: #3aad6e; }
+.admin-stat-card--cat::after { background: var(--color-brand-500); }
+.admin-stat-card--proj::after { background: var(--color-brand-500); }
+.admin-stat-card--art::after { background: var(--color-brand-500);}
  
 .admin-stat-icon-wrap {
   display: flex;
@@ -1094,9 +1094,9 @@ body {
 }
  
 .admin-stat-card--ws .admin-stat-icon-wrap  { background: rgba(36, 161, 199, 0.1); color: var(--color-brand-500); }
-.admin-stat-card--cat .admin-stat-icon-wrap { background: rgba(124, 108, 212, 0.1); color: #7c6cd4; }
-.admin-stat-card--proj .admin-stat-icon-wrap { background: rgba(212, 133, 58, 0.1); color: #d4853a; }
-.admin-stat-card--art .admin-stat-icon-wrap { background: rgba(58, 173, 110, 0.1); color: #3aad6e; }
+.admin-stat-card--cat .admin-stat-icon-wrap { background: rgba(36, 161, 199, 0.1); color: var(--color-brand-500);}
+.admin-stat-card--proj .admin-stat-icon-wrap { background: rgba(36, 161, 199, 0.1); color: var(--color-brand-500); }
+.admin-stat-card--art .admin-stat-icon-wrap { background: rgba(36, 161, 199, 0.1); color: var(--color-brand-500); }
 
 .admin-tabs {
   display: flex;
