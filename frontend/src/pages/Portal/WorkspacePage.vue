@@ -56,9 +56,9 @@
                             class="project-row project-row-clickable"
                             role="button"
                             tabindex="0"
-                            @click="goToCategory(category.id)"
-                            @keydown.enter="goToCategory(category.id)"
-                            @keydown.space.prevent="goToCategory(category.id)"
+                            @click="goToCategory(category.slug)"
+                            @keydown.enter="goToCategory(category.slug)"
+                            @keydown.space.prevent="goToCategory(category.slug)"
                         >
                             <div class="project-row-main u-min-w-0">
                                 <div class="project-icon icon-box">
@@ -290,8 +290,8 @@ function toggleProject(id) {
         : [...expandedProjects.value, id]
 }
 
-function goToCategory(id) {
-    router.push(`/category/${id}`)
+function goToCategory(slug) {
+    router.push(`/category/${slug}`)
 }
 
 function goToProject(id) {

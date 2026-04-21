@@ -18,6 +18,11 @@ class Category extends Model
     public function workspace() {
       return $this->belongsTo(Workspace::class);
     }
+
+    public function getRouteKeyName() {
+        return 'slug';
+    }
+
 public function scopeVisibleTo($query, $user) {
     if ($user->role === 'admin') return $query;
     return $query->whereHas('projects.workspace.members', function ($q) use ($user) {

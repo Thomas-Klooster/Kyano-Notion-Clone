@@ -303,8 +303,8 @@ function workspaceRoute(workspace) {
     return {
         name: 'workspace',
         params: {
-            slug: workspace.slug
-        }
+            slug: workspace.slug,
+        },
     }
 }
 

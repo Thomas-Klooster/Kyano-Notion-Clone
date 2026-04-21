@@ -11,7 +11,7 @@
                         <span>{{ filteredProjects.length }} projecten</span>
                     </div>
 
-                    <h1 class="hero-title">Categorie: {{ category.name }}</h1>
+                    <h1 class="hero-title">{{ category.name }}</h1>
 
                     <p class="hero-subtitle">
                         Bekijk alle projecten binnen deze categorie.
@@ -34,7 +34,17 @@
                     </div>
                 </div>
 
-                <div v-if="filteredProjects.length" class="project-table">
+                <div v-if="loading" class="empty-state">
+                <v-icon size="24">mdi-loading mdi-spin</v-icon>
+                <p>Projecten zijn aan het laden...</p>    
+                </div>
+
+                <div v-else-if="error" class="empty-state">
+                    <v-icon size="30">mdi-alert-circle-outline</v-icon>
+                    <p>{{ error }}</p>
+                </div>
+
+                <div v-else-if="filteredProjects.length" class="project-table">
                     <div v-for="project in filteredProjects" :key="project.id" class="project-group">
                         <div class="project-row project-row-clickable" role="button" tabindex="0"
                             @click="goToProject(project.id)" @keydown.enter="goToProject(project.id)"
@@ -45,7 +55,7 @@
                                 </div>
 
                                 <div class="project-info">
-                                    <div class="project-name">{{ project.name }}</div>
+                                    <div class="project-name">{{ project.projectname }}</div>
                                     <div class="project-meta">
                                         <span>{{ project.articles.length }} artikelen</span>
                                         <span class="dot">•</span>
@@ -55,7 +65,7 @@
                             </div>
 
                             <button class="project-row-right u-gap-12 tree-toggle" type="button"
-                                @click.stop="toggleProject(project.id)">
+                                @click.stop="toggleProject(project.slug)">
                                 <v-icon size="18" class="project-arrow">
                                     {{ expandedProjects.includes(project.id) ? 'mdi-chevron-down' : 'mdi-chevron-right'
                                     }}
@@ -95,39 +105,35 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import axios from 'axios'
 
+const auth = useAuthStore()
+const route = useRoute()
 const router = useRouter()
-
+const loading = ref(false)
+const error = ref(false)
 const search = ref('')
 const expandedProjects = ref([])
 
-const category = ref({
-    id: 1,
-    name: 'Development',
-    workspace: 'Kyano',
-    projects: [
-        {
-            id: 111,
-            name: 'Frontend',
-            updatedAt: 'Vandaag bijgewerkt',
-            articles: [
-                { id: 1111, title: 'Design system richtlijnen', tags: ['Design', 'UI'] },
-                { id: 1112, title: 'Component structuur', tags: ['Vue', 'Frontend'] },
-            ],
-        },
-        {
-            id: 112,
-            name: 'Backend',
-            updatedAt: 'Gisteren bijgewerkt',
-            articles: [
-                { id: 1121, title: 'API authenticatie', tags: ['Laravel', 'Auth'] },
-                { id: 1122, title: 'Database structuur', tags: ['Database', 'Backend'] },
-            ],
-        },
-    ],
+const category = ref({ name: '', projects: [] })
+
+    onMounted(async () => {
+    if (!auth.initialized) return
+    loading.value = true
+    try {
+        await axios.get('/sanctum/csrf-cookie');
+        const { data } = await axios.get(`/api/categories/${route.params.slug}`)
+        category.value = data
+    } catch (err) {
+        error.value = 'Geen projecten gevonden'
+    } finally {
+        loading.value = false
+    }
 })
+
 
 const filteredProjects = computed(() => {
     const query = search.value.trim().toLowerCase()
@@ -145,8 +151,9 @@ function toggleProject(id) {
         : [...expandedProjects.value, id]
 }
 
-function goToProject(id) {
-    router.push(`/project/${id}`)
+function goToProject(slug) {
+    router.push(`/project/${slug}`)
 }
+
 </script>
 

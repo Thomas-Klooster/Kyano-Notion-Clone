@@ -6,6 +6,16 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import FunctionButtons from '@/components/FunctionButtons.vue'
 import SidebarItem from './components/SidebarItem.vue'
+import { useAuthStore } from '@/stores/auth'
+import { onMounted } from 'vue'
+
+const auth = useAuthStore()
+
+onMounted(async () => {
+    if (!auth.initialized) {
+        await auth.fetchUser()
+    }
+})
 
 const pages = ref([
   {
