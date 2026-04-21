@@ -37,9 +37,9 @@ class WorkspaceController extends Controller
         public function show(Workspace $workspace) {
         $this->authorize('view', $workspace);
         return 
-        $workspace->load(['articles', 'projects']);
+        $workspace->load(['categories.projects.articles']);
     }
-
+    
     public function update(Workspace $workspace, WorkspaceUpdateRequest $request) {
         $this->authorize('update', $workspace);
         $data = $request->validated();

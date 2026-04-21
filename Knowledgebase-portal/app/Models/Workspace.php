@@ -31,6 +31,10 @@ class Workspace extends Model
         $this->hasMany(Project::class);
     }
 
+
+    public function getRouteKeyName() {
+        return 'slug';
+    }
     public function scopeVisibleTo($query, $user)
 {
     if ($user->role === 'admin') return $query;

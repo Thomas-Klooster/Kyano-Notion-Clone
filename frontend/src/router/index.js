@@ -37,13 +37,13 @@ const router = createRouter({
       meta: { guestOnly: true, breadcrumb: 'Dashboard' },
     },
     {
-      path: '/category/:id',
+      path: '/category/:slug',
       name: 'category',
       component: () => import('@/pages/Portal/CategoryPage.vue'),
       meta: { requiresAuth: true, breadcrumb: 'Category' },
     },
     {
-      path: '/workspace/:id',
+      path: '/workspace/:slug',
       name: 'workspace',
       component: () => import('@/pages/Portal/WorkspacePage.vue'),
       meta: { requiresAuth: true, breadcrumb: 'Workspace' },

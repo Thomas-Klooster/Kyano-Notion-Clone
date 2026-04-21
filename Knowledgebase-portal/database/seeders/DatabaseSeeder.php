@@ -60,11 +60,11 @@ class DatabaseSeeder extends Seeder
         ->create();
 
         Article::factory()
-        ->count(15)
+        ->count(8)
         ->create();
 
         Project::factory()
-        ->count(15)
+        ->count(8)
         ->create();
 
         Article::all()->each(function ($article) {
@@ -72,7 +72,7 @@ class DatabaseSeeder extends Seeder
                 'project_id' => Project::inRandomOrder()->first()->id
             ]);
         });
-        
+
         
          DB::table('tags')->insert([
             [

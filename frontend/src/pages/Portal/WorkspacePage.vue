@@ -172,34 +172,29 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import axios from 'axios'
 
 const router = useRouter()
+const route = useRoute()
 const auth = useAuthStore()
 const search = ref('')
-const workspace = ref({ name: '' })
+const workspace = ref({ name: '', categories: [] })
 const loading = ref(false)
 const error = ref(false)
-const expandedCategories = ref([11])
-const expandedProjects = ref([111])
+const expandedCategories = ref([])
+const expandedProjects = ref([])
 
-const categories = ref([])
-
+const categories = computed(() => workspace.value.categories ?? [])
 
 onMounted(async () => {
     if (!auth.initialized) return
     loading.value = true
     try {
         await axios.get('/sanctum/csrf-cookie');
-        const [categoriesRes, workspaceRes, articlesRes] = await Promise.all([
-            axios.get('/api/categories'),
-            axios.get('/api/workspaces'),
-            // axios.get('/api/articles')
-        ])
-        categories.value = categoriesRes.data
-        workspace.value = workspaceRes.data[0]
-        // article.value = articlesRes.data
+        const { data } = await axios.get(`/api/workspaces/${route.params.slug}`)
+        workspace.value = data
     } catch (err) {
         error.value = 'Geen categorieen gevonden'
     } finally {
@@ -207,17 +202,6 @@ onMounted(async () => {
     }
 })
 
-
-/* 
-
-1. Onmounted async
-2. if auth not initialized return loading.value  tue
-3. attempt to try to axios get sanctum csrf cookie route
-4. call a repose to get the route of the api afterwards call the value and make it a data response
-5. catch any errors on the way and give it a value that nothing is found
-6. finally loading value = false
-
-*/
 
 
 
