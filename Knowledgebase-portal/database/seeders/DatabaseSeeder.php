@@ -56,15 +56,15 @@ class DatabaseSeeder extends Seeder
         }}}
                 
         Category::factory()
-        ->count(8)
+        ->count(10000)
         ->create();
 
         Article::factory()
-        ->count(8)
+        ->count(1000)
         ->create();
 
         Project::factory()
-        ->count(8)
+        ->count(100)
         ->create();
 
         Article::all()->each(function ($article) {
