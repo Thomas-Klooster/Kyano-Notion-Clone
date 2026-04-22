@@ -25,12 +25,6 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/test',
-      name: 'test',
-      component: () => import('@/pages/Admin/NewAdminLayoutTestPage.vue'),
-      meta: { breadcrumb: 'test'}
-    },
-    {
       path: '/',
       name: 'Dashboard',
       component: () => import('@/pages/Portal/DashboardPage.vue'),

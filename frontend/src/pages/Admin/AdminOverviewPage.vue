@@ -45,7 +45,6 @@
 
       <section class="stats-grid admin-stats-grid">
         <article class="admin-stat-card card card-elevated admin-stat-card--ws">
-          <div class="admin-stat-card__accent" aria-hidden="true" />
           <div class="admin-stat-card__body">
             <div class="admin-stat-icon-wrap">
               <v-icon size="20">mdi-view-dashboard-outline</v-icon>
@@ -58,7 +57,6 @@
           <div class="admin-stat-card__bg-shape" aria-hidden="true" />
         </article>
         <article class="admin-stat-card card card-elevated admin-stat-card--ws">
-          <div class="admin-stat-card__accent" aria-hidden="true" />
           <div class="admin-stat-card__body">
             <div class="admin-stat-icon-wrap">
               <v-icon size="20">mdi-shape-outline</v-icon>
@@ -71,7 +69,6 @@
           <div class="admin-stat-card__bg-shape" aria-hidden="true" />
         </article>
         <article class="admin-stat-card card card-elevated admin-stat-card--ws">
-          <div class="admin-stat-card__accent" aria-hidden="true" />
           <div class="admin-stat-card__body">
             <div class="admin-stat-icon-wrap">
               <v-icon size="20">mdi-briefcase-outline</v-icon>
@@ -84,7 +81,6 @@
           <div class="admin-stat-card__bg-shape" aria-hidden="true" />
         </article>
         <article class="admin-stat-card card card-elevated admin-stat-card--ws">
-          <div class="admin-stat-card__accent" aria-hidden="true" />
           <div class="admin-stat-card__body">
             <div class="admin-stat-icon-wrap">
               <v-icon size="20">mdi-file-document-outline</v-icon>
