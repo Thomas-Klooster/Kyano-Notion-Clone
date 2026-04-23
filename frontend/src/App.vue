@@ -178,7 +178,7 @@ const isHovering = ref(false)
       <v-divider></v-divider>
     </v-navigation-drawer>
 
-    <v-main @mouseenter="drawer = false">
+    <v-main @mouseenter="drawer = false" style="background: var(--color-bg-page);">
       <div>
         <v-app-bar :elevation="0" density="compact">
           <template v-slot:prepend>

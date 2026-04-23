@@ -62,7 +62,7 @@ html, body, #app { min-height: 100%; }
 body {
   margin: 0;
   font-family: var(--font-family-base);
-  background: var(--color-white);
+  background: var(--color-bg-page);
   color: var(--color-text-primary);
 }
 
