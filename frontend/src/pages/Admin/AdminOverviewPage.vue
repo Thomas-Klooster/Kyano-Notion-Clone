@@ -9,37 +9,12 @@
         <div class="hero-content u-min-w-0">
           <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
             <span class="hero-pill u-inline-flex u-items-center">
-              <span class="hero-pill-dot" />
-              Admin
-            </span>
-            <span class="hero-meta-separator">•</span>
-            <span>{{ totalRecords }} records</span>
-            <span class="hero-meta-separator">•</span>
-            <span>1 content studio</span>
+              <span class="hero-pill-dot" /> Admin </span>
+            <span class="hero-meta-separator"> • </span>
+            <span> {{ totalRecords }} records </span>
           </div>
           <h1 class="hero-title">Kyano Knowledgebase</h1>
           <p class="hero-subtitle">Beheer je workspaces, categorieën, projecten en artikelen.</p>
-          <div class="hero-quick-stats">
-            <div class="hero-quick-stat">
-              <span class="hero-quick-stat-value">{{ counts.workspaces }}</span>
-              <span class="hero-quick-stat-label">workspaces</span>
-            </div>
-            <div class="hero-quick-stat-divider" />
-            <div class="hero-quick-stat">
-              <span class="hero-quick-stat-value">{{ counts.categories }}</span>
-              <span class="hero-quick-stat-label">categorieën</span>
-            </div>
-            <div class="hero-quick-stat-divider" />
-            <div class="hero-quick-stat">
-              <span class="hero-quick-stat-value">{{ counts.articles }}</span>
-              <span class="hero-quick-stat-label">artikelen</span>
-            </div>
-            <div class="hero-quick-stat-divider" />
-            <div class="hero-quick-stat">
-              <span class="hero-quick-stat-value">{{ counts.projects }}</span>
-              <span class="hero-quick-stat-label">projecten</span>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -381,31 +356,25 @@
                       <span class="meta-label">Bovenliggend item</span>
                       <span class="meta-value">{{ selectedParentLabel }}</span>
                     </div>
-                    <div class="meta-item" v-if="selectedEntityType === 'project'">
+                    <!-- <div class="meta-item" v-if="selectedEntityType === 'project'">
                       <span class="meta-label">Status</span>
                       <span class="meta-value">{{ selectedEntity.status }}</span>
-                    </div>
-                    <div class="meta-item" v-if="selectedEntityType === 'article'">
-                      <span class="meta-label">Slug</span>
-                      <span class="meta-value">/{{ selectedEntity.slug }}</span>
-                    </div>
+                    </div> -->
                     <div class="meta-item" v-if="selectedEntityType === 'article'">
                       <span class="meta-label">Laatst gewijzigd</span>
                       <span class="meta-value">{{ selectedEntity.updatedAt }}</span>
                     </div>
                   </div>
                 </article>
+                <article v-if="showsSummaryCard" class="detail-card card card-rounded-xl">
+                  <div class="detail-card-head">
+                    <div class="panel-kicker">Samenvatting</div>
+                  </div>
+                  <p class="detail-description">
+                    {{ selectedEntity.description || selectedEntity.summary || defaultEntityDescription }}
+                  </p>
+                </article>
               </div>
-
-              <article v-if="showsSummaryCard" class="detail-card card card-rounded-xl">
-                <div class="detail-card-head">
-                  <div class="panel-kicker">Samenvatting</div>
-                  <h4 class="panel-title">Beschrijving</h4>
-                </div>
-                <p class="detail-description">
-                  {{ selectedEntity.description || selectedEntity.summary || defaultEntityDescription }}
-                </p>
-              </article>
 
               <article v-if="showsRelationsCard" class="detail-card card card-rounded-xl child-list-card">
                 <div class="detail-card-head child-list-head">
@@ -693,7 +662,7 @@
         </div>
         <div class="u-gap-12 dialog-footer">
           <v-btn variant="text" @click="deleteOpen = false">Annuleren</v-btn>
-          <v-btn color="error" rounded="xl" @click="confirmDelete">Verwijderen</v-btn>
+          <v-btn color="#DC3545" @click="confirmDelete">Verwijderen</v-btn>
         </div>
       </v-card>
     </v-dialog>
@@ -744,7 +713,7 @@
         </div>
         <div class="u-gap-12 dialog-footer">
           <v-btn variant="text" @click="customerDeleteOpen = false">Annuleren</v-btn>
-          <v-btn color="error" rounded="xl" @click="confirmCustomerDelete">Verwijderen</v-btn>
+          <v-btn color="#DC3545" @click="confirmCustomerDelete">Verwijderen</v-btn>
         </div>
       </v-card>
     </v-dialog>
