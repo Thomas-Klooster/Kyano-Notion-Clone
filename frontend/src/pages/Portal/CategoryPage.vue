@@ -55,7 +55,7 @@
                                 </div>
 
                                 <div class="project-info">
-                                    <div class="project-name">{{ project.projectname }}</div>
+                                    <div class="project-name">{{ project.name }}</div>
                                     <div class="project-meta">
                                         <span>{{ project.articles.length }} artikelen</span>
                                         <span class="dot">•</span>

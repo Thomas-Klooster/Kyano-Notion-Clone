@@ -22,7 +22,7 @@ class ProjectsUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'projectname' => 'sometimes|required|string',
+            'name' => 'sometimes|required|string',
             'description' => 'sometimes|required|string',
             'slug' => 'sometimes|required',
             'category_id'  => 'sometimes|required|exists:categories,id',

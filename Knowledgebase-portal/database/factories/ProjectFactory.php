@@ -26,11 +26,11 @@ class ProjectFactory extends Factory
 public function definition(): array
 {
 
-    $projectname = $this->faker->company();
+    $name = $this->faker->company();
     return [
-        'projectname' => $projectname,
+        'name' => $name,
         'description' => $this->faker->paragraph(4, true),
-        'slug' => Str::slug($projectname),
+        'slug' => Str::slug($name),
         'article_id' => Article::inRandomOrder()->first()->id ?? Article::factory(),
         'workspace_id' => Workspace::inRandomOrder()->first()->id ?? Workspace::factory(),
         'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory(),

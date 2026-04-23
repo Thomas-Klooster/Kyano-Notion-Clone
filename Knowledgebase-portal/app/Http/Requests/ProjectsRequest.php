@@ -31,8 +31,8 @@ class ProjectsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'projectname' => 'required|string',
-            'description' => 'required|string',
+            'name' => 'required|string',
+            'description' => 'nullable|string',
             'slug' => 'unique:projects,slug',
             'category_id' => 'required|exists:categories,id',
             // 'article_id' => 'nullable|exists:articles,id',
@@ -43,7 +43,7 @@ class ProjectsRequest extends FormRequest
 
     public function messages(): array {
         return [
-            'projectname.required' => 'Het invullen van jouw projectnaam is verplicht.',
+            'name.required' => 'Het invullen van jouw projectnaam is verplicht.',
             // 'description.required' => 'Het invullen van een descriptie is verplicht.',
             'category_id.required' => 'Een categorie is verplicht om een project aan te maken.',
             'workspace_id.required' => 'Een workspace is verplicht om een project aan te maken.'            

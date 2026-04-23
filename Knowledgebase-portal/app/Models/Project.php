@@ -13,7 +13,7 @@ class Project extends Model
 {
     use HasFactory, SoftDeletes;
     protected $fillable = [
-        'projectname',
+        'name',
         'description',
         'slug',
         'user_id',
@@ -56,7 +56,7 @@ class Project extends Model
         parent::boot();
 
         static::saving(function ($project) {
-            $project->slug = Str::slug($project->projectname);
+            $project->slug = Str::slug($project->name);
         });
     }
 }
