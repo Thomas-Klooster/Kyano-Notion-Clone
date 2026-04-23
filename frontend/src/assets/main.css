@@ -3380,10 +3380,10 @@ body {
 }
 
 .auth-page {
-  min-height: 100vh;
+  min-height: 95vh;
   background: var(--color-bg-page);
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: center;
   padding: 32px 16px;
 }
@@ -3663,7 +3663,7 @@ body {
 
 .auth-social-btns {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 8px;
 }
  
