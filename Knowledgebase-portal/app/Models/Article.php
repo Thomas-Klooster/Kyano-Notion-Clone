@@ -1,13 +1,14 @@
 <?php
 
 namespace App\Models;
+use App\Traits\HasTags;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Attachment;
 class Article extends Model
 {
 
-    use HasFactory;
+    use HasFactory, HasTags;
     /**
      * The attributes that are mass assignable.
      *
@@ -55,9 +56,6 @@ class Article extends Model
         public function categories() {
             return $this->belongsTo(Category::class);
 }
-        public function tags() {
-            return $this->belongsToMany(Tag::class);
-    }
 
 public function scopeVisibleTo($query, $user) {
     if ($user->role === 'admin') return $query;

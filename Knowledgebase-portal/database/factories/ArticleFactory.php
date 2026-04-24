@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Category;
 use App\Models\Workspace;
+use App\Models\Tag;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Article;
 
@@ -18,9 +19,9 @@ class ArticleFactory extends Factory
      * @return array<string, mixed>
      */
     protected $model = Article::class;
+
     public function definition(): array
     {
-        
         return [
             'title' => $this->faker->name(),
             'content' => $this->faker->paragraph(2, true),
@@ -30,5 +31,13 @@ class ArticleFactory extends Factory
             'status' => $this->faker->randomElement(['draft', 'published']),
             'visibility' => $this->faker->randomElement(['public', 'private']),
         ];
+    }
+
+    public function configure(): static
+    {
+        return $this->afterCreating(function (Article $article) {
+            $tagIds = Tag::inRandomOrder()->take(rand(1, 3))->pluck('id')->toArray();
+            $article->tags()->syncWithoutDetaching($tagIds);
+                    });
     }
 }

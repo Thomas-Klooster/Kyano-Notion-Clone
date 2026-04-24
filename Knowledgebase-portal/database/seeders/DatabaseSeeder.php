@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Str;
 use App\Models\Project;
 use App\Models\Workspace;
+use App\Models\Tag;
 use App\Models\Category;
 class DatabaseSeeder extends Seeder
 {
@@ -59,8 +60,12 @@ class DatabaseSeeder extends Seeder
         ->count(50)
         ->create();
 
+        Tag::factory()
+        ->count(5)
+        ->create();
+
         Article::factory()
-        ->count(100)
+        ->count(40)
         ->create();
 
         Project::factory()
@@ -68,27 +73,9 @@ class DatabaseSeeder extends Seeder
         ->create();
 
         Article::all()->each(function ($article) {
-            $article->update([
-                'project_id' => Project::inRandomOrder()->first()->id
-            ]);
-        });
-
-        
-         DB::table('tags')->insert([
-            [
-                'name' => 'personal',
-                'created_at' => now(),
-                'updated_at' => now(),
-                
-            ],
-            [
-                'name' => 'php',
-                'created_at' => now(),
-                'updated_at' => now(),
-                ],
-        ]);
-
-
+        $article->update(['project_id' => Project::inRandomOrder()->first()->id
+    ]);
+});
 
     }
 }

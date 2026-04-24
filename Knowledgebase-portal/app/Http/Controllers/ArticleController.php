@@ -23,10 +23,13 @@ class ArticleController extends Controller
      return response()->json($articles);
     }
 
+
    public function store(ArticleRequest $request) {
     $this->authorize('create', [Article::class, $request->project_id]);
     $data = $request->validated();
     $article = Article::create(Arr::except($data, ['attachments']));
+
+    $article->syncTags($request->tags ?? []);
 
     if ($request->hasFile('attachments')) {
         foreach ($request->file('attachments') as $file) {
@@ -42,13 +45,13 @@ class ArticleController extends Controller
         }
     }
 
-    return response()->json($article->load('attachments'), 201);
+    return response()->json($article->load(['attachments', 'tags']), 201);
 }
 
 
     public function show(Article $article) { 
     $this->authorize('view', $article);
-    return response()->json($article->load(['projects', 'categories', 'attachments']));
+    return $article->load(['tags', 'projects', 'categories', 'attachments']);
     }
 
     public function update(ArticleUpdateRequest $request, Article $article) {
@@ -56,7 +59,7 @@ class ArticleController extends Controller
         $this->authorize('update', $article);
         $article->update($request->validated());
 
-        return $article->load(['project', 'category', 'attachments']);
+        return $article->load(['tags', 'project', 'category', 'attachments']);
     }
 
     public function destroy(Article $article) {

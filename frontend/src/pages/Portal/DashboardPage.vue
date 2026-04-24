@@ -71,8 +71,8 @@
                             </button>
                         </div>
 
-                        <div v-if="expandedWorkspaces.includes(workspace.id)" class="tree-children">
-                            <div v-for="category in workspace.categories" :key="category.id" class="tree-group">
+                        <div v-if="expandedWorkspaces.includes(workspace.slug)" class="tree-children">
+                            <div v-for="category in workspace.categories" :key="category.slug" class="tree-group">
                                 <div class="tree-row tree-row-category">
                                     <router-link :to="categoryRoute(workspace, category)"
                                         class="tree-row-main u-min-w-0 tree-link">
@@ -98,7 +98,7 @@
                                     </button>
                                 </div>
 
-                                <div v-if="expandedCategories.includes(category.id)" class="tree-children">
+                                <div v-if="expandedCategories.includes(category.slug)" class="tree-children">
                                     <div v-for="project in category.projects" :key="project.id" class="tree-group">
                                         <div class="tree-row tree-row-project">
                                             <router-link :to="projectRoute(project)" class="tree-row-main u-min-w-0 tree-link">
