@@ -15,10 +15,6 @@ axios.defaults.headers.common['Accept'] = 'application/json'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 window.axios = axios
 
-// VueQuill
-import { QuillEditor } from '@vueup/vue-quill'
-import '@vueup/vue-quill/dist/vue-quill.snow.css'
-
 // Vuetify
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -34,7 +30,6 @@ import '@fontsource/roboto/700.css'
 import '@fontsource/roboto/900.css'
 
 const app = createApp(App)
-app.component('QuillEditor', QuillEditor)
 
 const pinia = createPinia()
 app.use(pinia)

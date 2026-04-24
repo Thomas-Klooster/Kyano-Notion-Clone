@@ -118,7 +118,9 @@
 import axios from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 
+const auth = useAuthStore();
 const passwordField = ref(null);
 const formRef = ref(null);
 const formValid = ref(false);
@@ -160,6 +162,7 @@ async function onSubmit() {
       remember: remember.value,
     });
     console.log("Ingelogd:", response.data);
+    await auth.fetchUser();
     router.push({ name: "Dashboard" });
   } catch (error) {
     if (error.response?.status === 422) {
