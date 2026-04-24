@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 
+
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
@@ -18,10 +19,11 @@ Route::post('/reset-password', [AuthController::class, 'newPassword']);
 // Route::post('/newPassword', [AuthController::class, 'newPassword']);
 Route::get('/workspace/invite/accept', [WorkspaceController::class, 'acceptInvite'])
 ->name('workspace.invite.accept');    
+Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/me', fn(Request $request) => $request->user()); 
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', fn(Request $request) => $request->user()); 
     Route::post('/change-password', [AuthController::class, 'resetPassword']);
 
     Route::get('/workspaces', [WorkspaceController::class, 'index']);

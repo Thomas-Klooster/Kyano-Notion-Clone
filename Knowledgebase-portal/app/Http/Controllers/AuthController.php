@@ -11,6 +11,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LogoutRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Auth;
 use App\Mail\OtpMail;
 
@@ -30,14 +31,37 @@ class AuthController extends Controller
             ]);
         Auth::login($user);
 
-        if ($request->hasSession()) {
-            $request->session()->regenerate();
-        }
-        
+        $accessToken = $user->createToken('access-token', ['*'], now()->addMinutes(15))->plainTextToken;
+        $refreshToken = $user->createToken('refresh-token', ['*'], now()->addMinutes(30))->plainTextToken;
+
         return response()->json([
             'message' => 'Geregistreerd!',
             'user'=> $user,
+            'accessToken' => $accessToken,
+            'refreshToken' => $refreshToken
         ], 201);
+    }
+
+    public function refresh(Request $request) {
+    $refreshToken = $request->input('refreshToken');
+    $token = PersonalAccessToken::findToken($refreshToken);
+
+    if (!$token || $token->expires_at->isPast()) {
+        return response()->json(['message' => 'token verlopen'], 401);
+    }
+
+        $user = $token->tokenable;
+        $user->tokens()->delete();
+
+        $accessToken = $user->createToken('access-token', ['*'], now()->addMinutes(15))->plainTextToken;
+        $refreshToken = $user->createToken('refresh-token', ['*'], now()->addDays(30))->plainTextToken;
+
+        return response([
+        'accessToken' => $accessToken,
+        'refreshToken' => $refreshToken,
+        ]);
+
+
     }
 
    public function login(LoginRequest $request)
@@ -66,10 +90,12 @@ public function logout(LogoutRequest $request) {
         $request->session()->regenerateToken();
     }
 
+    $request->user()->tokens()->delete();
+
     return response()->json([
         'success' => true,
         'message' => 'Succesvol uitgelogd!'
-        ]);
+    ]);
 
     }    
 
