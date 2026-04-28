@@ -11,15 +11,14 @@ export const login = async (email, password) => {
      localStorage.setItem('refreshToken',
           data.refreshToken
      );
-     return data.user;
+     return data.user
 };
 
 export const register = async (name, email, password, password_confirmation) => {
      const { data } = await api.post('/register', {
           name, email, password, password_confirmation
      });
-          console.log(data);
-
+     
      localStorage.setItem('accessToken',
           data.accessToken
      );

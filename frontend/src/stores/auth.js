@@ -32,28 +32,7 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async login(payload) {
-      this.loading = true
-      try {
-        await this.getCsrfCookie()
-        await api.post('/login', payload)
-        await this.fetchUser()
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async register(payload) {
-      this.loading = true
-      try {
-        await this.getCsrfCookie()
-        await api.post('/register', payload)
-        await this.fetchUser()
-      } finally {
-        this.loading = false
-      }
-    },
-
+    
     async logout() {
       await api.post('/logout')
       this.user = null
@@ -63,15 +42,15 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async forgotPassword(email) {
-      return axios.post('/api/forgot-password', { email })
+      return api.post('/api/forgot-password', { email })
     },
 
     async verifyOtp(email, otp) {
-      return axios.post('/api/verify-otp', { email, otp })
+      return api.post('/api/verify-otp', { email, otp })
     },
 
     async setNewPassword(payload) {
-      return axios.post('/api/newPassword', payload)
+      return api.post('/api/newPassword', payload)
     },
   },
 })

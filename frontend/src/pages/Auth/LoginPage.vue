@@ -40,7 +40,6 @@
                 </button>
               </div>
               <v-text-field
-                ref="passwordField"
                 v-model="password"
                 placeholder="••••••••"
                 autocomplete="current-password"
@@ -154,13 +153,14 @@ const onSubmit = async () => {
   try {
     const user = await login(email.value, password.value);
     auth.setUser(user);
-    router.push({ name: 'dashboard' });
+    router.push({ name: 'Dashboard' });
   } catch (err) {
     errorMessage.value = err.response?.data?.message || 'Er is iets misgegaan.';
   } finally {
     loading.value = false;
   }
 };
+
 
 function onForgotPassword() {
   router.push({ name: "forgot-password" }).catch(() => {});
