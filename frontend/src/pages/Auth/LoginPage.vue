@@ -115,17 +115,15 @@
 </template>
 
 <script setup>
-import axios from "axios";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import { login } from "@/services/authService";
 
 const auth = useAuthStore();
-const passwordField = ref(null);
 const formRef = ref(null);
 const formValid = ref(false);
 const loading = ref(false);
-const errors = ref({});
 const email = ref("");
 const password = ref("");
 const remember = ref(true);
@@ -146,36 +144,23 @@ const passwordRules = [
   (v) => /[\d\W]/.test(v) || "Het wachtwoord moet ten minste één cijfer of speciaal teken bevatten.",
 ];
 
-async function onSubmit() {
+const onSubmit = async () => {
   const { valid } = await formRef.value.validate();
   if (!valid) return;
 
   loading.value = true;
-  errors.value = {};
-  errorMessage.value = "";
+  errorMessage.value = '';
 
   try {
-    await axios.get("/sanctum/csrf-cookie");
-    const response = await axios.post("/api/login", {
-      email: email.value,
-      password: password.value,
-      remember: remember.value,
-    });
-    console.log("Ingelogd:", response.data);
-    await auth.fetchUser();
-    router.push({ name: "Dashboard" });
-  } catch (error) {
-    if (error.response?.status === 422) {
-      errors.value = error.response.data.errors ?? {};
-      errorMessage.value = "Oeps, er is iets verkeerds gegaan..";
-    } else {
-      errorMessage.value = "Onjuiste gegevens.";
-      console.error(error);
-    }
+    const user = await login(email.value, password.value);
+    auth.setUser(user);
+    router.push({ name: 'dashboard' });
+  } catch (err) {
+    errorMessage.value = err.response?.data?.message || 'Er is iets misgegaan.';
   } finally {
     loading.value = false;
   }
-}
+};
 
 function onForgotPassword() {
   router.push({ name: "forgot-password" }).catch(() => {});
