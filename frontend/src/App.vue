@@ -97,7 +97,7 @@ async function handleLogout() {
         <div class="sidebar-nav-section">
           <div class="sidebar-section-kicker">Navigatie</div>
           <nav class="sidebar-nav">
-            <router-link to="/" class="sidebar-nav-item" active-class="sidebar-nav-item--active" exact @click="drawer = false">
+            <router-link to="/dashboard" class="sidebar-nav-item" active-class="sidebar-nav-item--active" exact @click="drawer = false">
               <div class="sidebar-nav-icon"><v-icon size="16">mdi-home-outline</v-icon></div>
               <span>Home</span>
             </router-link>

@@ -26,6 +26,11 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      redirect: '/auth/login',
+    },
+
+    {
+      path: '/dashboard',
       name: 'Dashboard',
       component: () => import('@/pages/Portal/DashboardPage.vue'),
       meta: { guestOnly: true, breadcrumb: 'Dashboard' },
