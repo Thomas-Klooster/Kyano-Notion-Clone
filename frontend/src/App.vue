@@ -2,18 +2,11 @@
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { onMounted } from 'vue'
 
 const auth = useAuthStore()
 const router = useRouter()
-
-onMounted(async () => {
-  if (!auth.initialized) {
-    await auth.fetchUser()
-  }
-})
-
 const route = useRoute()
+const drawer = ref(false)
 
 const breadcrumbItems = computed(() => {
   return route.matched
@@ -28,8 +21,6 @@ const breadcrumbItems = computed(() => {
       }
     })
 })
-
-const drawer = ref(false)
 
 const userInitials = computed(() => {
   const name = auth.user?.name
