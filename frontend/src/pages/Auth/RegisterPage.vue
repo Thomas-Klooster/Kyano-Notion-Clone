@@ -18,7 +18,7 @@
             <div class="auth-field-group">
               <label class="auth-label">Volledige naam</label>
               <v-text-field
-                v-model="fullName"
+                v-model="name"
                 placeholder="Jouw naam..."
                 autocomplete="name"
                 variant="solo-filled"
@@ -156,10 +156,12 @@
 </template>
 
 <script setup>
-import axios from 'axios'
+import { register } from "@/services/authService";
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth';
 
+const auth = useAuthStore();
 const formRef = ref(null)
 const emailField = ref(null)
 const passwordField = ref(null)
@@ -167,12 +169,11 @@ const confirmField = ref(null)
 const formValid = ref(false)
 const loading = ref(false)
 const errorMessage = ref('')
-const errors = ref({})
-const fullName = ref('')
+const name = ref('')
 const email = ref('')
-const company = ref('')
-const phone_number = ref('')
-const address = ref('')
+// const company = ref('')
+// const phone_number = ref('')
+// const address = ref('')
 const password = ref('')
 const password_confirmation = ref('')
 const acceptTerms = ref(false)
@@ -209,46 +210,27 @@ function focusEmail() { emailField.value?.focus?.() }
 function focusPassword() { passwordField.value?.focus?.() }
 function focusConfirm() { confirmField.value?.focus?.() }
 
-async function onSubmit() {
-  const { valid } = await formRef.value.validate()
-  if (!valid) return
-  loading.value = true
-  errors.value = {}
-  errorMessage.value = ''
+const onSubmit = async () => {
+  const { valid } = await formRef.value.validate();
+  if (!valid) return;
+
+  loading.value = true;
+  errorMessage.value = '';
 
   try {
-    await axios.get('/sanctum/csrf-cookie', { withCredentials: true })
-    const response = await axios.post(
-      '/api/register',
-      {
-        name: fullName.value,
-        email: email.value,
-        company: company.value,
-        phone_number: phone_number.value,
-        address: address.value,
-        password: password.value,
-        password_confirmation: password_confirmation.value,
-      },
-      { withCredentials: true },
-    )
-    console.log('Geregistreerd:', response.data)
-    router.push({ name: 'login' })
-  } catch (error) {
-    if (error.response?.status === 422) {
-      errors.value = error.response.data.errors ?? {}
-      errorMessage.value = 'Controleer ur velden en probeer opnieuw.'
-    } else {
-      errorMessage.value = 'Er is een onverwachte fout opgetreden'
-      console.error(error)
-    }
+    const user = await register(name.value, email.value, password.value, password_confirmation.value);
+    auth.setUser(user);
+    router.push({ name: 'login' });
+  } catch (err) {
+    errorMessage.value = err.response?.data?.message || 'Er is iets misgegaan.';
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
-function onSocial(provider) {
-  errorMessage.value = `Social signup (${provider}) is not connected yet.`
-}
+// function onSocial(provider) {
+//   errorMessage.value = `Social signup (${provider}) is not connected yet.`
+// }
 
 function goToLogin() {
   router.push({ name: 'login' }).catch(() => {})

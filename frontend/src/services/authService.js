@@ -2,7 +2,7 @@ import api from "@/api/api";
 
 
 export const login = async (email, password) => {
-     const { data } = await api.post('/auth/login', {
+     const { data } = await api.post('/login', {
           email, password
      });
      localStorage.setItem('accessToken',
@@ -14,10 +14,12 @@ export const login = async (email, password) => {
      return data.user;
 };
 
-export const register = async (name, email, password) => {
-     const { data } = await api.post('/auth/register', {
-          name, email, password
+export const register = async (name, email, password, password_confirmation) => {
+     const { data } = await api.post('/register', {
+          name, email, password, password_confirmation
      });
+          console.log(data);
+
      localStorage.setItem('accessToken',
           data.accessToken
      );
@@ -29,7 +31,7 @@ export const register = async (name, email, password) => {
 
 
 export const logout = async () => {
-     await api.post('/auth/logout');
+     await api.post('/logout');
      localStorage.clear();
      windows.location.href = '/login';
 };

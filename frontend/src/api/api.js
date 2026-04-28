@@ -5,7 +5,8 @@ import axios from 'axios';
 //  !! DEBUG: if it doesn't work change it to be backend host
 // !! It should work on the frontend since the sanctum is on it the current host though..
 const api = axios.create({
-     baseURL: 'http://localhost:5173'
+     baseURL: 'http://localhost:8000/api',
+     withCredentials: false,
 });
 
 let isRefreshing = false;
