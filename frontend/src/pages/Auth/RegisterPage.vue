@@ -233,7 +233,7 @@ const onSubmit = async () => {
 // }
 
 function goToLogin() {
-  router.push({ name: '/login' }).catch(() => {})
+  router.push({ name: 'login' }).catch(() => {})
 }
 
 function onOpenTerms() { console.log('Open terms') }
