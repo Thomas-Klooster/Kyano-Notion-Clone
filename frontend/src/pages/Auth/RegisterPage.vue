@@ -220,7 +220,7 @@ const onSubmit = async () => {
   try {
     const user = await register(name.value, email.value, password.value, password_confirmation.value);
     auth.setUser(user);
-    router.push({ name: '/login' });
+    router.push({ name: 'Dashboard' });
   } catch (err) {
     errorMessage.value = err.response?.data?.message || 'Er is iets misgegaan.';
   } finally {
