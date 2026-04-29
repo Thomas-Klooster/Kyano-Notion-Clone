@@ -23,7 +23,8 @@ class Category extends Model
         return 'slug';
     }
 
-public function scopeVisibleTo($query, $user) {
+    public function scopeVisibleTo($query, $user) {
+    if (!$user) return $query->whereRaw('1 = 0');
     if ($user->role === 'admin') return $query;
     return $query->whereHas('projects.workspace.members', function ($q) use ($user) {
         $q->where('user_id', $user->id);

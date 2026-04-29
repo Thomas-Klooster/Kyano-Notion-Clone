@@ -172,13 +172,11 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import axios from 'axios'
+import { getWorkspaces } from '@/services/workspaceService'
+import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter()
 const route = useRoute()
-const auth = useAuthStore()
 const search = ref('')
 const workspace = ref({ name: '', categories: [] })
 const loading = ref(false)
@@ -188,23 +186,26 @@ const expandedProjects = ref([])
 
 const categories = computed(() => workspace.value.categories ?? [])
 
-onMounted(async () => {
-    if (!auth.initialized) return
+
+onMounted(loadCategories)
+
+async function loadCategories() {
     loading.value = true
+    error.value = false
     try {
-        await axios.get('/sanctum/csrf-cookie');
-        const { data } = await axios.get(`/api/workspaces/${route.params.slug}`)
-        workspace.value = data
+        const allWorkspaces = await getWorkspaces()
+        const current = allWorkspaces.find(w => w.slug === route.params.slug)
+        
+        if (current) {
+            workspace.value.name = current.name
+            workspace.value.categories = current.categories
+        }
     } catch (err) {
-        error.value = 'Geen categorieen gevonden'
+        error.value = 'Kon categorieën niet inladen...'
     } finally {
         loading.value = false
     }
-})
-
-
-
-
+}
 
 const filteredCategories = computed(() => {
     const query = search.value.trim().toLowerCase()
@@ -290,8 +291,8 @@ function toggleProject(id) {
         : [...expandedProjects.value, id]
 }
 
-function goToCategory(slug) {
-    router.push(`/category/${slug}`)
+function goToCategory(id) {
+    router.push(`/category/${id}`)
 }
 
 function goToProject(id) {

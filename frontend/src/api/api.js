@@ -57,7 +57,7 @@ api.interceptors.response.use(
                     // ? back to the loginpage after logout feature
                     localStorage.clear();
                     window.location.href = '/auth/login';
-                    return Promise.rejecct(error);
+                    return Promise.reject(error);
                } finally {
                     isRefreshing = false;
                }

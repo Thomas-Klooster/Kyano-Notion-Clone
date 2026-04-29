@@ -71,7 +71,7 @@
                             </button>
                         </div>
 
-                        <div v-if="expandedWorkspaces.includes(workspace.slug)" class="tree-children">
+                        <div v-if="expandedWorkspaces.includes(workspace.id)" class="tree-children">
                             <div v-for="category in workspace.categories" :key="category.slug" class="tree-group">
                                 <div class="tree-row tree-row-category">
                                     <router-link :to="categoryRoute(workspace, category)"
@@ -90,7 +90,7 @@
                                         </div>
                                     </router-link>
 
-                                    <button class="tree-toggle" type="button" @click="toggleCategory(category.id)">
+                                    <button class="tree-toggle" type="button" @click="toggleCategory(category.slug)">
                                         <v-icon size="18">
                                             {{ expandedCategories.includes(category.id) ? 'mdi-chevron-down' :
                                                 'mdi-chevron-right' }}
@@ -138,8 +138,8 @@
                                                     <div class="tree-info">
                                                         <div class="tree-name">{{ article.title }}</div>
                                                         <div class="tree-meta">
-                                                            <span>{{ article.tags.join(', ') }}</span>
-                                                        </div>
+                                                    <span>{{ (article.tags ?? []).join(', ') }}</span>
+                                                                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -175,14 +175,13 @@ const workspaces = ref([])
 const loading = ref(false)
 const error = ref('')
 
-const expandedWorkspaces = ref([1])
-const expandedCategories = ref([11])
-const expandedProjects = ref([111])
+const expandedWorkspaces = ref([])
+const expandedCategories = ref([])
+const expandedProjects = ref([])
+
 
 onMounted(async () => {
   
-  const data = await getWorkspaces()
-  workspaces.value = data
  loading.value = true;
   try {
     workspaces.value = await getWorkspaces();
@@ -306,12 +305,12 @@ function workspaceRoute(workspace) {
     }
 }
 
-function categoryRoute(workspace, category) {
+function categoryRoute(category) {
     return {
         name: 'category',
         params: {
-            workspaceId: workspace.id,
-            id: category.id,
+            // workspaceId: workspace.id,
+            slug: category.slug,
         },
     }
 }
