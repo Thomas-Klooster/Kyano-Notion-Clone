@@ -15,12 +15,12 @@ class CategoryRequest extends FormRequest
     $categoryId = $this->input('category_id');
 
     if(!$categoryId) return 
-        in_array(auth()->user()->role, ['admin', 'owner']);
+        in_array(auth('sanctum')->user()->role, ['admin', 'owner']);
 
     $category = \App\Models\Category::find($categoryId);
     if (!$category) return false;
 
-    return auth()->user()->role === 'admin' ||
+    return auth('sanctum')->user()->role === 'admin' ||
     $category->user_id === auth()->id();
 }
 

@@ -11,7 +11,7 @@ class CategoryController extends Controller
   
 use AuthorizesRequests;
   public function index() {
-  $categories = Category::visibleTo(auth()->user())->with(['projects.articles'])
+  $categories = Category::visibleTo(auth('sanctum')->user())->with(['projects.articles'])
   ->latest()->get();
         return response()->json($categories);
   }

@@ -167,33 +167,31 @@
 </template>
 
 <script setup>
-import axios from 'axios'
-import { computed, onMounted, ref } from 'vue'
-import { useAuthStore } from '@/stores/auth'
+import { ref, computed, onMounted } from 'vue';
+import { getWorkspaces } from '@/services/workspaceService';
 
-const auth = useAuthStore()
 const search = ref('')
 const workspaces = ref([])
 const loading = ref(false)
-const error = ref(false)
+const error = ref('')
 
 const expandedWorkspaces = ref([1])
 const expandedCategories = ref([11])
 const expandedProjects = ref([111])
 
 onMounted(async () => {
-    if (!auth.initialized) return 
-    loading.value = true
-    try {
-        await axios.get('/sanctum/csrf-cookie');
-        const response = await axios.get('/api/workspaces')
-        workspaces.value = response.data
-    } catch (err) {
-        error.value = 'Geen workspaces gevonden.'
-    } finally {
-        loading.value = false
-    }
-})
+  
+  const data = await getWorkspaces()
+  workspaces.value = data
+ loading.value = true;
+  try {
+    workspaces.value = await getWorkspaces();
+  } catch (err) {
+    error.value = 'Kon workspaces niet laden...';
+  } finally {
+    loading.value = false;
+  }
+});
 
 const filteredWorkspaces = computed(() => {
     const query = search.value.trim().toLowerCase()

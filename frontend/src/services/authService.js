@@ -32,5 +32,5 @@ export const register = async (name, email, password, password_confirmation) => 
 export const logout = async () => {
      await api.post('/logout');
      localStorage.clear();
-     windows.location.href = '/login';
+     window.location.href = '/login';
 };

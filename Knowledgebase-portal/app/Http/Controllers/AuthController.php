@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Http\Requests\LogoutRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -70,25 +69,28 @@ class AuthController extends Controller
     if (!Auth::attempt($credentials, $request->filled('remember'))) {
         return response()->json(['message' => 'Ongeldige inloggegevens.'], 401);
     }
-    
-     if ($request->hasSession()) {
-         $request->session()->regenerate();
-     }
+
+        $user = Auth::user();
+
+        $accessToken = $user->createToken('access-token', ['*'], now()->addMinutes(15))->plainTextToken;
+        $refreshToken = $user->createToken('refresh-token', ['*'], now()->addDays(30))->plainTextToken;
+
     
     return response()->json([
         'message' => 'Ingelogd!',
         'user' => Auth::user(),
+        'accessToken' => $accessToken,
+        'refreshToken' => $refreshToken,
         ]);
 
 }
 
-public function logout(LogoutRequest $request) {
-    Auth::guard('web')->logout();
+public function logout(Request $request) {
 
     if ($request->user()) {
     $request->user()->tokens()->delete();
     }
-    
+
     return response()->json([
         'success' => true,
         'message' => 'Succesvol uitgelogd!'

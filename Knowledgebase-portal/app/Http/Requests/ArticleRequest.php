@@ -39,12 +39,12 @@ class ArticleRequest extends FormRequest
       $articleId = $this->input('article_id');
 
       if (!$articleId)
-        return in_array(auth()->user()->role, ['admin', 'owner']);
+        return in_array(auth('sanctum')->user()->role, ['admin', 'owner']);
 
       $article = \App\Models\Article::find($articleId);
       if (!$article) return false;
 
-      return in_array(auth()->user()->role, ['admin', 'owner'])
+      return in_array(auth('sanctum')->user()->role, ['admin', 'owner'])
          || $article->user_id === auth()->id();
 }
      

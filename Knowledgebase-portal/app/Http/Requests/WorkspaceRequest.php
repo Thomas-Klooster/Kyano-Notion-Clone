@@ -13,12 +13,12 @@ class WorkspaceRequest extends FormRequest
     {
     $workspaceId = $this->input('workspace_id');
     if(!$workspaceId) return 
-    in_array(auth()->user()->role, ['admin', 'owner']);
+    in_array(auth('sanctum')->user()->role, ['admin', 'owner']);
 
     $workspace = \App\Models\Workspace::find($workspaceId);
     if (!$workspace) return false;
 
-    return auth()->user()->role === 'admin' ||
+    return auth('sanctum')->user()->role === 'admin' ||
     $workspace->user_id === auth()->id();
 
     }

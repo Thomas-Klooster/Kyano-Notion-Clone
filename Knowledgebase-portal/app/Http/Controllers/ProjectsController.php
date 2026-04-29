@@ -12,7 +12,7 @@ class ProjectsController extends Controller
 
      public function index() {
        $projects = Project::with(['category', 'article', 'workspace'])
-       ->visibleTo(auth()->user())->get();
+       ->visibleTo(auth('sanctum')->user())->get();
         return response()->json($projects);
         
     }
@@ -56,7 +56,7 @@ class ProjectsController extends Controller
     public function myProjects()
 {
     $projects = Project::with(['category', 'article', 'workspace'])
-    ->visibleTo(auth()->user())->get();
+    ->visibleTo(auth('sanctum')->user())->get();
     return response()->json($projects);
 }
 

@@ -6,7 +6,7 @@ import axios from 'axios';
 // !! It should work on the frontend since the sanctum is on it the current host though..
 const api = axios.create({
      baseURL: 'http://localhost:8000/api',
-     withCredentials: false,
+     withCredentials: true,
 });
 
 let isRefreshing = false;
@@ -46,7 +46,7 @@ api.interceptors.response.use(
                isRefreshing = true;
 
                try {
-                    const { data } = await axios.post(`{api.defaults.baseURL}/auth/refresh`, {
+                    const { data } = await axios.post('http://localhost:8000/api/refresh', {
                          refreshToken: localStorage.getItem('refreshToken'),
                     });
                     localStorage.setItem('accessToken', data.accessToken);

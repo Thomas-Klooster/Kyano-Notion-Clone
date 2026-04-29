@@ -18,7 +18,7 @@ class ArticleController extends Controller
     use AuthorizesRequests;
     public function index() {
      $this->authorize('viewAny', Article::class);        
-     $articles = Article::visibleTo(auth()->user())
+     $articles = Article::visibleTo(auth('sanctum')->user())
      ->where('status', 'published')->latest()->get();
      return response()->json($articles);
     }
@@ -84,7 +84,7 @@ class ArticleController extends Controller
       $keyword = $request->input('keyword');
       if (!$keyword) return response()->json([]);
 
-     $articles = Article::visibleTo(auth()->user())
+     $articles = Article::visibleTo(auth('sanctum')->user())
      ->with(['project', 'category', 'attachments'])
     ->where('project_id', $project->id)
       ->where('status', 'published') 
@@ -98,7 +98,7 @@ class ArticleController extends Controller
 
     public function projectArticles(Project $project) {
     $this->authorize('view', $project);
-    $articles = Article::visibleTo(auth()->user())
+    $articles = Article::visibleTo(auth('sanctum')->user())
         ->with(['project', 'category', 'attachments'])
         ->where('project_id', $project->id)
         ->get();
@@ -116,7 +116,7 @@ return response()->json($feedback, 201);
 }
     public function AdminIndex(Request $request)
     {
-        $query = Article::visibleTo(auth()->user())
+        $query = Article::visibleTo(auth('sanctum')->user())
         ->with(['project', 'category', 'attachments']);
 
         if ($request->user_id) {

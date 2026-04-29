@@ -35,12 +35,18 @@ class Workspace extends Model
     public function getRouteKeyName() {
         return 'slug';
     }
-    public function scopeVisibleTo($query, $user)
+public function scopeVisibleTo($query, $user)
 {
-    if ($user->role === 'admin') return $query;
+    if (!$user) {
+        return $query->whereRaw('1 = 0');
+    }
+
+    if ($user->role === 'admin') {
+        return $query;
+    }
 
     return $query->where(function ($q) use ($user) {
-        $q->where('owner_id', $user->id)   
+        $q->where('owner_id', $user->id)
           ->orWhereHas('members', function ($q) use ($user) {
               $q->where('user_id', $user->id);
           });

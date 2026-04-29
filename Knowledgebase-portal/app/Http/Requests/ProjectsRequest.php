@@ -14,12 +14,12 @@ class ProjectsRequest extends FormRequest
         $projectId = $this->input('project_id');
 
         if (!$projectId) return
-        in_array(auth()->user()->role, ['admin', 'owner']);
+        in_array(auth('sanctum')->user()->role, ['admin', 'owner']);
 
         $project = \App\Models\Category::find($projectId);
         if (!$project) return false;
         
-        return auth()->user()->role === 'admin' ||
+        return auth('sanctum')->user()->role === 'admin' ||
         $project->user_id === auth()->id();
     }
 
