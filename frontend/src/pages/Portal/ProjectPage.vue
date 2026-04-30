@@ -52,7 +52,7 @@
                                     <div class="project-meta">
                                         <span>{{ article.tags.join(', ') }}</span>
                                         <span class="dot">•</span>
-                                        <span>{{ article.updatedAt }}</span>
+                                        <span>{{ article.updated_at }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -89,28 +89,28 @@ const project = ref({
             id: 1111,
             title: 'Design system richtlijnen',
             tags: ['Design', 'UI'],
-            updatedAt: 'Vandaag bijgewerkt',
+            updated_at: 'Vandaag bijgewerkt',
             status: 'Gepubliceerd',
         },
         {
             id: 1112,
             title: 'Component structuur',
             tags: ['Vue', 'Frontend'],
-            updatedAt: 'Gisteren bijgewerkt',
+            updated_at: 'Gisteren bijgewerkt',
             status: 'Concept',
         },
         {
             id: 1113,
             title: 'Navigatie en routing',
             tags: ['Router', 'Frontend'],
-            updatedAt: '2 dagen geleden',
+            updated_at: '2 dagen geleden',
             status: 'Gepubliceerd',
         },
         {
             id: 1114,
             title: 'Form validatie',
             tags: ['Forms', 'UX'],
-            updatedAt: 'Vorige week',
+            updated_at: 'Vorige week',
             status: 'Gepubliceerd',
         },
     ],

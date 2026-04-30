@@ -18,8 +18,8 @@ public function toArray($request): array
         'id' => $this->id,
         'name' => $this->name,
         'slug' => $this->slug,
-        'created_at' => $this->created_at->locale("ja")->diffForHumans(),
-        'updated_at' => $this->updated_at->locale("ja")->diffForHumans(),
+        'created_at' => $this->created_at->locale("nl")->diffForHumans(),
+        'updated_at' => $this->updated_at->locale("nl")->diffForHumans(),
          'projects' => ProjectResource::collection($this->whenLoaded('projects')),
     ];
 }

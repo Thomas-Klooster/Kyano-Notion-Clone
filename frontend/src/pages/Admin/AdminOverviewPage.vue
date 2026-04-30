@@ -231,7 +231,7 @@
                                 <div class="tree-row-meta">
                                   <span>{{ article.status }}</span>
                                   <span class="dot">•</span>
-                                  <span>{{ article.updatedAt }}</span>
+                                  <span>{{ article.updated_at }}</span>
                                 </div>
                               </div>
                             </div>
@@ -362,7 +362,7 @@
                     </div> -->
                     <div class="meta-item" v-if="selectedEntityType === 'article'">
                       <span class="meta-label">Laatst gewijzigd</span>
-                      <span class="meta-value">{{ selectedEntity.updatedAt }}</span>
+                      <span class="meta-value">{{ selectedEntity.updated_at }}</span>
                     </div>
                   </div>
                 </article>
@@ -399,8 +399,8 @@
                           <span>{{ labelForType(child.type) }}</span>
                           <span v-if="child.status" class="dot">•</span>
                           <span v-if="child.status">{{ child.status }}</span>
-                          <span v-if="child.updatedAt" class="dot">•</span>
-                          <span v-if="child.updatedAt">{{ child.updatedAt }}</span>
+                          <span v-if="child.updated_at" class="dot">•</span>
+                          <span v-if="child.updated_at">{{ child.updated_at }}</span>
                         </div>
                       </div>
                     </div>
@@ -863,7 +863,7 @@ const workspaceData = ref([
                 title: 'Inloggen als klant',
                 slug: 'inloggen-als-klant',
                 status: 'Published',
-                updatedAt: '2026-04-10',
+                updated_at: '2026-04-10',
                 summary: 'Uitleg over inloggen, autorisatie en toegang tot eigen projecten.',
               },
               {
@@ -871,7 +871,7 @@ const workspaceData = ref([
                 title: 'Nieuwe artikelen publiceren',
                 slug: 'nieuwe-artikelen-publiceren',
                 status: 'Draft',
-                updatedAt: '2026-04-11',
+                updated_at: '2026-04-11',
                 summary: 'Stappenplan voor het aanmaken en publiceren van nieuwe artikelen.',
               },
             ],
@@ -886,7 +886,7 @@ const workspaceData = ref([
                 title: 'Projecten filteren',
                 slug: 'projecten-filteren',
                 status: 'Published',
-                updatedAt: '2026-04-08',
+                updated_at: '2026-04-08',
                 summary: 'Hoe klanten projecten en categorieën snel terugvinden.',
               },
             ],
@@ -908,7 +908,7 @@ const workspaceData = ref([
                 title: 'Problemen oplossen',
                 slug: 'problemen-oplossen',
                 status: 'Published',
-                updatedAt: '2026-04-07',
+                updated_at: '2026-04-07',
                 summary: 'Veelvoorkomende issues en mogelijke oplossingen.',
               },
             ],
@@ -938,7 +938,7 @@ const workspaceData = ref([
                 title: 'Eerste oplevering bekijken',
                 slug: 'eerste-oplevering-bekijken',
                 status: 'Draft',
-                updatedAt: '2026-04-09',
+                updated_at: '2026-04-09',
                 summary: 'Handleiding voor de eerste review door de klant.',
               },
             ],
@@ -1499,7 +1499,7 @@ function createEntity() {
   if (dialogType.value === 'article') {
     const result = findProject(draft.projectId)
     if (!result) return
-    const newArticle = { id: articleId.value++, title: draft.name, summary: draft.summary, slug: draft.slug || slugify(draft.name), status: draft.status || 'Draft', updatedAt: '2026-04-13' }
+    const newArticle = { id: articleId.value++, title: draft.name, summary: draft.summary, slug: draft.slug || slugify(draft.name), status: draft.status || 'Draft', updated_at: '2026-04-13' }
     result.project.articles.unshift(newArticle)
     selectEntity('article', newArticle.id)
   }
@@ -1560,7 +1560,7 @@ function updateEntity() {
     result.article.summary = draft.summary
     result.article.slug = draft.slug || slugify(draft.name)
     result.article.status = draft.status
-    result.article.updatedAt = '2026-04-13'
+    result.article.updated_at = '2026-04-13'
     selectEntity('article', result.article.id)
   }
 }

@@ -111,7 +111,7 @@
                                                     <div class="tree-meta">
                                                         <span>{{ project.articles.length }} artikelen</span>
                                                         <span class="dot">•</span>
-                                                        <span>{{ project.updatedAt }}</span>
+                                                        <span>{{ project.updated_at }}</span>
                                                     </div>
                                                 </div>
                                             </router-link>
@@ -210,13 +210,13 @@ const filteredWorkspaces = computed(() => {
                     const projects = (category.projects ?? [])
                         .map(project => {
                             const projectName = (project.name ?? '').toLowerCase()
-                            const updatedAt = String(
-                                project.updatedAt ?? project.updated_at ?? ''
+                            const updated_at = String(
+                                project.updated_at ?? project.updated_at ?? ''
                             ).toLowerCase()
 
                             const projectMatches =
                                 projectName.includes(query) ||
-                                updatedAt.includes(query)
+                                updated_at.includes(query)
 
                             const articles = (project.articles ?? []).filter(article => {
                                 const title = (article.title ?? '').toLowerCase()

@@ -107,7 +107,7 @@
                   <span class="dot">•</span>
                   <span>{{ article.category }}</span>
                   <span class="dot">•</span>
-                  <span>Laatst gewijzigd: {{ formatDate(article.updatedAt) }}</span>
+                  <span>Laatst gewijzigd: {{ formatDate(article.updated_at) }}</span>
                 </div>
               </div>
             </div>
@@ -162,7 +162,7 @@ const articles = ref([
     project: 'Knowledgebase Portal',
     category: 'Installatie',
     status: 'Published',
-    updatedAt: '2026-03-10',
+    updated_at: '2026-03-10',
   },
   {
     id: 2,
@@ -171,7 +171,7 @@ const articles = ref([
     project: 'Client Onboarding',
     category: 'Toegang',
     status: 'Draft',
-    updatedAt: '2026-03-12',
+    updated_at: '2026-03-12',
   },
   {
     id: 3,
@@ -180,7 +180,7 @@ const articles = ref([
     project: 'Support Docs',
     category: 'Troubleshooting',
     status: 'Published',
-    updatedAt: '2026-03-11',
+    updated_at: '2026-03-11',
   },
 ])
 
@@ -213,7 +213,7 @@ const sortedArticles = computed(() => {
     return items.sort((a, b) => a.title.localeCompare(b.title))
   }
 
-  return items.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
+  return items.sort((a, b) => b.updated_at.localeCompare(a.updated_at))
 })
 
 function formatDate(date) {

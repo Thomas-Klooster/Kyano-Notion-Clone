@@ -17,8 +17,8 @@ class ProjectResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'created_at' => $this->created_at->locale("ja")->diffForHumans(),
-            'updated_at' => $this->updated_at->locale("ja")->diffForHumans(),
+            'created_at' => $this->created_at->locale("nl")->diffForHumans(),
+            'updated_at' => $this->updated_at->locale("nl")->diffForHumans(),
             'articles' => $this->whenLoaded('articles'),
         ];
     }
