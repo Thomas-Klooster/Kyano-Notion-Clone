@@ -1,5 +1,36 @@
 import axios from 'axios';
 
+const SESSION_DURATION = 30 * 60 * 1000;
+let logoutTimer;
+
+function scheduleAutoLogout() {
+  clearTimeout(logoutTimer);
+  logoutTimer = setTimeout(forceLogout, SESSION_DURATION);
+}
+
+function forceLogout() {
+  localStorage.clear();
+  window.location.href = '/auth/login';
+}
+
+function initSessionTimer() {
+  const expiresAt = parseInt(localStorage.getItem('sessionExpiresAt'));
+  if (!expiresAt || Date.now() >= expiresAt) {
+    if (localStorage.getItem('accessToken')) forceLogout();
+    return;
+  }
+  const remaining = expiresAt - Date.now();
+  logoutTimer = setTimeout(forceLogout, remaining);
+}
+
+export function startSession() {
+  const expiresAt = Date.now() + SESSION_DURATION;
+  localStorage.setItem('sessionExpiresAt', expiresAt);
+  scheduleAutoLogout();
+}
+
+initSessionTimer();
+
 const api = axios.create({
      baseURL: 'http://localhost:8000/api',
      withCredentials: true,
@@ -52,6 +83,7 @@ api.interceptors.response.use(
 
                     localStorage.setItem('accessToken', data.accessToken);
                     localStorage.setItem('refreshToken', data.refreshToken);
+                    startSession();
                     processQueue(null, data.accessToken);
                     return api(originalRequest);
                } catch (refreshError) {
