@@ -10,16 +10,16 @@ import ResetPasswordPage from '@/pages/Auth/ResetPasswordPage.vue'
 
 // ADMIN
 import AdminOverviewPage from '@/pages/Admin/AdminOverviewPage.vue'
-import CustomersPage from '@/pages/Admin/Customers/CustomersPage.vue'
-import CustomerFormPage from '@/pages/Admin/Customers/CustomerFormPage.vue'
-import ProjectsPage from '@/pages/Admin/Projects/ProjectsPage.vue'
-import ProjectFormPage from '@/pages/Admin/Projects/ProjectFormPage.vue'
-import ProjectDetailPage from '@/pages/Admin/Projects/ProjectDetailPage.vue'
-import WorkspacesPage from '@/pages/Admin/Workspaces/WorkspacesPage.vue'
-import CategoriesPage from '@/pages/Admin/Categories/CategoriesPage.vue'
+// import CustomersPage from '@/pages/Admin/Customers/CustomersPage.vue'
+// import CustomerFormPage from '@/pages/Admin/Customers/CustomerFormPage.vue'
+// import ProjectsPage from '@/pages/Admin/Projects/ProjectsPage.vue'
+// import ProjectFormPage from '@/pages/Admin/Projects/ProjectFormPage.vue'
+// import ProjectDetailPage from '@/pages/Admin/Projects/ProjectDetailPage.vue'
+// import WorkspacesPage from '@/pages/Admin/Workspaces/WorkspacesPage.vue'
+// import CategoriesPage from '@/pages/Admin/Categories/CategoriesPage.vue'
 
 import { createRouter, createWebHistory } from 'vue-router'
-import CategoriesFormPage from '@/pages/Admin/Categories/CategoriesFormPage.vue'
+// import CategoriesFormPage from '@/pages/Admin/Categories/CategoriesFormPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -110,72 +110,72 @@ const router = createRouter({
           name: 'admin-overview',
           component: AdminOverviewPage,
         },
-        {
-          path: 'customers',
-          name: 'admin-customers',
-          component: CustomersPage,
-          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Customers module' },
-        },
-        {
-          path: 'customers/new',
-          name: 'admin-customers-new',
-          component: CustomerFormPage,
-          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Customer create/edit form' },
-        },
-        {
-          path: 'customers/:id/edit',
-          name: 'admin-customers-edit',
-          component: CustomerFormPage,
-          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Customer create/edit form' },
-        },
-        {
-          path: 'workspaces',
-          name: 'admin-workspaces',
-          component: WorkspacesPage,
-          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Workspaces' },
-        },
-        {
-          path: 'categories',
-          name: 'admin-categories',
-          component: CategoriesPage,
-          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Categories' },
-        },
-        {
-          path: 'categories/new',
-          name: 'admin-categories-new',
-          component: CategoriesFormPage,
-          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Categories create/edit form' },
-        },
-        {
-          path: 'categories/:id/edit',
-          name: 'admin-categories-edit',
-          component: CategoriesFormPage,
-          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Categories create/edit form' },
-        },
-        {
-          path: 'projects',
-          name: 'admin-projects',
-          component: ProjectsPage,
-          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Projects' },
-        },
-        {
-          path: 'projects/new',
-          name: 'admin-projects-new',
-          component: ProjectFormPage,
-          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Project create/edit' },
-        },
-        {
-          path: 'projects/:id/edit',
-          name: 'admin-projects-edit',
-          component: ProjectFormPage,
-          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Project create/edit' },
-        },
-        {
-          path: 'projects/:id',
-          name: 'admin-project-detail',
-          component: ProjectDetailPage,
-          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Project detail page' },
-        },
+      //   {
+      //     path: 'customers',
+      //     name: 'admin-customers',
+      //     component: CustomersPage,
+      //     meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Customers module' },
+      //   },
+      //   {
+      //     path: 'customers/new',
+      //     name: 'admin-customers-new',
+      //     component: CustomerFormPage,
+      //     meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Customer create/edit form' },
+      //   },
+      //   {
+      //     path: 'customers/:id/edit',
+      //     name: 'admin-customers-edit',
+      //     component: CustomerFormPage,
+      //     meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Customer create/edit form' },
+      //   },
+      //   {
+      //     path: 'workspaces',
+      //     name: 'admin-workspaces',
+      //     component: WorkspacesPage,
+      //     meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Workspaces' },
+      //   },
+      //   {
+      //     path: 'categories',
+      //     name: 'admin-categories',
+      //     component: CategoriesPage,
+      //     meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Categories' },
+      //   },
+      //   {
+      //     path: 'categories/new',
+      //     name: 'admin-categories-new',
+      //     component: CategoriesFormPage,
+      //     meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Categories create/edit form' },
+      //   },
+      //   {
+      //     path: 'categories/:id/edit',
+      //     name: 'admin-categories-edit',
+      //     component: CategoriesFormPage,
+      //     meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Categories create/edit form' },
+      //   },
+      //   {
+      //     path: 'projects',
+      //     name: 'admin-projects',
+      //     component: ProjectsPage,
+      //     meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Projects' },
+      //   },
+      //   {
+      //     path: 'projects/new',
+      //     name: 'admin-projects-new',
+      //     component: ProjectFormPage,
+      //     meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Project create/edit' },
+      //   },
+      //   {
+      //     path: 'projects/:id/edit',
+      //     name: 'admin-projects-edit',
+      //     component: ProjectFormPage,
+      //     meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Project create/edit' },
+      //   },
+      //   {
+      //     path: 'projects/:id',
+      //     name: 'admin-project-detail',
+      //     component: ProjectDetailPage,
+      //     meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Project detail page' },
+      //   },
         {
           path: 'articles',
           name: 'admin-articles',
