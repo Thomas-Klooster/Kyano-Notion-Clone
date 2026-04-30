@@ -59,7 +59,7 @@
                                     <div class="project-meta">
                                         <span>{{ project.articles.length }} artikelen</span>
                                         <span class="dot">•</span>
-                                        <span>{{ project.updatedAt }}</span>
+                                        <span>{{ project.updated_at }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -107,10 +107,8 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import axios from 'axios'
+import { getCategories } from '@/services/categoryService'
 
-const auth = useAuthStore()
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)
@@ -120,20 +118,26 @@ const expandedProjects = ref([])
 
 const category = ref({ name: '', projects: [] })
 
-    onMounted(async () => {
-    if (!auth.initialized) return
-    loading.value = true
+onMounted(loadProjects)
+
+async function loadProjects() {
+   loading.value = true
+    error.value = false
     try {
-        await axios.get('/sanctum/csrf-cookie');
-        const { data } = await axios.get(`/api/categories/${route.params.slug}`)
-        category.value = data
+        const allCategories = await getCategories()
+        const current = allCategories.find(c => c.slug === route.params.slug)
+        console.log('found:', current)
+
+        if (current) {
+            category.value.name = current.name
+            category.value.projects = current.projects
+        }
     } catch (err) {
         error.value = 'Geen projecten gevonden'
     } finally {
         loading.value = false
     }
-})
-
+}
 
 const filteredProjects = computed(() => {
     const query = search.value.trim().toLowerCase()

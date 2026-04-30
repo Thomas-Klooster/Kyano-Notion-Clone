@@ -37,7 +37,7 @@
         </div>
 
         <div v-if="filteredCategories.length" class="entity-list">
-          <div v-for="category in filteredCategories" :key="category.id" class="entity-row">
+          <div v-for="category in filteredCategories" :key="category.slug" class="entity-row">
             <div class="entity-row-main">
               <div class="entity-icon icon-box entity-icon-soft">
                 <v-icon size="18">mdi-shape-outline</v-icon>

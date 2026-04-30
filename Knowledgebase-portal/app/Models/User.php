@@ -36,16 +36,19 @@ class User extends Authenticatable
         
     ];
 
+        protected $casts = [
+       'created_at' => 'date:Y-m-d',
+       'updated_at' => 'date:Y-m-d',
+       'admin' => 'enum',
+       ];
+
+
     public function workspaces() {
     return $this->belongsToMany(Workspace::class, 'user_workspace')
         ->withPivot('role')
         ->withTimestamps();
 }
 
-
-protected $casts = [
-        'admin' => 'enum',
-    ];
     /**
      * The attributes that should be hidden for serialization.
      *

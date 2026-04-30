@@ -92,7 +92,7 @@
 
                                     <button class="tree-toggle" type="button" @click="toggleCategory(category.slug)">
                                         <v-icon size="18">
-                                            {{ expandedCategories.includes(category.id) ? 'mdi-chevron-down' :
+                                            {{ expandedCategories.includes(category.slug) ? 'mdi-chevron-down' :
                                                 'mdi-chevron-right' }}
                                         </v-icon>
                                     </button>
@@ -125,7 +125,7 @@
                                             </button>
                                         </div>
 
-                                        <div v-if="expandedProjects.includes(project.id)"
+                                        <div v-if="expandedProjects.includes(project.slug)"
                                             class="tree-children tree-children-articles">
                                             <router-link v-for="article in project.articles" :key="article.id"
                                                 :to="articleRoute(project, article)"
@@ -319,7 +319,7 @@ function projectRoute(project) {
     return {
         name: 'project',
         params: {
-            id: project.id,
+            slug: project.slug,
         },
     }
 }

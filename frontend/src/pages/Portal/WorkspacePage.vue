@@ -49,7 +49,7 @@
                 <div v-else-if="filteredCategories.length" class="project-table">
                     <div
                         v-for="category in filteredCategories"
-                        :key="category.id"
+                        :key="category.slug"
                         class="project-group"
                     >
                         <div
@@ -78,15 +78,15 @@
                             <button
                                 class="project-row-right u-gap-12 tree-toggle"
                                 type="button"
-                                @click.stop="toggleCategory(category.id)"
+                                @click.stop="toggleCategory(category.slug)"
                             >
                                 <v-icon size="18" class="project-arrow">
-                                    {{ expandedCategories.includes(category.id) ? 'mdi-chevron-down' : 'mdi-chevron-right' }}
+                                    {{ expandedCategories.includes(category.slug) ? 'mdi-chevron-down' : 'mdi-chevron-right' }}
                                 </v-icon>
                             </button>
                         </div>
 
-                        <div v-if="expandedCategories.includes(category.id)" class="article-list">
+                        <div v-if="expandedCategories.includes(category.slug)" class="article-list">
                             <div
                                 v-for="project in category.projects"
                                 :key="project.id"
@@ -195,8 +195,11 @@ async function loadCategories() {
     try {
         const allWorkspaces = await getWorkspaces()
         const current = allWorkspaces.find(w => w.slug === route.params.slug)
-        
+        console.log('route slug:', route.params.slug)
+        console.log('found:', current)
+
         if (current) {
+            
             workspace.value.name = current.name
             workspace.value.categories = current.categories
         }

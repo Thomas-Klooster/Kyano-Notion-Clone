@@ -30,8 +30,8 @@ class AuthController extends Controller
             ]);
         Auth::login($user);
 
-        $accessToken = $user->createToken('access-token', ['*'], now()->addMinutes(15))->plainTextToken;
-        $refreshToken = $user->createToken('refresh-token', ['*'], now()->addMinutes(30))->plainTextToken;
+        $accessToken = $user->createToken('access-token', ['*'], now()->addMinutes(60))->plainTextToken;
+        $refreshToken = $user->createToken('refresh-token', ['*'], now()->addMinutes(60))->plainTextToken;
 
         return response()->json([
             'message' => 'Geregistreerd!',
@@ -52,7 +52,7 @@ class AuthController extends Controller
         $user = $token->tokenable;
         $user->tokens()->delete();
 
-        $accessToken = $user->createToken('access-token', ['*'], now()->addMinutes(15))->plainTextToken;
+        $accessToken = $user->createToken('access-token', ['*'], now()->addMinutes(60))->plainTextToken;
         $refreshToken = $user->createToken('refresh-token', ['*'], now()->addDays(30))->plainTextToken;
 
         return response([
@@ -72,7 +72,7 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        $accessToken = $user->createToken('access-token', ['*'], now()->addMinutes(15))->plainTextToken;
+        $accessToken = $user->createToken('access-token', ['*'], now()->addMinutes(60))->plainTextToken;
         $refreshToken = $user->createToken('refresh-token', ['*'], now()->addDays(30))->plainTextToken;
 
     

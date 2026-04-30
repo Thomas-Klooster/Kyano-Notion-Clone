@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ArticleResource;
 use App\Http\Requests\ArticleUpdateRequest;
 use Arr;
 use Illuminate\Support\Facades\Storage;
@@ -20,8 +21,8 @@ class ArticleController extends Controller
      $this->authorize('viewAny', Article::class);        
      $articles = Article::visibleTo(auth('sanctum')->user())
      ->where('status', 'published')->latest()->get();
-     return response()->json($articles);
-    }
+     return ArticleResource::collection($articles);
+     }
 
 
    public function store(ArticleRequest $request) {
@@ -45,13 +46,13 @@ class ArticleController extends Controller
         }
     }
 
-    return response()->json($article->load(['attachments', 'tags']), 201);
+    return (new ArticleResource($article->load(['attachments', 'tags'])))->response()->setStatusCode(201);
 }
 
 
     public function show(Article $article) { 
     $this->authorize('view', $article);
-    return $article->load(['tags', 'projects', 'categories', 'attachments']);
+    return new ArticleResource($article->load(['tags', 'projects', 'categories', 'attachments']));    
     }
 
     public function update(ArticleUpdateRequest $request, Article $article) {
@@ -59,7 +60,7 @@ class ArticleController extends Controller
         $this->authorize('update', $article);
         $article->update($request->validated());
 
-        return $article->load(['tags', 'project', 'category', 'attachments']);
+        return new ArticleResource($article->load(['tags', 'project', 'category', 'attachments']));
     }
 
     public function destroy(Article $article) {
@@ -75,8 +76,9 @@ class ArticleController extends Controller
     abort_if($article->status !== 'published', 403);
     abort_if($article->visibility !== 'public', 403);
 
-    return response()->json($article->load(['project', 'category', 'attachments']));
-}
+    return new ArticleResource($article->load(['project', 'category', 'attachments']));
+  
+  }
 
     public function search(Project $project, Request $request) {
         $this->authorize('view', $project);
@@ -93,8 +95,8 @@ class ArticleController extends Controller
               ->orWhere('content', 'like', "%{$keyword}%")
               ->orWhere('summary', 'like', "%{$keyword}%");
         })->get();
-        return response()->json($articles);
-}
+        return ArticleResource::collection($articles);
+   }
 
     public function projectArticles(Project $project) {
     $this->authorize('view', $project);
@@ -102,8 +104,8 @@ class ArticleController extends Controller
         ->with(['project', 'category', 'attachments'])
         ->where('project_id', $project->id)
         ->get();
-        return response()->json($articles);
-}
+         return ArticleResource::collection($articles);
+        }
     public function storeFeedback(FeedbackRequest $request, Article $article) {
     $this->authorize('view', $article);
     $data = $request->validated();
@@ -125,7 +127,7 @@ return response()->json($feedback, 201);
             });
         }
 
-        return response()->json($query->latest()->get());
-    }
+          return ArticleResource::collection($query->latest()->get());
+      }
 }
 

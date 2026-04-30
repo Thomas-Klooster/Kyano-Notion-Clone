@@ -21,6 +21,12 @@ class Project extends Model
         'category_id',
         'workspace_id',
     ];
+
+
+    // protected $casts = [
+    //    'created_at' => 'date:Y-m-d',
+    //    'updated_at' => 'date:Y-m-d',
+    // ];
   
     public function users(): BelongsTo
     {
