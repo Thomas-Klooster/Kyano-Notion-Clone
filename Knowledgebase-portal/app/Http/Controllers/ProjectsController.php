@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
+
+use App\Http\Resources\ProjectResource;
 use App\Http\Requests\ProjectsUpdateRequest;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -13,27 +15,27 @@ class ProjectsController extends Controller
      public function index() {
        $projects = Project::with(['category', 'article', 'workspace'])
        ->visibleTo(auth('sanctum')->user())->get();
-        return response()->json($projects);
-        
+        return ProjectResource::collection($projects);        
     }
-    public function store(ProjectsRequest $request)
+    public function store(ProjectsRequest $request, Project $project)
     {
         $this->authorize('create', Project::class);
         $data = $request->validated();
         $data['user_id'] = auth()->id();
-        return Project::create($data);
+        $project = Project::create($data);
+        return (new ProjectResource($project))->response()->setStatusCode(201);
     }
     public function show(Project $project)
     {
         $this->authorize('view', $project);
-        return $project->load(['category', 'article', 'workspace']);
+        return new ProjectResource($project->load(['category', 'article', 'workspace']));
     }
     public function update(ProjectsUpdateRequest $request, Project $project)
     {
         $this->authorize('update', $project);
         $data = $request->validated();
         $project->update($data);    
-        return $project;
+        return ProjectResource::collection($project);
         }
     
     public function destroy(Project $project)
@@ -49,7 +51,7 @@ class ProjectsController extends Controller
         $query->where('user_id', $request->user_id);
          };
         
-         return response()->json($query->get());
+         return ProjectResource::collection($query->get());
     }
      
     
@@ -57,7 +59,7 @@ class ProjectsController extends Controller
 {
     $projects = Project::with(['category', 'article', 'workspace'])
     ->visibleTo(auth('sanctum')->user())->get();
-    return response()->json($projects);
+    return ProjectResource::collection($projects);
 }
 
 }

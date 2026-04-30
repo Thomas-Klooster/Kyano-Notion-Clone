@@ -11,6 +11,11 @@ class Workspace extends Model
     
     protected $fillable = ['name', 'slug', 'owner_id'];
 
+    // protected $casts = [
+    //    'created_at' => 'date:Y-m-d',
+    //    'updated_at' => 'date:Y-m-d',
+    // ];
+
     public function owner() {
         return $this->belongsTo(User::class, 'owner_id');
     }
