@@ -35,6 +35,7 @@ public function definition(): array
         'workspace_id' => Workspace::inRandomOrder()->first()->id ?? Workspace::factory(),
         'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory(),
         'user_id' => User::factory(),
+        
     ];
 }
 }

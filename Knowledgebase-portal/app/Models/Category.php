@@ -20,6 +20,11 @@ class Category extends Model
       return $this->belongsTo(Workspace::class);
     }
 
+    public function articles() {
+    return $this->hasMany(Article::class);
+    }
+
+
     public function getRouteKeyName() {
         return 'slug';
     }

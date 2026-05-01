@@ -21,6 +21,7 @@ public function toArray($request): array
         'created_at' => $this->created_at->locale("nl")->diffForHumans(),
         'updated_at' => $this->updated_at->locale("nl")->diffForHumans(),
          'projects' => ProjectResource::collection($this->whenLoaded('projects')),
+         'workspace' => $this->workspace->name,
     ];
 }
 }

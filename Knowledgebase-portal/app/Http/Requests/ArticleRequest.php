@@ -24,6 +24,7 @@ class ArticleRequest extends FormRequest
             'workspace_id' => 'required|exists:workspaces,id',
             'visibility' => 'required|in:public,private',
             'status' => 'required|in:draft,published,',
+            'slug' => 'unique:articles,slug',
             'article_id' => 'nullable|exists:articles,id',
             'attachments' => 'nullable|array',
             'attachments.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx,webm|max:10240',

@@ -6,13 +6,12 @@
                     <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
                         <span class="hero-pill u-inline-flex u-items-center">Workspace</span>
                         <span class="hero-meta-separator">•</span>
-                        <span>{{ filteredCategories.length }} categorieën</span>
+                        <span>{{ filteredCategories.length  === 1 ? '1 categorie' : `${filteredCategories.length} categorieën` }}</span>
                         <span class="hero-meta-separator">•</span>
-                        <span>{{ totalProjects }} projecten</span>
+                        <span>{{ totalProjects === 1 ? '1 project' : `${totalProjects} projecten`}}</span>
                         <span class="hero-meta-separator">•</span>
-                        <span>{{ totalArticles }} artikelen</span>
+                        <span>{{ totalArticles === 1 ? '1 artikel' : `${totalArticles} artikelen` }}</span>
                     </div>
-
                     <h1 class="hero-title">{{ workspace.name }}</h1>
 
                     <p class="hero-subtitle">
@@ -96,9 +95,9 @@
                                     class="project-row project-row-clickable project-row-nested"
                                     role="button"
                                     tabindex="0"
-                                    @click="goToProject(project.id)"
-                                    @keydown.enter="goToProject(project.id)"
-                                    @keydown.space.prevent="goToProject(project.id)"
+                                    @click="goToProject(project.slug)"
+                                    @keydown.enter="goToProject(project.slug)"
+                                    @keydown.space.prevent="goToProject(project.slug)"
                                 >
                                     <div class="project-row-main u-min-w-0">
                                         <div class="project-icon icon-box">
@@ -133,9 +132,9 @@
                                         class="article-row article-row-clickable"
                                         role="button"
                                         tabindex="0"
-                                        @click="goToArticle(article.id)"
-                                        @keydown.enter="goToArticle(article.id)"
-                                        @keydown.space.prevent="goToArticle(article.id)"
+                                        @click="goToArticle(article.slug)"
+                                        @keydown.enter="goToArticle(article.slug)"
+                                        @keydown.space.prevent="goToArticle(article.slug)"
                                     >
                                         <div class="article-row-main u-min-w-0">
                                             <div class="article-icon">
@@ -195,11 +194,7 @@ async function loadCategories() {
     try {
         const allWorkspaces = await getWorkspaces()
         const current = allWorkspaces.find(w => w.slug === route.params.slug)
-        console.log('route slug:', route.params.slug)
-        console.log('found:', current)
-
         if (current) {
-            
             workspace.value.name = current.name
             workspace.value.categories = current.categories
         }
@@ -294,15 +289,15 @@ function toggleProject(id) {
         : [...expandedProjects.value, id]
 }
 
-function goToCategory(id) {
-    router.push(`/category/${id}`)
+function goToCategory(slug) {
+    router.push(`/category/${slug}`)
 }
 
-function goToProject(id) {
-    router.push(`/project/${id}`)
+function goToProject(slug) {
+    router.push(`/project/${slug}`)
 }
 
-function goToArticle(id) {
-    router.push(`/article/${id}`)
+function goToArticle(slug) {
+    router.push(`/article/${slug}`)
 }
 </script>

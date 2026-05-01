@@ -27,6 +27,7 @@ class ArticleUpdateRequest extends FormRequest
             'summary' => 'sometimes|nullable',
             'visibility' => 'sometimes|required',
             'status' => 'sometimes|required',
+            'slug' => 'sometimes|required',
             'project_id' => 'sometimes|required|exists:projects,id',
             'category_id' => 'sometimes|required|exists:categories,id'
         ];

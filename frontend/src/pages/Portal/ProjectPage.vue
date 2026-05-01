@@ -36,12 +36,22 @@
                     </div>
                 </div>
 
-                <div v-if="filteredArticles.length" class="project-table-wrap">
+                <div v-if="loading" class="empty-state">
+                <v-icon size="24">mdi-loading mdi-spin</v-icon>
+                <p>Projecten zijn aan het laden...</p>                    
+                </div>
+
+                <div v-else-if="error" class="empty-state">
+                    <v-icon size="30">mdi-alert-circle-outline</v-icon>
+                    <p>{{ error }}</p>
+                </div>
+
+                <div v-else-if="filteredArticles.length" class="project-table-wrap">
                     <div class="project-table">
                         <div v-for="article in filteredArticles" :key="article.id"
                             class="project-row project-row-clickable" role="button" tabindex="0"
-                            @click="goToArticle(article.id)" @keydown.enter="goToArticle(article.id)"
-                            @keydown.space.prevent="goToArticle(article.id)">
+                            @click="goToArticle(article.slug)" @keydown.enter="goToArticle(article.slug)"
+                            @keydown.space.prevent="goToArticle(article.slug)">
                             <div class="project-row-main u-min-w-0">
                                 <div class="project-icon icon-box">
                                     <v-icon size="18">mdi-file-document-outline</v-icon>
@@ -50,7 +60,7 @@
                                 <div class="project-info">
                                     <div class="project-name">{{ article.title }}</div>
                                     <div class="project-meta">
-                                        <span>{{ article.tags.join(', ') }}</span>
+                                        <!-- <span>{{ article.tags.join(', ') }}</span> -->
                                         <span class="dot">•</span>
                                         <span>{{ article.updated_at }}</span>
                                     </div>
@@ -73,63 +83,66 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { getProjects } from '@/services/projectService'
+import { computed, onMounted, ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
+const route = useRoute()
 const router = useRouter()
 const search = ref('')
+const loading = ref(false)
+const error = ref(false)
+const project = ref({ name: '', workspace: '', articles: [] })
 
-const project = ref({
-    id: 111,
-    name: 'Frontend',
-    workspace: 'Kyano',
-    category: 'Development',
-    articles: [
-        {
-            id: 1111,
-            title: 'Design system richtlijnen',
-            tags: ['Design', 'UI'],
-            updated_at: 'Vandaag bijgewerkt',
-            status: 'Gepubliceerd',
-        },
-        {
-            id: 1112,
-            title: 'Component structuur',
-            tags: ['Vue', 'Frontend'],
-            updated_at: 'Gisteren bijgewerkt',
-            status: 'Concept',
-        },
-        {
-            id: 1113,
-            title: 'Navigatie en routing',
-            tags: ['Router', 'Frontend'],
-            updated_at: '2 dagen geleden',
-            status: 'Gepubliceerd',
-        },
-        {
-            id: 1114,
-            title: 'Form validatie',
-            tags: ['Forms', 'UX'],
-            updated_at: 'Vorige week',
-            status: 'Gepubliceerd',
-        },
-    ],
-})
+
+
+onMounted(loadArticles)
+
+async function loadArticles() {
+
+     loading.value = true
+     error.value = false
+
+     try {
+        const allProjects = await getProjects()
+        const current = allProjects.find(c => c.slug === route.params.slug)
+        console.log('found:', current)
+        console.log(allProjects[0])
+        console.log('articles:', current.articles)
+        console.log('project:', project)
+
+        console.log('route params:', route.params)
+
+        if (current) {
+            project.value.name = current.name
+            project.value.category = current.category
+            project.value.articles = current.articles
+        }
+
+     } catch(err) {
+        error.value = 'Geen artikelen gevonden'
+     } finally {
+        loading.value = false
+     }
+
+}
+
+
 
 const filteredArticles = computed(() => {
+    const articles = project.value.articles ?? []  
     const query = search.value.trim().toLowerCase()
 
-    if (!query) return project.value.articles
+    if (!query) return articles
 
-    return project.value.articles.filter(article =>
+    return articles.filter(article =>
         article.title.toLowerCase().includes(query) ||
         article.status.toLowerCase().includes(query) ||
         article.tags.some(tag => tag.toLowerCase().includes(query))
     )
 })
-
-function goToArticle(id) {
-    router.push(`/article/${id}`)
+function goToArticle(slug) {
+    router.push(`/article/${slug}`)
 }
 </script>
 

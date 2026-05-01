@@ -5,10 +5,10 @@
                 <div class="hero-content u-min-w-0">
                     <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
                         <span class="hero-pill u-inline-flex u-items-center">Categorie</span>
-                        <span class="hero-meta-separator">•</span>
+                        <!-- <span class="hero-meta-separator">•</span> -->
                         <span>{{ category.workspace }}</span>
                         <span class="hero-meta-separator">•</span>
-                        <span>{{ filteredProjects.length }} projecten</span>
+                        <span>{{ filteredProjects.length === 1 ? '1 project' : `${filteredProjects.length} projecten` }}</span>
                     </div>
 
                     <h1 class="hero-title">{{ category.name }}</h1>
@@ -47,8 +47,8 @@
                 <div v-else-if="filteredProjects.length" class="project-table">
                     <div v-for="project in filteredProjects" :key="project.id" class="project-group">
                         <div class="project-row project-row-clickable" role="button" tabindex="0"
-                            @click="goToProject(project.id)" @keydown.enter="goToProject(project.id)"
-                            @keydown.space.prevent="goToProject(project.id)">
+                            @click="goToProject(project.slug)" @keydown.enter="goToProject(project.slug)"
+                            @keydown.space.prevent="goToProject(project.slug)">
                             <div class="project-row-main u-min-w-0">
                                 <div class="project-icon icon-box">
                                     <v-icon size="18">mdi-briefcase-outline</v-icon>
@@ -116,7 +116,7 @@ const error = ref(false)
 const search = ref('')
 const expandedProjects = ref([])
 
-const category = ref({ name: '', projects: [] })
+const category = ref({ name: '', workspace: '', projects: [] })
 
 onMounted(loadProjects)
 
@@ -126,10 +126,10 @@ async function loadProjects() {
     try {
         const allCategories = await getCategories()
         const current = allCategories.find(c => c.slug === route.params.slug)
-        console.log('found:', current)
 
         if (current) {
             category.value.name = current.name
+            category.value.workspace = current.workspace
             category.value.projects = current.projects
         }
     } catch (err) {

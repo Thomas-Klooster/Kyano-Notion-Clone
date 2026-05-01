@@ -5,6 +5,8 @@ use App\Traits\HasTags;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Attachment;
+use Illuminate\Support\Str;
+
 class Article extends Model
 {
 
@@ -19,6 +21,7 @@ class Article extends Model
         'content',
         'summary',
         'status',
+        'slug',
         'project_id',
         'category_id',
         'workspace_id',
@@ -31,6 +34,11 @@ class Article extends Model
         'visibility' => 'string',
         'status' => 'string'
         ];
+
+
+        public function getRouteKeyName() {
+        return 'slug';
+    }
 
 
         public function users() {
@@ -68,4 +76,16 @@ public function scopeVisibleTo($query, $user) {
     ->orWhere('user_id', $user->id);
 });
 }
+
+
+
+        protected static function boot(): void
+    {
+        parent::boot();
+
+        static::saving(function ($article) {
+            $article->slug = Str::slug($article->title);
+        });
+    }
+
 }

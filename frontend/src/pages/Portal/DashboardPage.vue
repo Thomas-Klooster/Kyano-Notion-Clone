@@ -5,8 +5,8 @@
                 <div class="hero-content u-min-w-0">
                     <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
                         <span class="hero-pill u-inline-flex u-items-center">Klantportaal</span>
-                        <span class="hero-meta-separator">•</span>
-                        <span>{{ filteredWorkspaces.length }} workspaces</span>
+                        <!-- <span class="hero-meta-separator">•</span> -->
+                        <span>{{ filteredWorkspaces.length === 1 ? '1 workspace' : `${filteredWorkspaces.length} workspaces` }}</span>
                     </div>
                     
                     <h1 class="hero-title">Dashboard</h1>
@@ -119,7 +119,7 @@
                                             <button class="tree-toggle" type="button"
                                                 @click="toggleProject(project.id)">
                                                 <v-icon size="18">
-                                                    {{ expandedProjects.includes(project.id) ? 'mdi-chevron-down' :
+                                                    {{ expandedProjects.includes(project.slug) ? 'mdi-chevron-down' :
                                                         'mdi-chevron-right' }}
                                                 </v-icon>
                                             </button>
@@ -317,19 +317,19 @@ function categoryRoute(category) {
 
 function projectRoute(project) {
     return {
-        name: 'project',
+    name: 'project',
         params: {
             slug: project.slug,
         },
     }
 }
 
-function articleRoute(project, article) {
+function articleRoute(article) {
+    console.log('article:', article)  
     return {
         name: 'article',
         params: {
-            projectId: project.id,
-            id: article.id,
+            slug: article.slug,
         },
     }
 }

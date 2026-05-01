@@ -3,7 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-
+use App\Http\Resources\ArticleResource;
 class ProjectResource extends JsonResource
 {
     /**
@@ -17,9 +17,10 @@ class ProjectResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
+            'slug' => $this->slug,
             'created_at' => $this->created_at->locale("nl")->diffForHumans(),
             'updated_at' => $this->updated_at->locale("nl")->diffForHumans(),
-            'articles' => $this->whenLoaded('articles'),
+            'articles' => ArticleResource::collection($this->whenLoaded('articles')),
         ];
     }
 }

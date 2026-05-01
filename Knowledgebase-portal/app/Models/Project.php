@@ -27,7 +27,10 @@ class Project extends Model
     //    'created_at' => 'date:Y-m-d',
     //    'updated_at' => 'date:Y-m-d',
     // ];
-  
+      public function getRouteKeyName() {
+        return 'slug';
+    }
+
     public function users(): BelongsTo
     {
         return $this->belongsTo(User::class);

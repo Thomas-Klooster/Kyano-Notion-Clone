@@ -12,11 +12,12 @@ class ProjectsController extends Controller
 {
     use AuthorizesRequests;
 
-     public function index() {
-       $projects = Project::with(['category', 'article', 'workspace'])
-       ->visibleTo(auth('sanctum')->user())->get();
-        return ProjectResource::collection($projects);        
-    }
+public function index()
+{
+    $projects = Project::with(['category', 'articles', 'workspace'])
+    ->visibleTo(auth('sanctum')->user())->get();
+    return ProjectResource::collection($projects);
+}
     public function store(ProjectsRequest $request, Project $project)
     {
         $this->authorize('create', Project::class);
@@ -25,19 +26,23 @@ class ProjectsController extends Controller
         $project = Project::create($data);
         return (new ProjectResource($project))->response()->setStatusCode(201);
     }
-    public function show(Project $project)
-    {
+    public function show(Project $project) {
         $this->authorize('view', $project);
-        return new ProjectResource($project->load(['category', 'article', 'workspace']));
+        return new ProjectResource(
+            $project->load(['category', 'articles', 'workspace'])
+        );
     }
-    public function update(ProjectsUpdateRequest $request, Project $project)
-    {
-        $this->authorize('update', $project);
-        $data = $request->validated();
-        $project->update($data);    
-        return ProjectResource::collection($project);
-        }
     
+    public function update(ProjectsUpdateRequest $request, Project $project) {
+    $this->authorize('update', $project);
+
+    $project->update($request->validated());
+
+    return new ProjectResource(
+        $project->load(['category', 'articles', 'workspace'])
+    );
+}    
+
     public function destroy(Project $project)
     {
         $this->authorize('delete', $project);
@@ -46,7 +51,7 @@ class ProjectsController extends Controller
         return response()->json(['deleted' => true]);
     }
     public function AdminIndex(Request $request) {
-        $query = Project::with(['category', 'article', 'workspace']);
+        $query = Project::with(['category', 'articles', 'workspace']);
         if ($request->user_id) {
         $query->where('user_id', $request->user_id);
          };
@@ -57,7 +62,7 @@ class ProjectsController extends Controller
     
     public function myProjects()
 {
-    $projects = Project::with(['category', 'article', 'workspace'])
+    $projects = Project::with(['category', 'articles', 'workspace'])
     ->visibleTo(auth('sanctum')->user())->get();
     return ProjectResource::collection($projects);
 }

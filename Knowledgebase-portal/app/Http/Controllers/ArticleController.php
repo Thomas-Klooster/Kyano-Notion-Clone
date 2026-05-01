@@ -76,7 +76,7 @@ class ArticleController extends Controller
     abort_if($article->status !== 'published', 403);
     abort_if($article->visibility !== 'public', 403);
 
-    return new ArticleResource($article->load(['project', 'category', 'attachments']));
+    return new ArticleResource($article->load(['projects', 'category', 'attachments']));
   
   }
 
