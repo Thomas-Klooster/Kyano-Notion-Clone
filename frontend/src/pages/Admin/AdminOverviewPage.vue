@@ -634,8 +634,6 @@
           <template v-if="dialogType === 'article'">
             <v-select v-model="draft.projectId" :items="projectSelectOptions" item-title="label" item-value="value"
               label="Project" variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
-            <v-text-field v-model="draft.slug" label="Slug" variant="solo-filled" flat hide-details
-              class="notion-soft-input mb-4" />
             <v-select v-model="draft.status" :items="articleStatusOptions" label="Status" variant="solo-filled" flat
               hide-details class="notion-soft-input" />
           </template>
