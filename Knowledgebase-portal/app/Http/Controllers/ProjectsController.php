@@ -14,7 +14,7 @@ class ProjectsController extends Controller
 
 public function index()
 {
-    $projects = Project::with(['category', 'articles', 'workspace'])
+    $projects = Project::with(['category', 'workspace', 'articles', ])
     ->visibleTo(auth('sanctum')->user())->get();
     return ProjectResource::collection($projects);
 }

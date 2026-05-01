@@ -27,7 +27,8 @@ api.interceptors.response.use(
 
           if (originalRequest.url === '/refresh') {
                localStorage.clear();
-               window.location.href = '/auth/login';
+               // Commented out due by error page gets forced refreshed
+               // window.location.href = '/auth/login';
                return Promise.reject(error);
           }
 
@@ -57,7 +58,8 @@ api.interceptors.response.use(
                } catch (refreshError) {
                     processQueue(refreshError, null);
                     localStorage.clear();
-                    window.location.href = '/auth/login';
+                    // Commented out due by error page gets forced refreshed
+                    // window.location.href = '/auth/login';
                     return Promise.reject(refreshError);
                } finally {
                     isRefreshing = false;

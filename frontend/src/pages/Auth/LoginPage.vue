@@ -155,7 +155,8 @@ const onSubmit = async () => {
     auth.setUser(user);
     router.push({ name: 'Dashboard' });
   } catch (err) {
-    errorMessage.value = err.response?.data?.message || 'Er is iets misgegaan.';
+    // errorMessage.value = err.response?.data?.message
+    errorMessage.value = 'Ongeldige inloggegevens.';
   } finally {
     loading.value = false;
   }

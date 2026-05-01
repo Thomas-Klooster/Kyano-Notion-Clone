@@ -38,11 +38,11 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory()
-        ->count(10)
+        ->count(30)
         ->create();        
         
         Workspace::factory()
-        ->count(5)
+        ->count(10)
         ->create();
         
         $users = User::where('email', '!=', 'Admin@gmail.com')->get();
@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
         ->create();
 
         Tag::factory()
-        ->count(5)
+        ->count(20)
         ->create();
 
         Article::factory()

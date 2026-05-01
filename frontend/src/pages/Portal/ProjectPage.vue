@@ -10,7 +10,7 @@
                         <span class="hero-meta-separator">•</span>
                         <span>{{ project.category }}</span>
                         <span class="hero-meta-separator">•</span>
-                        <span>{{ filteredArticles.length }} artikelen</span>
+                        <span>{{ filteredArticles.length === 1 ? '1 artikel' : `${filteredArticles.length} artikelen`}}</span>
                     </div>
 
                     <h1 class="hero-title">Project: {{ project.name }}</h1>
@@ -60,7 +60,7 @@
                                 <div class="project-info">
                                     <div class="project-name">{{ article.title }}</div>
                                     <div class="project-meta">
-                                        <!-- <span>{{ article.tags.join(', ') }}</span> -->
+                                    <span>{{ (article.tags ?? []).join(', ') }}</span>
                                         <span class="dot">•</span>
                                         <span>{{ article.updated_at }}</span>
                                     </div>
@@ -116,6 +116,7 @@ async function loadArticles() {
         if (current) {
             project.value.name = current.name
             project.value.category = current.category
+            project.value.workspace = current.workspace
             project.value.articles = current.articles
         }
 

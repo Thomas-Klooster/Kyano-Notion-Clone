@@ -21,6 +21,8 @@ class ProjectResource extends JsonResource
             'created_at' => $this->created_at->locale("nl")->diffForHumans(),
             'updated_at' => $this->updated_at->locale("nl")->diffForHumans(),
             'articles' => ArticleResource::collection($this->whenLoaded('articles')),
+            'category' => $this->category->name,
+            'workspace' => $this->workspace->name,
         ];
     }
 }
