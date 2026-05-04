@@ -14,7 +14,7 @@ class ProjectsController extends Controller
 
 public function index()
 {
-    $projects = Project::with(['category', 'workspace', 'articles', ])
+    $projects = Project::with(['category', 'workspace', 'articles.tags', ])
     ->visibleTo(auth('sanctum')->user())->get();
     return ProjectResource::collection($projects);
 }
@@ -29,7 +29,7 @@ public function index()
     public function show(Project $project) {
         $this->authorize('view', $project);
         return new ProjectResource(
-            $project->load(['category', 'articles', 'workspace'])
+            $project->load(['category', 'articles.tags', 'workspace'])
         );
     }
     
@@ -39,7 +39,7 @@ public function index()
     $project->update($request->validated());
 
     return new ProjectResource(
-        $project->load(['category', 'articles', 'workspace'])
+        $project->load(['category', 'articles.tags', 'workspace'])
     );
 }    
 
@@ -51,7 +51,7 @@ public function index()
         return response()->json(['deleted' => true]);
     }
     public function AdminIndex(Request $request) {
-        $query = Project::with(['category', 'articles', 'workspace']);
+        $query = Project::with(['category', 'articles.tags', 'workspace']);
         if ($request->user_id) {
         $query->where('user_id', $request->user_id);
          };
@@ -62,7 +62,7 @@ public function index()
     
     public function myProjects()
 {
-    $projects = Project::with(['category', 'articles', 'workspace'])
+    $projects = Project::with(['category', 'articles.tags', 'workspace'])
     ->visibleTo(auth('sanctum')->user())->get();
     return ProjectResource::collection($projects);
 }

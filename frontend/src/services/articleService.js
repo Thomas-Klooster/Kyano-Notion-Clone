@@ -5,8 +5,11 @@ export const getArticles = async () => {
      return data;
 }
 
-
-export const createArticles = async () => {
-     const { data } = await api.post('articles')
-     return data;
+export const createArticles = async (formData) => {
+    const { data } = await api.post('articles', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+    return data;
 }

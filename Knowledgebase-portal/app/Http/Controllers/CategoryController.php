@@ -12,7 +12,7 @@ class CategoryController extends Controller
   
 use AuthorizesRequests;
   public function index() {
-  $categories = Category::visibleTo(auth('sanctum')->user())->with(['workspace', 'projects.articles'])
+  $categories = Category::visibleTo(auth('sanctum')->user())->with(['workspace', 'projects.articles.tags'])
   ->latest()->get();
     return CategoryResource::collection($categories);
   }
@@ -27,7 +27,7 @@ use AuthorizesRequests;
 
   public function show(Category $category) {
   $this->authorize('view', $category);  
-    return new CategoryResource($category->load('workspace', 'projects.articles'));
+    return new CategoryResource($category->load('workspace', 'projects.articles.tags'));
   
   }
 

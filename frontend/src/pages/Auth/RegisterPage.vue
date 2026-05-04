@@ -52,17 +52,17 @@
             </div>
 
             <div class="auth-field-group">
-              <label class="auth-label">address</label>
+              <label class="auth-label">Adres</label>
               <v-text-field
                 ref="addressField"
                 v-model="address"
-                placeholder="address"
+                placeholder="Optioneel*"
                 autocomplete="street-address"
                 type="text"
                 variant="solo-filled"
                 flat
                 density="comfortable"
-                prepend-inner-icon="mdi-email-outline"
+                prepend-inner-icon="mdi-map-marker-outline"
                 hide-details="auto"
                 class="notion-soft-input"
                 @keydown.enter.prevent="focusPhoneNumber"
@@ -74,13 +74,13 @@
               <v-text-field
                 ref="phoneField"
                 v-model="phone_number"
-                placeholder="012345678910"
+                placeholder="Optioneel*"
                 autocomplete="tel"
                 type="tel"
                 variant="solo-filled"
                 flat
                 density="comfortable"
-                prepend-inner-icon="mdi-email-outline"
+                prepend-inner-icon="mdi-phone-outline"
                 :rules="phoneRules"
                 hide-details="auto"
                 class="notion-soft-input"
@@ -93,13 +93,13 @@
               <v-text-field
                 ref="companyField"
                 v-model="company"
-                placeholder="naam@bedrijf.com"
+                placeholder="Optioneel*"
                 autocomplete="organization"
                 type="text"
                 variant="solo-filled"
                 flat
                 density="comfortable"
-                prepend-inner-icon="mdi-email-outline"
+                prepend-inner-icon="mdi-briefcase-outline"
                 hide-details="auto"
                 class="notion-soft-input"
                 @keydown.enter.prevent="focusPassword"
@@ -147,7 +147,7 @@
                 @click:append-inner="showConfirm = !showConfirm"
                 @keydown.enter.prevent="onSubmit"
               />
-            </div>
+            </div> 
 
             <div class="auth-terms-row">
               <v-checkbox v-model="acceptTerms" density="compact" hide-details="auto" :rules="termsRules" class="auth-checkbox">
@@ -183,7 +183,7 @@
               <v-progress-circular v-if="loading" size="18" width="2" indeterminate color="white" />
               <span v-else>Account aanmaken</span>
             </button>
-
+<!-- 
             <div class="u-divider auth-divider">
               <span class="auth-divider-text">of ga verder met</span>
             </div>
@@ -197,7 +197,7 @@
                 <v-icon size="18">mdi-microsoft</v-icon>
                 Microsoft
               </button>
-            </div>
+            </div> -->
 
             <p class="auth-footer-text">
               Al een account?

@@ -22,6 +22,7 @@ class ArticleResource extends JsonResource
         'slug' => $this->slug,
         'created_at' => $this->created_at->locale("nl")->diffForHumans(),
         'updated_at' => $this->updated_at->locale("nl")->diffForHumans(),
+        'tags' => $this->whenLoaded('tags', fn() => $this->tags->pluck('name')),
         'projects' => ProjectResource::collection($this->whenLoaded('projects')),
 
 

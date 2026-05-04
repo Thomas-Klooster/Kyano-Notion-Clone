@@ -62,7 +62,19 @@ class Article extends Model
         public function feedbacks() {
             return $this->hasMany(Feedback::class);
     }
+    
+        public function tags() {
+            return $this->morphToMany(Tag::class, 'taggable');
+}
 
+public function syncTags(array $tags): void
+{
+    $tagIds = collect($tags)->map(function ($name) {
+        return Tag::firstOrCreate(['name' => $name])->id;
+    });
+
+    $this->tags()->sync($tagIds);
+}
         public function categories() {
             return $this->belongsTo(Category::class);
 }

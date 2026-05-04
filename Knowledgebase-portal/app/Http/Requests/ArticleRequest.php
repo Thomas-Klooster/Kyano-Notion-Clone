@@ -25,6 +25,8 @@ class ArticleRequest extends FormRequest
             'visibility' => 'required|in:public,private',
             'status' => 'required|in:draft,published,',
             'slug' => 'unique:articles,slug',
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['string', 'max:50'],
             'article_id' => 'nullable|exists:articles,id',
             'attachments' => 'nullable|array',
             'attachments.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx,webm|max:10240',

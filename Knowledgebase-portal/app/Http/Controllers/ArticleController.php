@@ -116,6 +116,7 @@ class ArticleController extends Controller
     ]);
 return response()->json($feedback, 201);
 }
+
     public function AdminIndex(Request $request)
     {
         $query = Article::visibleTo(auth('sanctum')->user())

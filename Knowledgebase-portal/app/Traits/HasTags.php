@@ -12,7 +12,7 @@ trait HasTags
 
     public function attachTags(array $tagNames) {
         $ids = collect($tagNames)->map(
-            fn($name) => Tag::firstOrFail(['name' => $name])->id
+            fn($name) => Tag::firstOrCreate(['name' => $name])->id
         );
         $this->tags()->syncWithoutDetaching($ids);
     }

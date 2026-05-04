@@ -17,7 +17,7 @@ class WorkspaceController extends Controller
 public function index()
 {
     return Workspace::visibleTo(auth('sanctum')->user())
-        ->with('categories.projects.articles')
+        ->with('categories.projects.articles.tags')
         ->latest()
         ->get();
 }
@@ -37,7 +37,7 @@ public function index()
         public function show(Workspace $workspace) {
         $this->authorize('view', $workspace);
         return 
-        $workspace->load(['categories.projects.articles']);
+        $workspace->load(['categories.projects.articles.tags']);
     }
     
     public function update(Workspace $workspace, WorkspaceUpdateRequest $request) {
@@ -88,7 +88,7 @@ public function index()
     $existingMemberIds = $workspace->members()->pluck('users.id');
 
     $users = User::whereNotIn('id', $existingMemberIds)
-        ->select(['id', 'name', 'email', 'address', 'phone', 'role'])
+        ->select(['id', 'name', 'email', 'address', 'phone_number', 'role'])
         ->orderBy('name')
         ->paginate(20);
 
