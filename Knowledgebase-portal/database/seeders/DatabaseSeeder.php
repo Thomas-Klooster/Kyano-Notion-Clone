@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
 
         
         DB::table('users')->insert([
+            'id' => 1,
             'name' => 'Admin',
             'role' => 'admin',
             'email' => 'Admin@gmail.com',
@@ -36,6 +37,19 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ]);
+
+        DB::table('users')->insert([
+            'id' => 2,
+            'name' => 'RandomName',
+            'role' => 'klant',
+            'email' => 'Vincent@gmail.com',
+            'password' => Hash::make('WazZzaaaaaaa123!'),
+            'created_at' => now(),
+            'updated_at' => now(),
+            'email_verified_at' => now(),
+            'remember_token' => Str::random(10),
+        ]);
+
 
         User::factory()
         ->count(30)

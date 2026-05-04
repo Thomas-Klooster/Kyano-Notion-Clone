@@ -47,9 +47,65 @@
                 :rules="emailRules"
                 hide-details="auto"
                 class="notion-soft-input"
+                @keydown.enter.prevent="focusAddress"
+              />
+            </div>
+
+            <div class="auth-field-group">
+              <label class="auth-label">address</label>
+              <v-text-field
+                ref="addressField"
+                v-model="address"
+                placeholder="address"
+                autocomplete="street-address"
+                type="text"
+                variant="solo-filled"
+                flat
+                density="comfortable"
+                prepend-inner-icon="mdi-email-outline"
+                hide-details="auto"
+                class="notion-soft-input"
+                @keydown.enter.prevent="focusPhoneNumber"
+              />
+            </div>
+
+            <div class="auth-field-group">
+              <label class="auth-label">Telefoonnummer</label>
+              <v-text-field
+                ref="phoneField"
+                v-model="phone_number"
+                placeholder="012345678910"
+                autocomplete="tel"
+                type="tel"
+                variant="solo-filled"
+                flat
+                density="comfortable"
+                prepend-inner-icon="mdi-email-outline"
+                :rules="phoneRules"
+                hide-details="auto"
+                class="notion-soft-input"
+                @keydown.enter.prevent="focusCompany"
+              />
+            </div>
+
+            <div class="auth-field-group">
+              <label class="auth-label">Bedrijfsnaam</label>
+              <v-text-field
+                ref="companyField"
+                v-model="company"
+                placeholder="naam@bedrijf.com"
+                autocomplete="organization"
+                type="text"
+                variant="solo-filled"
+                flat
+                density="comfortable"
+                prepend-inner-icon="mdi-email-outline"
+                hide-details="auto"
+                class="notion-soft-input"
                 @keydown.enter.prevent="focusPassword"
               />
             </div>
+
 
             <div class="auth-field-group">
               <label class="auth-label">Wachtwoord</label>
@@ -165,15 +221,20 @@ const auth = useAuthStore();
 const formRef = ref(null)
 const emailField = ref(null)
 const passwordField = ref(null)
+
+const phoneField = ref(null)
+const companyField = ref(null)
+const addressField = ref(null)
+
 const confirmField = ref(null)
 const formValid = ref(false)
 const loading = ref(false)
 const errorMessage = ref('')
 const name = ref('')
 const email = ref('')
-// const company = ref('')
-// const phone_number = ref('')
-// const address = ref('')
+const company = ref('')
+const phone_number = ref('')
+const address = ref('')
 const password = ref('')
 const password_confirmation = ref('')
 const acceptTerms = ref(false)
@@ -189,6 +250,11 @@ const nameRules = [
 const emailRules = [
   (v) => !!v || 'Het invullen van een email is verplicht.',
   (v) => /.+@.+\..+/.test(v) || 'Voer een geldig emailadres in',
+]
+
+const phoneRules = [
+  (v) => (v?.trim()?.length ?? 0 ) >= 3 || 'Het telefoonnummer moet minimaal 3 cijfers lang zijn.',
+  (v) => /^\d+$/.test(v?.trim() ?? '') || 'Het telefoonnummer mag alleen uit cijfers bestaan.'
 ]
 
 const passwordRules = [
@@ -207,6 +273,9 @@ const confirmRules = computed(() => [
 const termsRules = [(v) => v === true || 'U moet de voorwaarden accepteren om verder te gaan.']
 
 function focusEmail() { emailField.value?.focus?.() }
+function focusAddress() {addressField.value?.focus?.()}
+function focusPhoneNumber() {phoneField.value?.focus?.()}
+function focusCompany() {companyField.value?.focus()} 
 function focusPassword() { passwordField.value?.focus?.() }
 function focusConfirm() { confirmField.value?.focus?.() }
 
@@ -218,7 +287,7 @@ const onSubmit = async () => {
   errorMessage.value = '';
 
   try {
-    const user = await register(name.value, email.value, password.value, password_confirmation.value);
+    const user = await register(name.value, email.value, address.value, phone_number.value, company.value, password.value, password_confirmation.value);
     auth.setUser(user);
     router.push({ name: 'Dashboard' });
   } catch (err) {

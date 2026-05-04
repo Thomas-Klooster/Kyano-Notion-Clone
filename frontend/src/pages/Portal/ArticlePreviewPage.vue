@@ -5,6 +5,7 @@
                 <div class="article-topbar-left">
                     <div class="article-badge">
                         <v-icon size="16">mdi-eye-outline</v-icon>
+                        <!-- Delete? -->
                         <span>Preview</span>
                     </div>
                 </div>
@@ -22,6 +23,7 @@
                 <div class="sidebar-card card card-soft card-rounded-lg">
                     <div class="sidebar-label">In dit artikel</div>
 
+                    <!-- Kopjes bij id geen slug -->
                     <nav class="toc-nav">
                         <a href="#" class="toc-link active">Introductie</a>
                         <a href="#" class="toc-link">Meer Introductie</a>
@@ -37,16 +39,19 @@
                     <div class="sidebar-meta-list u-flex-col u-gap-12">
                         <div class="sidebar-meta-row u-flex-between u-gap-12">
                             <span>Project</span>
+                            <!-- {{ Project }} bij titel-->
                             <strong>Knowledgebase Portal</strong>
                         </div>
 
                         <div class="sidebar-meta-row u-flex-between u-gap-12">
                             <span>Status</span>
+                            <!-- {{ status }}-->
                             <strong>Gepubliceerd</strong>
                         </div>
 
                         <div class="sidebar-meta-row u-flex-between u-gap-12">
                             <span>Bijgewerkt</span>
+                            <!-- {{ timestamp }} -->
                             <strong>Vandaag</strong>
                         </div>
                     </div>
@@ -57,6 +62,7 @@
 
                     <div class="useful-button-box">
                         <button class="useful-button thumbs-up" type="button">
+                        <!-- Feedback - helpful boolean-->
                             <v-icon>mdi-thumb-up</v-icon>
                         </button>
                         <button class="useful-button thumbs-down" type="button">
@@ -67,9 +73,11 @@
                 <form class="sidebar-card card card-soft card-rounded-lg feedback-card" @submit.prevent="submitFeedback">
                     <div class="sidebar-label">Extra feedback</div>
 
+                    <!-- {{ comment }} -->
                     <textarea ref="feedbackTextarea" v-model="feedbackTitle" class="feedback-input feedback-textarea"
                         placeholder="Laat je feedback achter..." rows="1" @input="autoResizeTextarea" maxlength="500"></textarea>
 
+                        <!-- {{ OnSubmit }}-->
                     <button class="feedback-submit" type="submit">
                         Versturen
                     </button>
@@ -84,25 +92,33 @@
                         <div class="article-meta-line u-flex-center u-wrap u-gap-8">
                             <span class="article-pill u-inline-flex u-items-center">Handleiding</span>
                             <span class="article-meta-separator">•</span>
+                            <!-- {{ timestamp }} met diffForHumans() -->
                             <span>Vandaag bijgewerkt</span>
                         </div>
 
+                        <!-- {{ title }} -->
                         <h1 class="article-title">PAGINATITEL</h1>
 
+                        <!-- kan klant dit zien? is of is dit {{ summary}} ?-->
                         <p class="article-subtitle">
                             Dit is de preview van een artikel. deze pagina is de pagina die klanten in het portaal zien.
                         </p>
 
+                        <!-- user profile? -->
                         <div class="article-author-row u-flex-center u-gap-12">
                             <div class="author-avatar icon-box">K</div>
 
                             <div>
+                                <!-- {{ name }} (user tables) -->
                                 <div class="author-name">Kyano Team</div>
+                                <!-- {{ role }}author role? Admin? -->
                                 <div class="author-role">Kennisbankartikel</div>
                             </div>
                         </div>
                     </div>
 
+
+                    <!-- {{ content }}-->
                     <div class="article-body">
                         <p>
                             Cras quis commodo turpis, eu rhoncus ligula. Phasellus viverra mi nec elit tempus vulputate.
@@ -170,10 +186,13 @@
                         <div class="resource-grid">
                             <div class="resource-card">
                                 <div class="resource-icon">
+                                    <!-- {{ mime }}-->
                                     <v-icon size="18">mdi-file-document-outline</v-icon>
                                 </div>
                                 <div class="resource-body">
+                                    <!-- {{ original_name }} -->
                                     <div class="resource-title">Portal.pdf</div>
+                                    <!-- {{ size }} -->
                                     <div class="resource-subtitle">PDF-document · 6.9 MB</div>
                                 </div>
                             </div>
@@ -183,6 +202,7 @@
                                     <v-icon size="18">mdi-link-variant</v-icon>
                                 </div>
                                 <div class="resource-body">
+                                    <!-- {{ mime }} -->
                                     <div class="resource-title">youtube.com</div>
                                     <div class="resource-subtitle">bookmark</div>
                                 </div>
@@ -209,12 +229,12 @@ function autoResizeTextarea() {
     el.style.height = 'auto'
     el.style.height = `${el.scrollHeight}px`
 }
-
-onMounted(() => {
-    nextTick(() => {
-        autoResizeTextarea()
-    })
-})
+ // remove
+// onMounted(() => {
+//     nextTick(() => {
+//         autoResizeTextarea()
+//     })
+// })
 
 const route = useRoute()
 

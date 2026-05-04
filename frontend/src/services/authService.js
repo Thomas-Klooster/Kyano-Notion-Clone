@@ -14,9 +14,9 @@ export const login = async (email, password) => {
      return data.user
 };
 
-export const register = async (name, email, password, password_confirmation) => {
+export const register = async (name, email, address, phone_number, company, password, password_confirmation) => {
      const { data } = await api.post('/register', {
-          name, email, password, password_confirmation
+          name, email, address, phone_number, company, password, password_confirmation
      });
      
      localStorage.setItem('accessToken',

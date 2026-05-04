@@ -106,20 +106,12 @@ async function loadArticles() {
      try {
         const allProjects = await getProjects()
         const current = allProjects.find(c => c.slug === route.params.slug)
-        console.log('found:', current)
-        console.log(allProjects[0])
-        console.log('articles:', current.articles)
-        console.log('project:', project)
-
-        console.log('route params:', route.params)
-
         if (current) {
             project.value.name = current.name
             project.value.category = current.category
             project.value.workspace = current.workspace
             project.value.articles = current.articles
         }
-
      } catch(err) {
         error.value = 'Geen artikelen gevonden'
      } finally {

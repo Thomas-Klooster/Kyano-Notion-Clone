@@ -309,7 +309,6 @@ function categoryRoute(category) {
     return {
         name: 'category',
         params: {
-            // workspaceId: workspace.id,
             slug: category.slug,
         },
     }
