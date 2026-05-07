@@ -66,11 +66,22 @@
                             <!-- {{ timestamp }} -->
                             <strong>{{article?.updated_at}}</strong>
                         </div>
-                        <div class="sidebar-meta-row u-flex-between u-gap-12">
-                            <span>Tag</span>
-                            <strong>{{ articleTags }}</strong>
-                        </div>
                     </div>
+                </div>
+
+                <div class="sidebar-card card card-soft card-rounded-lg">
+                <div class="sidebar-label">Tags</div>
+                <div v-if="articleTags.length" class="tag-grid flex-wrap">
+                                    <span
+                                        v-for="tag in articleTags"
+                                        :key="tag"
+                                        class="article-pill u-inline-flex u-items-center">
+                                        {{ tag }}
+                                    </span>
+                                </div>
+                            
+                                <span v-else class="article-pill u-inline-flex u-items-center">Geen tags</span>
+                
                 </div>
 
                 <div class="sidebar-card card card-soft card-rounded-lg feedback-card">
@@ -105,11 +116,7 @@
 
                 <article class="article-card card card-elevated card-rounded-2xl">
                     <div class="article-head card-head">
-                        <div class="article-meta-line u-flex-center u-wrap u-gap-8">
-                            <span class="article-pill u-inline-flex u-items-center">{{ articleTags }}</span>
-                            <span class="article-meta-separator">•</span>
-                            <span>{{ article.updated_at }}</span>
-                        </div>
+                        <div class="article-meta-line u-flex-center u-wrap u-gap-8" />
 
                         <h1 class="article-title-input">{{article.title}}</h1>
 
@@ -169,9 +176,7 @@ const article = ref(null)
 const error = ref(false)
 const loading = ref(false)
 const project = computed(() => article.value?.project ?? null)
-const articleTags = computed(() => { const tags = article.value?.tags ?? []
-    return Array.isArray(tags) && tags.length ? tags.join(', ') : 'Geen tags'
-})
+const articleTags = computed(() => Array.isArray(article.value?.tags) ? article.value.tags : [])
 
 onMounted(loadArticles)
 

@@ -2701,6 +2701,13 @@ body {
   font-size: 0.92rem;
 }
 
+.tag-grid {
+  display:flex;
+  gap: 6px;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  margin-top: 10px;
+}
+
 .article-pill {
   min-height: 28px;
   padding: 0 10px;
