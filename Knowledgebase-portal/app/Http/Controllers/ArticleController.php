@@ -77,7 +77,7 @@ public function show(Article $article)
     abort_if($article->status !== 'published', 403);
     abort_if($article->visibility !== 'public', 403);
 
-    return new ArticleResource($article->load(['project', 'category', 'attachments']));
+    return new ArticleResource($article->load(['project', 'tags', 'category', 'attachments']));
   
   }
 
@@ -121,7 +121,7 @@ return response()->json($feedback, 201);
     public function AdminIndex(Request $request)
     {
         $query = Article::visibleTo(auth('sanctum')->user())
-        ->with(['project', 'category', 'attachments']);
+        ->with(['project', 'category', 'attachments', 'tags']);
 
         if ($request->user_id) {
             $query->whereHas('project', function ($q) use ($request) {

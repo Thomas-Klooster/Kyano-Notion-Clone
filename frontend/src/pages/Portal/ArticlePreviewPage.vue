@@ -11,7 +11,7 @@
         </div>
     </div>
 
-    <div v-else class="article-page">
+    <div v-else-if="article" class="article-page">
         <div class="article-topbar">
             <div class="article-topbar-inner">
                 <div class="article-topbar-left">
@@ -66,6 +66,10 @@
                             <!-- {{ timestamp }} -->
                             <strong>{{article?.updated_at}}</strong>
                         </div>
+                        <div class="sidebar-meta-row u-flex-between u-gap-12">
+                            <span>Tag</span>
+                            <strong>{{ articleTags }}</strong>
+                        </div>
                     </div>
                 </div>
 
@@ -102,37 +106,21 @@
                 <article class="article-card card card-elevated card-rounded-2xl">
                     <div class="article-head card-head">
                         <div class="article-meta-line u-flex-center u-wrap u-gap-8">
-                            <span class="article-pill u-inline-flex u-items-center">Handleiding</span>
+                            <span class="article-pill u-inline-flex u-items-center">{{ articleTags }}</span>
                             <span class="article-meta-separator">•</span>
-                            <!-- {{ timestamp }} met diffForHumans() -->
-                            <span>{{ article?.updated_at }}</span>
+                            <span>{{ article.updated_at }}</span>
                         </div>
 
-                        <!-- {{ title }} -->
-                        <h1 class="article-title-input">{{article?.title}}</h1>
+                        <h1 class="article-title-input">{{article.title}}</h1>
 
-                        <!-- kan klant dit zien? is of is dit {{ summary}} ?-->
                         <p class="article-subtitle">
-                            {{ article?.summary }}
+                            {{ article.summary }}
                         </p>
-
-                        <!-- user profile? -->
-                        <!-- <div class="article-author-row u-flex-center u-gap-12">
-                            <div class="author-avatar icon-box">K</div> -->
-
-                            <!-- <div> -->
-                                <!-- {{ name }} (user tables) -->
-                                <!-- <div class="author-name">Kyano Team</div> -->
-                                <!-- {{ role }}author role? Admin? -->
-                                <!-- <div class="author-role">Kennisbankartikel</div> -->
-                            <!-- </div> -->
-                        <!-- </div> -->
                     </div>
 
 
-                    <!-- {{ content }}-->
                 <div class="article-body" v-html="article?.content" />
-                        <!-- <div class="resource-grid">
+                        <div class="resource-grid">
                             <div class="resource-card">
                                 <div class="resource-icon">
                                     <v-icon size="18">mdi-file-document-outline</v-icon>
@@ -144,7 +132,7 @@
                                     <div class="resource-subtitle">
                                         {{  article.size  }}</div>
                                 </div>
-                            </div>
+                            </div> 
 
                             <div class="resource-card">
                                 <div class="resource-icon">
@@ -154,11 +142,17 @@
                                     <div class="resource-title">{{ article.mime }}</div>
                                     <div class="resource-subtitle">{{ article.mime }}</div>
                                 </div>
-                            </div>
-                        </div> -->
-                    <!-- </div> -->
+                            </div> 
+                     </div>  
                 </article>
             </main>
+        </div>
+    </div>
+
+    <div v-else class="empty-state">
+        <div style="margin-top: 300px;">
+            <v-icon size="40">mdi-file-document-outline</v-icon>
+            <h2>Artikel niet gevonden.</h2>
         </div>
     </div>
 </template>
@@ -175,6 +169,9 @@ const article = ref(null)
 const error = ref(false)
 const loading = ref(false)
 const project = computed(() => article.value?.project ?? null)
+const articleTags = computed(() => { const tags = article.value?.tags ?? []
+    return Array.isArray(tags) && tags.length ? tags.join(', ') : 'Geen tags'
+})
 
 onMounted(loadArticles)
 
