@@ -6,6 +6,7 @@ use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\WorkspaceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rule;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UserController;
 
@@ -23,7 +24,22 @@ Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/me', fn(Request $request) => $request->user()); 
+    Route::get('/me', fn(Request $request) => $request->user());
+    Route::patch('/me', function (Request $request) {
+        $user = $request->user();
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
+            'company' => ['nullable', 'string', 'max:255'],
+            'phone_number' => ['nullable', 'string', 'max:20'],
+            'address' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $user->update($data);
+
+        return response()->json($user->fresh());
+    });
     Route::post('/change-password', [AuthController::class, 'resetPassword']);
 
     Route::get('/workspaces', [WorkspaceController::class, 'index']);

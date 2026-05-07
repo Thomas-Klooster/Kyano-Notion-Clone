@@ -1,6 +1,5 @@
 import Home from '@/pages/Portal/DashboardPage.vue'
-import MoreSettings from '@/views/MoreSettings.vue'
-import Settings from '@/views/Settings.vue'
+import ProfilePage from '@/pages/Portal/ProfilePage.vue'
 
 // AUTH
 import LoginPage from '@/pages/Auth/LoginPage.vue'
@@ -19,6 +18,7 @@ import AdminOverviewPage from '@/pages/Admin/AdminOverviewPage.vue'
 // import CategoriesPage from '@/pages/Admin/Categories/CategoriesPage.vue'
 
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 // import CategoriesFormPage from '@/pages/Admin/Categories/CategoriesFormPage.vue'
 
 const router = createRouter({
@@ -33,7 +33,7 @@ const router = createRouter({
       path: '/dashboard',
       name: 'Dashboard',
       component: () => import('@/pages/Portal/DashboardPage.vue'),
-      meta: { guestOnly: true, breadcrumb: 'Dashboard' },
+      meta: { requiresAuth: true, breadcrumb: 'Dashboard' },
     },
     {
       path: '/category/:slug',
@@ -61,19 +61,18 @@ const router = createRouter({
     },
 
     {
+      path: '/profile',
+      name: 'profile',
+      component: ProfilePage,
+      meta: { requiresAuth: true, breadcrumb: 'Profiel' },
+    },
+    {
       path: '/settings',
-      meta: { requiresAuth: true, breadcrumb: 'Settings' },
-      children: [
-        {
-          path: '',
-          component: Settings,
-        },
-        {
-          path: 'more-settings',
-          component: MoreSettings,
-          meta: { breadcrumb: 'More Settings' },
-        },
-      ],
+      redirect: { name: 'profile' },
+    },
+    {
+      path: '/settings/more-settings',
+      redirect: { name: 'profile' },
     },
 
     {
@@ -205,28 +204,29 @@ const router = createRouter({
   ],
 })
 
-// import { useAuthStore } from '@/stores/auth'
+router.beforeEach(async (to) => {
+  const auth = useAuthStore()
 
-// router.beforeEach(async (to) => {
-//   const auth = useAuthStore()
+  if (!auth.initialized) {
+    await auth.fetchUser()
+  }
 
-//   if (!auth.initialized) {
-//     await auth.fetchUser()
-//   }
+  if (to.meta.requiresAuth && !auth.isAuthenticated) {
+    return {
+      name: 'login',
+      query: to.fullPath !== '/profile' ? { redirect: to.fullPath } : {},
+    }
+  }
 
-//   if (to.meta.requiresAuth && !auth.isAuthenticated) {
-//     return { name: 'login' }
-//   }
+  if (to.meta.guestOnly && auth.isAuthenticated) {
+    return auth.isAdmin ? { name: 'admin-overview' } : { name: 'Dashboard' }
+  }
 
-//   if (to.meta.guestOnly && auth.isAuthenticated) {
-//     return auth.isAdmin ? { name: 'admin-overview' } : { name: 'Dashboard' }
-//   }
+  if (to.meta.requiresAdmin && !auth.isAdmin) {
+    return { name: 'Dashboard' }
+  }
 
-//   if (to.meta.requiresAdmin && !auth.isAdmin) {
-//     return { name: 'Dashboard' }
-//   }
-
-//   return true
-// })
+  return true
+})
 
 export default router

@@ -3945,6 +3945,29 @@ body {
   margin-top: -4px;
 }
 
+.sidebar-account-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 30px;
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-surface-subtle);
+  border: 1px solid var(--color-border-default);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.sidebar-account-link:hover,
+.sidebar-account-link--active {
+  background: rgba(36, 161, 199, 0.08);
+  border-color: var(--color-border-brand-soft);
+  color: var(--color-brand-600);
+}
+
 .sidebar-logout-btn {
   display: flex;
   align-items: center;
@@ -4034,4 +4057,178 @@ body {
   inset: 0;
   z-index: 999;
   background: transparent;
+}
+
+/* Profile page */
+.profile-page .dashboard-shell {
+  max-width: 1320px;
+}
+
+.profile-hero-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.profile-avatar-large {
+  width: 86px;
+  height: 86px;
+  border-radius: var(--radius-2xl);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.18);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 370px);
+  gap: 20px;
+  align-items: start;
+}
+
+.profile-card-body {
+  padding: 28px;
+}
+
+.profile-card-body-compact {
+  padding-top: 0;
+}
+
+.profile-side-column {
+  display: grid;
+  gap: 20px;
+}
+
+.profile-side-card-head {
+  padding: 24px 24px 18px;
+  border-bottom: 1px solid var(--color-border-soft);
+}
+
+.profile-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-field-full {
+  grid-column: 1 / -1;
+}
+
+.profile-page .notion-soft-input .v-field {
+  border: 1px solid var(--color-border-input) !important;
+  border-radius: var(--radius-lg) !important;
+  background: var(--color-bg-surface-soft) !important;
+  box-shadow: none !important;
+}
+
+.profile-page .notion-soft-input .v-field:hover,
+.profile-page .notion-soft-input .v-field--focused {
+  background: var(--color-white) !important;
+}
+
+.profile-alert {
+  margin-top: 18px;
+  border-radius: var(--radius-lg) !important;
+}
+
+.profile-form-actions {
+  justify-content: flex-end;
+}
+
+.profile-secondary-action {
+  min-height: 42px !important;
+  border-radius: var(--radius-lg) !important;
+  border-color: var(--color-border-input) !important;
+  color: var(--color-text-primary) !important;
+  text-transform: none !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+}
+
+.profile-full-action {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.profile-status-stack {
+  display: grid;
+  gap: 12px;
+  padding: 20px 24px 24px;
+}
+
+.profile-status-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-radius: var(--radius-xl);
+}
+
+.profile-status-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-brand-soft);
+  background: #f3f8fa;
+  color: var(--color-brand-700);
+  flex-shrink: 0;
+}
+
+.profile-stat-value {
+  color: var(--color-text-strong);
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+@media (max-width: 1024px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .profile-hero-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .profile-avatar-large {
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radius-xl);
+    font-size: 1.6rem;
+  }
+
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-card-body,
+  .profile-status-stack,
+  .profile-side-card-head {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .profile-form-actions,
+  .profile-secondary-action,
+  .profile-form-actions .v-btn {
+    width: 100%;
+  }
 }

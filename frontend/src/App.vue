@@ -86,6 +86,15 @@ async function handleLogout() {
             </div>
           </div>
           <div class="sidebar-profile-email">{{ auth.user?.email }}</div>
+          <router-link
+            to="/profile"
+            class="sidebar-account-link"
+            active-class="sidebar-account-link--active"
+            @click="drawer = false"
+          >
+            <v-icon size="14">mdi-account-circle-outline</v-icon>
+            Profiel beheren
+          </router-link>
           <button class="sidebar-logout-btn" @click="handleLogout">
             <v-icon size="13">mdi-logout-variant</v-icon>
             Uitloggen
@@ -100,10 +109,6 @@ async function handleLogout() {
             <router-link to="/dashboard" class="sidebar-nav-item" active-class="sidebar-nav-item--active" exact @click="drawer = false">
               <div class="sidebar-nav-icon"><v-icon size="16">mdi-home-outline</v-icon></div>
               <span>Home</span>
-            </router-link>
-            <router-link to="/settings" class="sidebar-nav-item" active-class="sidebar-nav-item--active" @click="drawer = false">
-              <div class="sidebar-nav-icon"><v-icon size="16">mdi-cog-outline</v-icon></div>
-              <span>Instellingen</span>
             </router-link>
           </nav>
         </div>

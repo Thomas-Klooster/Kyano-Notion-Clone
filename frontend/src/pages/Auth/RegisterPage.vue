@@ -253,9 +253,17 @@ const emailRules = [
 ]
 
 const phoneRules = [
-  (v) => (v?.trim()?.length ?? 0 ) >= 3 || 'Het telefoonnummer moet minimaal 3 cijfers lang zijn.',
-  (v) => /^\d+$/.test(v?.trim() ?? '') || 'Het telefoonnummer mag alleen uit cijfers bestaan.'
-]
+  (v) => {
+    const trimmed = v?.trim();
+    if (!trimmed) return true;
+    return trimmed.length >= 3 || 'Het telefoonnummer moet minimaal 3 cijfers lang zijn.';
+  },
+  (v) => {
+    const trimmed = v?.trim();
+    if (!trimmed) return true;
+    return /^\d+$/.test(trimmed) || 'Het telefoonnummer mag alleen uit cijfers bestaan.';
+  }
+]   
 
 const passwordRules = [
   (v) => !!v || 'Het invullen van een wachtwoord is verplicht.',

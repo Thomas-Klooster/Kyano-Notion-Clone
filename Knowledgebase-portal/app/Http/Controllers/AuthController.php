@@ -50,7 +50,7 @@ class AuthController extends Controller
     }
 
         $user = $token->tokenable;
-        $user->tokens()->delete();
+        $token->delete();
 
         $accessToken = $user->createToken('access-token', ['*'], now()->addMinutes(60))->plainTextToken;
         $refreshToken = $user->createToken('refresh-token', ['*'], now()->addDays(30))->plainTextToken;
@@ -107,15 +107,10 @@ public function logout(Request $request) {
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'current_password' => 'required',
             'password' => 'required|min:8|confirmed',
         ]);
 
         $user = $request->user();
-
-        if (!Hash::check($request->current_password, $user->password)) {
-            return response()->json(['message' => 'Huidige wachtwoord is onjuist.'], 422);
-        }
 
         $user->update(['password' => Hash::make($request->password)]);
         // Email
