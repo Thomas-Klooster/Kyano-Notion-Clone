@@ -109,7 +109,7 @@
                         </div>
 
                         <!-- {{ title }} -->
-                        <h1 class="article-title">{{article?.title}}</h1>
+                        <h1 class="article-title-input">{{article?.title}}</h1>
 
                         <!-- kan klant dit zien? is of is dit {{ summary}} ?-->
                         <p class="article-subtitle">
