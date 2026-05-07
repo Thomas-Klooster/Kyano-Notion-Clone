@@ -1,7 +1,11 @@
 <template>
-    <div class="dashboard-page">
-        <div class="dashboard-shell page-shell">
-            <section class="dashboard-hero hero">
+  <div class="entity-page admin-studio-page">
+    <div class="entity-shell page-shell admin-studio-shell">
+      <section class="entity-hero hero admin-hero">
+        <div class="admin-hero-bg-shapes" aria-hidden="true">
+          <div class="admin-hero-shape admin-hero-shape-1" />
+          <div class="admin-hero-shape admin-hero-shape-2" />
+        </div>
                 <div class="hero-content u-min-w-0">
                     <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
                         <span class="hero-pill u-inline-flex u-items-center">Workspace</span>
@@ -88,7 +92,7 @@
                         <div v-if="expandedCategories.includes(category.slug)" class="article-list">
                             <div
                                 v-for="project in category.projects"
-                                :key="project.id"
+                                :key="project.slug"
                                 class="project-group project-group-nested"
                             >
                                 <div
@@ -117,18 +121,18 @@
                                     <button
                                         class="project-row-right u-gap-12 tree-toggle"
                                         type="button"
-                                        @click.stop="toggleProject(project.id)"
+                                        @click.stop="toggleProject(project.slug)"
                                     >
                                         <v-icon size="18" class="project-arrow">
-                                            {{ expandedProjects.includes(project.id) ? 'mdi-chevron-down' : 'mdi-chevron-right' }}
+                                            {{ expandedProjects.includes(project.slug) ? 'mdi-chevron-down' : 'mdi-chevron-right' }}
                                         </v-icon>
                                     </button>
                                 </div>
 
-                                <div v-if="expandedProjects.includes(project.id)" class="article-list article-list-nested">
+                                <div v-if="expandedProjects.includes(project.slug)" class="article-list article-list-nested">
                                     <div
                                         v-for="article in project.articles"
-                                        :key="article.id"
+                                        :key="article.slug"
                                         class="article-row article-row-clickable"
                                         role="button"
                                         tabindex="0"
@@ -144,7 +148,7 @@
                                             <div class="article-info">
                                                 <div class="article-title">{{ article.title }}</div>
                                                 <div class="article-meta">
-                                                    <span>{{ article.tags.join(', ') }}</span>
+                                                <span>{{ (article.tags ?? []).join(', ') }}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -177,7 +181,7 @@ import { useRouter, useRoute } from "vue-router";
 const router = useRouter()
 const route = useRoute()
 const search = ref('')
-const workspace = ref({ name: '', categories: [] })
+const workspace = ref({ name: '', categories: [], projects: [], articles: [] })
 const loading = ref(false)
 const error = ref(false)
 const expandedCategories = ref([])

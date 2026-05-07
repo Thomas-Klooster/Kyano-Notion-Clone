@@ -1,7 +1,11 @@
 <template>
-    <div class="dashboard-page">
-        <div class="dashboard-shell page-shell">
-            <section class="dashboard-hero hero">
+  <div class="entity-page admin-studio-page">
+    <div class="entity-shell page-shell admin-studio-shell">
+      <section class="entity-hero hero admin-hero">
+        <div class="admin-hero-bg-shapes" aria-hidden="true">
+          <div class="admin-hero-shape admin-hero-shape-1" />
+          <div class="admin-hero-shape admin-hero-shape-2" />
+        </div>
                 <div class="hero-content u-min-w-0">
                     <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
                         <span class="hero-pill u-inline-flex u-items-center">Klantportaal</span>

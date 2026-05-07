@@ -126,7 +126,7 @@
                     </div>
 
 
-                <div class="article-body" v-html="article?.content" />
+                <div class="article-body" v-html="article.content" />
                         <div class="resource-grid">
                             <div class="resource-card">
                                 <div class="resource-icon">

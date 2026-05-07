@@ -19,7 +19,7 @@
 
   --color-bg-page: #f7f7f5;
   --color-bg-surface: #ffffff;
-  --color-bg-surface-soft: #fbfbfa;
+  --color-bg-surface-soft: #98c6ff17;
   --color-bg-surface-muted: #f7f7f5;
   --color-bg-surface-subtle: #f3f3f1;
   --color-bg-hover: #f2f1ee;
@@ -173,7 +173,7 @@ body {
   padding: 0 14px;
   border-radius: var(--radius-lg);
   border: 1px solid var(--color-border-input);
-  background: var(--color-bg-surface-soft);
+  background: var(--color-bg-surface);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -415,7 +415,7 @@ body {
   padding: 0 14px;
   border-radius: 14px;
   border: 1px solid var(--color-border-input);
-  background: var(--color-bg-surface-soft);
+  background: var(--color-bg-surface);
   display: flex;
   align-items: center;
   gap: 10px;

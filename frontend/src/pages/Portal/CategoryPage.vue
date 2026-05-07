@@ -1,7 +1,11 @@
 <template>
-    <div class="dashboard-page">
-        <div class="dashboard-shell page-shell">
-            <section class="dashboard-hero hero">
+  <div class="entity-page admin-studio-page">
+    <div class="entity-shell page-shell admin-studio-shell">
+      <section class="entity-hero hero admin-hero">
+        <div class="admin-hero-bg-shapes" aria-hidden="true">
+          <div class="admin-hero-shape admin-hero-shape-1" />
+          <div class="admin-hero-shape admin-hero-shape-2" />
+        </div>
                 <div class="hero-content u-min-w-0">
                     <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
                         <span class="hero-pill u-inline-flex u-items-center">Categorie</span>
@@ -67,14 +71,23 @@
                             <button class="project-row-right u-gap-12 tree-toggle" type="button"
                                 @click.stop="toggleProject(project.slug)">
                                 <v-icon size="18" class="project-arrow">
-                                    {{ expandedProjects.includes(project.id) ? 'mdi-chevron-down' : 'mdi-chevron-right'
+                                    {{ expandedProjects.includes(project.slug) ? 'mdi-chevron-down' : 'mdi-chevron-right'
                                     }}
                                 </v-icon>
                             </button>
                         </div>
 
-                        <div v-if="expandedProjects.includes(project.id)" class="article-list">
-                            <div v-for="article in project.articles" :key="article.id" class="article-row">
+                        <div v-if="expandedProjects.includes(project.slug)" class="article-list">
+                            <div
+                                v-for="article in project.articles"
+                                :key="article.slug"
+                                class="article-row article-row-clickable"
+                                role="button"
+                                tabindex="0"
+                                @click="goToArticle(article.slug)"
+                                @keydown.enter="goToArticle(article.slug)"
+                                @keydown.space.prevent="goToArticle(article.slug)"
+                            >
                                 <div class="article-row-main u-min-w-0">
                                     <div class="article-icon">
                                         <v-icon size="18">mdi-file-document-outline</v-icon>
@@ -83,7 +96,7 @@
                                     <div class="article-info">
                                         <div class="article-title">{{ article.title }}</div>
                                         <div class="article-meta">
-                                            <span>{{ article.tags.join(', ') }}</span>
+                                            <span>{{ (article.tags ?? []).join(', ') }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -116,7 +129,7 @@ const error = ref(false)
 const search = ref('')
 const expandedProjects = ref([])
 
-const category = ref({ name: '', workspace: '', projects: [] })
+const category = ref({ name: '', workspace: '', projects: [], articles: [], tags: [] })
 
 onMounted(loadProjects)
 
@@ -131,6 +144,7 @@ async function loadProjects() {
             category.value.name = current.name
             category.value.workspace = current.workspace
             category.value.projects = current.projects
+            category.value.articles = current.articles
         }
     } catch (err) {
         error.value = 'Geen projecten gevonden'
@@ -144,9 +158,31 @@ const filteredProjects = computed(() => {
 
     if (!query) return category.value.projects
 
-    return category.value.projects.filter(project =>
-        project.name.toLowerCase().includes(query)
-    )
+    return category.value.projects
+        .map(project => {
+            const projectName = (project.name ?? '').toLowerCase()
+            const projectMatches = projectName.includes(query)
+
+            const articles = (project.articles ?? []).filter(article => {
+                const title = (article.title ?? '').toLowerCase()
+                const tags = Array.isArray(article.tags) ? article.tags : []
+
+                return (
+                    title.includes(query) ||
+                    tags.some(tag => String(tag).toLowerCase().includes(query))
+                )
+            })
+
+            if (projectMatches || articles.length) {
+                return {
+                    ...project,
+                    articles: projectMatches ? (project.articles ?? []) : articles,
+                }
+            }
+
+            return null
+        })
+        .filter(Boolean)
 })
 
 function toggleProject(id) {
@@ -159,5 +195,8 @@ function goToProject(slug) {
     router.push(`/project/${slug}`)
 }
 
-</script>
+function goToArticle(slug) {
+    router.push(`/article/${slug}`)
+}
 
+</script>
