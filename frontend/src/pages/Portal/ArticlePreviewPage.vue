@@ -1,5 +1,17 @@
-<template>
-    <div class="article-page">
+    <template>
+    <div v-if="loading" class="empty-state">
+        <v-icon size="24">mdi-loading mdi-spin</v-icon>
+        <p>Artikel is aan het laden...</p>
+    </div>
+
+    <div v-else-if="error" class="empty-state">
+        <div style="margin-top: 300px;">
+        <v-icon size="40">mdi-alert-circle-outline</v-icon>
+            <h2>{{ error }}</h2>
+        </div>
+    </div>
+
+    <div v-else class="article-page">
         <div class="article-topbar">
             <div class="article-topbar-inner">
                 <div class="article-topbar-left">
@@ -40,19 +52,19 @@
                         <div class="sidebar-meta-row u-flex-between u-gap-12">
                             <span>Project</span>
                             <!-- {{ Project }} bij titel-->
-                            <strong>Knowledgebase Portal</strong>
+                    <strong>{{ project?.name }}</strong>
                         </div>
 
                         <div class="sidebar-meta-row u-flex-between u-gap-12">
                             <span>Status</span>
                             <!-- {{ status }}-->
-                            <strong>Gepubliceerd</strong>
+                            <strong>{{ article?.status }}</strong>
                         </div>
 
                         <div class="sidebar-meta-row u-flex-between u-gap-12">
                             <span>Bijgewerkt</span>
                             <!-- {{ timestamp }} -->
-                            <strong>Vandaag</strong>
+                            <strong>{{article?.updated_at}}</strong>
                         </div>
                     </div>
                 </div>
@@ -93,107 +105,44 @@
                             <span class="article-pill u-inline-flex u-items-center">Handleiding</span>
                             <span class="article-meta-separator">•</span>
                             <!-- {{ timestamp }} met diffForHumans() -->
-                            <span>Vandaag bijgewerkt</span>
+                            <span>{{ article?.updated_at }}</span>
                         </div>
 
                         <!-- {{ title }} -->
-                        <h1 class="article-title">PAGINATITEL</h1>
+                        <h1 class="article-title">{{article?.title}}</h1>
 
                         <!-- kan klant dit zien? is of is dit {{ summary}} ?-->
                         <p class="article-subtitle">
-                            Dit is de preview van een artikel. deze pagina is de pagina die klanten in het portaal zien.
+                            {{ article?.summary }}
                         </p>
 
                         <!-- user profile? -->
-                        <div class="article-author-row u-flex-center u-gap-12">
-                            <div class="author-avatar icon-box">K</div>
+                        <!-- <div class="article-author-row u-flex-center u-gap-12">
+                            <div class="author-avatar icon-box">K</div> -->
 
-                            <div>
+                            <!-- <div> -->
                                 <!-- {{ name }} (user tables) -->
-                                <div class="author-name">Kyano Team</div>
+                                <!-- <div class="author-name">Kyano Team</div> -->
                                 <!-- {{ role }}author role? Admin? -->
-                                <div class="author-role">Kennisbankartikel</div>
-                            </div>
-                        </div>
+                                <!-- <div class="author-role">Kennisbankartikel</div> -->
+                            <!-- </div> -->
+                        <!-- </div> -->
                     </div>
 
 
                     <!-- {{ content }}-->
-                    <div class="article-body">
-                        <p>
-                            Cras quis commodo turpis, eu rhoncus ligula. Phasellus viverra mi nec elit tempus vulputate.
-                            Cras lacinia tincidunt eros sit amet varius. Nam quis purus quis nulla mollis mollis nec sed
-                            nulla. Phasellus in facilisis diam. Aenean sit amet pharetra quam.
-                        </p>
-
-                        <h2>Aenean sapien nisi</h2>
-                        <p>
-                            Curabitur egestas
-                            vulputate est at egestas. Aenean sapien nisi, pulvinar ut nisi in, commodo tristique erat.
-                            Donec laoreet, mi sed mattis maximus, neque ante malesuada erat, a vulputate lacus dui ac
-                            ante.
-                        </p>
-
-                        <blockquote>
-                            Nunc eros leo, efficitur eu orci quis, feugiat tempor eros. Fusce feugiat lacinia cursus.
-                            Morbi dolor enim, varius ut mauris ut, mattis aliquet nibh. Vestibulum ultricies tincidunt
-                            lacinia. Sed at nisl libero.
-                        </blockquote>
-
-                        <h2>Cras quis commodo</h2>
-                        <p>
-                            Cras quis commodo turpis, eu rhoncus ligula. Phasellus viverra mi nec elit tempus vulputate.
-                            Cras lacinia tincidunt eros sit amet varius. Nam quis purus quis nulla mollis mollis nec sed
-                            nulla. Phasellus in facilisis diam. Aenean sit amet pharetra quam.
-                        </p>
-
-                        <ul>
-                            <li>Cras quis commodo turpis, eu rhoncus ligula.</li>
-                            <li>Phasellus viverra mi nec elit tempus vulputate.</li>
-                            <li>Nam quis purus quis nulla mollis mollis nec sed nulla.</li>
-                            <li>Phasellus in facilisis diam. Aenean sit amet pharetra quam.</li>
-                        </ul>
-
-                        <h2>tempus vulputate</h2>
-                        <p>
-                            Sed sollicitudin egestas neque, nec laoreet odio maximus vitae. Vestibulum accumsan, libero
-                            ornare faucibus varius, urna tortor cursus turpis, non euismod augue magna non nunc. Etiam
-                            lobortis augue lectus, quis laoreet lorem imperdiet et. Ut auctor magna sit amet dolor
-                            luctus efficitur.
-                        </p>
-
-                        <div class="callout-card">
-                            <div class="callout-icon">!</div>
-                            <div>
-                                <div class="callout-title">Nam quis purus</div>
-                                <p class="callout-text">
-                                    Vestibulum nec augue bibendum risus malesuada pretium. Vivamus vel nunc sed ipsum
-                                    varius sollicitudin. Donec rutrum interdum orci ut rutrum.
-                                </p>
-                            </div>
-                        </div>
-
-                        <h2>commodo turpis</h2>
-                        <p>
-                            Cras quis commodo turpis, eu rhoncus ligula. Phasellus viverra mi nec elit tempus vulputate.
-                            Cras lacinia tincidunt eros sit amet varius. Nam quis purus quis nulla mollis mollis nec sed
-                            nulla. Phasellus in facilisis diam. Aenean sit amet pharetra quam. Curabitur egestas
-                            vulputate est at egestas. Aenean sapien nisi, pulvinar ut nisi in, commodo tristique erat.
-                            Donec laoreet, mi sed mattis maximus, neque ante malesuada erat, a vulputate lacus dui ac
-                            ante.
-                        </p>
-
-                        <div class="resource-grid">
+                <div class="article-body" v-html="article?.content" />
+                        <!-- <div class="resource-grid">
                             <div class="resource-card">
                                 <div class="resource-icon">
-                                    <!-- {{ mime }}-->
                                     <v-icon size="18">mdi-file-document-outline</v-icon>
                                 </div>
                                 <div class="resource-body">
-                                    <!-- {{ original_name }} -->
-                                    <div class="resource-title">Portal.pdf</div>
-                                    <!-- {{ size }} -->
-                                    <div class="resource-subtitle">PDF-document · 6.9 MB</div>
+                                    <div class="resource-title">
+                                        {{ article.original_name }}
+                                    </div>
+                                    <div class="resource-subtitle">
+                                        {{  article.size  }}</div>
                                 </div>
                             </div>
 
@@ -202,13 +151,12 @@
                                     <v-icon size="18">mdi-link-variant</v-icon>
                                 </div>
                                 <div class="resource-body">
-                                    <!-- {{ mime }} -->
-                                    <div class="resource-title">youtube.com</div>
-                                    <div class="resource-subtitle">bookmark</div>
+                                    <div class="resource-title">{{ article.mime }}</div>
+                                    <div class="resource-subtitle">{{ article.mime }}</div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                        </div> -->
+                    <!-- </div> -->
                 </article>
             </main>
         </div>
@@ -216,11 +164,32 @@
 </template>
 
 <script setup>
-import { computed, ref, nextTick, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-
+import { getArticle } from '@/services/articleService'
 const feedbackTitle = ref('')
 const feedbackTextarea = ref(null)
+
+const route = useRoute()
+const article = ref(null)
+const error = ref(false)
+const loading = ref(false)
+const project = computed(() => article.value?.project ?? null)
+
+onMounted(loadArticles)
+
+async function loadArticles() {
+    loading.value = true
+    error.value = false
+    try {
+        const data = await getArticle(route.params.slug)
+        article.value = data
+    } catch (err) {
+        error.value = 'Artikel kon niet worden geladen.'
+    } finally {
+        loading.value = false
+    }
+}
 
 function autoResizeTextarea() {
     const el = feedbackTextarea.value
@@ -235,8 +204,6 @@ function autoResizeTextarea() {
 //         autoResizeTextarea()
 //     })
 // })
-
-const route = useRoute()
 
 const backToEditorRoute = computed(() => {
     const articleId = route.params.id
@@ -254,4 +221,3 @@ function submitFeedback() {
     feedbackTitle.value = ''
 }
 </script>
-

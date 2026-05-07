@@ -194,7 +194,7 @@ const router = createRouter({
           meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Article editor page' },
         },
         {
-          path: '/articles/:id',
+          path: '/articles/:slug',
           name: 'article-preview',
           component: () => import('@/pages/Portal/ArticlePreviewPage.vue'),
           meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Article preview' },

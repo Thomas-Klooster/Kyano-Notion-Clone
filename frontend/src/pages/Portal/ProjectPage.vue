@@ -13,7 +13,7 @@
                         <span>{{ filteredArticles.length === 1 ? '1 artikel' : `${filteredArticles.length} artikelen`}}</span>
                     </div>
 
-                    <h1 class="hero-title">Project: {{ project.name }}</h1>
+                    <h1 class="hero-title">{{ project.name }}</h1>
 
                     <p class="hero-subtitle">
                         Bekijk alle artikelen binnen dit project.

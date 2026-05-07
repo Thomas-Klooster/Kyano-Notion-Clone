@@ -49,9 +49,9 @@ class Article extends Model
             return $this->belongsTo(Workspace::class);
     }
 
-        public function projects() {
-            return $this->belongsTo(Project::class);
-    }
+    //     public function projects() {
+    //         return $this->belongsTo(Project::class);
+    // }
         public function project() {
             return $this->belongsTo(Project::class);
         }

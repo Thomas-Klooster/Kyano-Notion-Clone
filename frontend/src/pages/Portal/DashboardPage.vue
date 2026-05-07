@@ -116,13 +116,13 @@
                                                 </div>
                                             </router-link>
 
-                                            <button class="tree-toggle" type="button"
-                                                @click="toggleProject(project.id)">
-                                                <v-icon size="18">
-                                                    {{ expandedProjects.includes(project.slug) ? 'mdi-chevron-down' :
-                                                        'mdi-chevron-right' }}
-                                                </v-icon>
-                                            </button>
+                                            <button class="tree-toggle" type="button" 
+                                                 @click="toggleProject(project.slug)"> 
+                                                <v-icon size="18"> 
+                                                    {{ expandedProjects.includes(project.slug) ? 'mdi-chevron-down' : 
+                                                         'mdi-chevron-right' }} 
+                                                </v-icon> 
+                                             </button>
                                         </div>
 
                                         <div v-if="expandedProjects.includes(project.slug)"
@@ -139,11 +139,12 @@
                                                         <div class="tree-name">{{ article.title }}</div>
                                                         <div class="tree-meta">
                                                     <span>{{ (article.tags ?? []).join(', ') }}</span>
-                                                                                                        </div>
+                                                    </div>
                                                     </div>
                                                 </div>
-
-                                                <v-icon size="18" class="project-arrow">mdi-chevron-right</v-icon>
+                                                
+                                                <!-- Commented out Article arrow. (het heeft geen vervolg routes dus hoeft ook geen arrow.)-->
+                                                <!-- <v-icon size="18" class="project-arrow">mdi-chevron-right</v-icon> -->
                                             </router-link>
                                         </div>
                                     </div>

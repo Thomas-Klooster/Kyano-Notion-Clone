@@ -5,6 +5,11 @@ export const getArticles = async () => {
      return data;
 }
 
+export const getArticle = async (slug) => {
+    const { data } = await api.get(`articles/${slug}`)
+    return data;
+}
+
 export const createArticles = async (formData) => {
     const { data } = await api.post('articles', formData, {
         headers: {

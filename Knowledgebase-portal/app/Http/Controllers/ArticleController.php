@@ -49,12 +49,13 @@ class ArticleController extends Controller
     return (new ArticleResource($article->load(['attachments', 'tags'])))->response()->setStatusCode(201);
 }
 
-
-    public function show(Article $article) { 
+public function show(Article $article)
+{
     $this->authorize('view', $article);
-    return new ArticleResource($article->load(['tags', 'projects', 'categories', 'attachments']));    
-    }
-
+    return new ArticleResource(
+        $article->load(['tags', 'project', 'categories', 'attachments'])
+    );
+}
     public function update(ArticleUpdateRequest $request, Article $article) {
 
         $this->authorize('update', $article);
@@ -76,7 +77,7 @@ class ArticleController extends Controller
     abort_if($article->status !== 'published', 403);
     abort_if($article->visibility !== 'public', 403);
 
-    return new ArticleResource($article->load(['projects', 'category', 'attachments']));
+    return new ArticleResource($article->load(['project', 'category', 'attachments']));
   
   }
 
@@ -131,4 +132,3 @@ return response()->json($feedback, 201);
           return ArticleResource::collection($query->latest()->get());
       }
 }
-

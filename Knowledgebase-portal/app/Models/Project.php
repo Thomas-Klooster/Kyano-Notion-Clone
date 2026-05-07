@@ -23,28 +23,22 @@ class Project extends Model
     ];
 
 
-    // protected $casts = [
-    //    'created_at' => 'date:Y-m-d',
-    //    'updated_at' => 'date:Y-m-d',
-    // ];
+    protected $casts = [
+       'created_at' => 'date:Y-m-d',
+       'updated_at' => 'date:Y-m-d',
+    ];
       public function getRouteKeyName() {
         return 'slug';
     }
 
-    public function users(): BelongsTo
-    {
+    public function user(): BelongsTo {
         return $this->belongsTo(User::class);
     }
    
-    public function category(): BelongsTo
-    {
+    public function category(): BelongsTo {
         return $this->belongsTo(Category::class);
     }
    
-    public function article(): HasMany
-    {
-        return $this->hasMany(Article::class);
-    }
     public function articles() {
         return $this->hasMany(Article::class);
     }
