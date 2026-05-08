@@ -127,30 +127,20 @@
 
 
                 <div class="article-body" v-html="article.content" />
-                        <div class="resource-grid">
-                            <div class="resource-card">
+                        <div v-if="articleAttachments.length" class="resource-grid">
+                            <div v-for="attachment in articleAttachments" :key="attachment.id" class="resource-card">
                                 <div class="resource-icon">
                                     <v-icon size="18">mdi-file-document-outline</v-icon>
                                 </div>
-                                <div class="resource-body">
+                                <button>
                                     <div class="resource-title">
-                                        {{ article.original_name }}
+                                        {{ attachment.original_name }}
                                     </div>
                                     <div class="resource-subtitle">
-                                        {{  article.size  }}</div>
-                                </div>
-                            </div> 
-
-                            <div class="resource-card">
-                                <div class="resource-icon">
-                                    <v-icon size="18">mdi-link-variant</v-icon>
-                                </div>
-                                <div class="resource-body">
-                                    <div class="resource-title">{{ article.mime }}</div>
-                                    <div class="resource-subtitle">{{ article.mime }}</div>
-                                </div>
-                            </div> 
-                     </div>  
+                                        {{ formatAttachmentSize(attachment.size) }}</div>
+                                    </button>
+                            </div>
+                     </div>
                 </article>
             </main>
         </div>
@@ -177,6 +167,7 @@ const error = ref(false)
 const loading = ref(false)
 const project = computed(() => article.value?.project ?? null)
 const articleTags = computed(() => Array.isArray(article.value?.tags) ? article.value.tags : [])
+const articleAttachments = computed(() => Array.isArray(article.value?.attachments) ? article.value.attachments : [])
 
 onMounted(loadArticles)
 
@@ -187,7 +178,7 @@ async function loadArticles() {
         const data = await getArticle(route.params.slug)
         article.value = data
     } catch (err) {
-        error.value = 'Artikel kon niet worden geladen.'
+        error.value = 'Artikel is niet gevonden...'
     } finally {
         loading.value = false
     }
@@ -221,5 +212,15 @@ function submitFeedback() {
     console.log('Feedback verzonden:', feedbackTitle.value)
 
     feedbackTitle.value = ''
+}
+
+function formatAttachmentSize(size) {
+    const value = Number(size)
+
+    if (!Number.isFinite(value) || value <= 0) return 'Onbekende grootte'
+    if (value < 1024) return `${value} B`
+    if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KB`
+
+    return `${(value / (1024 * 1024)).toFixed(1)} MB`
 }
 </script>

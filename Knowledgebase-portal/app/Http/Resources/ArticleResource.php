@@ -24,6 +24,13 @@ class ArticleResource extends JsonResource
         'updated_at' => $this->updated_at->locale("nl")->diffForHumans(),
         'tags' => $this->whenLoaded('tags', fn() => $this->tags->pluck('name')),
         'project' => new ProjectResource($this->whenLoaded('project')),
+        'attachments' => $this->whenLoaded('attachments', fn() => $this->attachments->map(fn($attachment) => [
+            'id' => $attachment->id,
+            'path' => $attachment->path,
+            'mime' => $attachment->mime,
+            'original_name' => $attachment->original_name,
+            'size' => $attachment->size,
+        ])->values()),
 
     ];
     }

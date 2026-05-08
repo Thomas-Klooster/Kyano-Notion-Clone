@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Attachment;
 use App\Models\Category;
 use App\Models\Workspace;
 use App\Models\Tag;
@@ -42,6 +43,11 @@ class ArticleFactory extends Factory
         return $this->afterCreating(function (Article $article) {
             $tagIds = Tag::inRandomOrder()->take(rand(1, 3))->pluck('id')->toArray();
             $article->tags()->syncWithoutDetaching($tagIds);
-                    });
+
+            Attachment::factory()
+                ->count(rand(1, 3))
+                ->for($article)
+                ->create();
+        });
     }
 }

@@ -19,7 +19,7 @@ class Attachment extends Model
         ];
 
 
-    public function articles() {
+    public function article() {
     return $this->belongsTo(Article::class);
     }
 }
