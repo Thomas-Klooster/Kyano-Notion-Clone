@@ -5,13 +5,25 @@ const api = axios.create({
      withCredentials: true,
 });
 
+export const AUTH_SESSION_EXPIRED_EVENT = 'auth:session-expired';
+
 let isRefreshing = false;
 let failedQueue = [];
+let hasEmittedSessionExpired = false;
 
 const processQueue = (error, token = null) => {
      failedQueue.forEach(({ resolve, reject }) =>
      error ? reject(error) : resolve(token));
      failedQueue = [];
+};
+
+const notifySessionExpired = () => {
+     localStorage.clear();
+
+     if (hasEmittedSessionExpired) return;
+
+     hasEmittedSessionExpired = true;
+     window.dispatchEvent(new CustomEvent(AUTH_SESSION_EXPIRED_EVENT));
 };
 
 api.interceptors.request.use((config) => {
@@ -26,9 +38,7 @@ api.interceptors.response.use(
           const originalRequest = error.config;
 
           if (originalRequest.url === '/refresh') {
-               localStorage.clear();
-               // Commented out due by error page gets forced refreshed
-               // window.location.href = '/auth/login';
+               notifySessionExpired();
                return Promise.reject(error);
           }
 
@@ -47,19 +57,23 @@ api.interceptors.response.use(
 
                try {
                     const refreshToken = localStorage.getItem('refreshToken');
+                    if (!refreshToken) {
+                         notifySessionExpired();
+                         return Promise.reject(error);
+                    }
+
                 const { data } = await api.post('/refresh', {
                    refreshToken: refreshToken
                 });
 
                     localStorage.setItem('accessToken', data.accessToken);
                     localStorage.setItem('refreshToken', data.refreshToken);
+                    hasEmittedSessionExpired = false;
                     processQueue(null, data.accessToken);
                     return api(originalRequest);
                } catch (refreshError) {
                     processQueue(refreshError, null);
-                    localStorage.clear();
-                    // Commented out due by error page gets forced refreshed
-                    // window.location.href = '/auth/login';
+                    notifySessionExpired();
                     return Promise.reject(refreshError);
                } finally {
                     isRefreshing = false;

@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from './router'
 import '@/assets/main.css'
 import '@/assets/fonts/fonts.css'
+import { AUTH_SESSION_EXPIRED_EVENT } from '@/api/api'
 
 import axios from 'axios'
 
@@ -48,6 +49,20 @@ app.use(vuetify)
 import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
+
+window.addEventListener(AUTH_SESSION_EXPIRED_EVENT, async () => {
+  auth.clearSession()
+
+  if (router.currentRoute.value.name !== 'login') {
+    await router.replace({
+      name: 'login',
+      query: router.currentRoute.value.fullPath !== '/auth/login'
+        ? { expired: '1', redirect: router.currentRoute.value.fullPath }
+        : { expired: '1' },
+    })
+  }
+})
+
 auth.fetchUser().finally(() => {
 app.mount('#app')  
 })

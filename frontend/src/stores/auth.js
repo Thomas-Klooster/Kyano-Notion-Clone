@@ -17,6 +17,12 @@ export const useAuthStore = defineStore('auth', {
     setUser(user) {
       this.user = user;
     },
+
+    clearSession() {
+      this.user = null;
+      this.initialized = true;
+      localStorage.clear();
+    },
   
 
     async fetchUser() {
@@ -34,11 +40,11 @@ export const useAuthStore = defineStore('auth', {
 
     
     async logout() {
-      await api.post('/logout')
-      this.user = null
-      localStorage.clear();
-      window.location.href = '/auth/login';
-
+      try {
+        await api.post('/logout')
+      } finally {
+        this.clearSession()
+      }
     },
 
     async forgotPassword(email) {
