@@ -28,7 +28,7 @@ class ArticleFactory extends Factory
         return [
             'title' => $this->faker->name(),
             'content' => $this->faker->paragraph(10, true),
-            'summary' => $this->faker->paragraphs(3, true),
+            'summary' => $this->faker->paragraphs(1, true),
             'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory(),
             'workspace_id' => Workspace::inRandomOrder()->first()->id ?? Workspace::factory(),
             'slug' => Str::slug($title),

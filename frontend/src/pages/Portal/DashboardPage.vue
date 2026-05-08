@@ -78,7 +78,7 @@
                         <div v-if="expandedWorkspaces.includes(workspace.id)" class="tree-children">
                             <div v-for="category in workspace.categories" :key="category.slug" class="tree-group">
                                 <div class="tree-row tree-row-category">
-                                    <router-link :to="categoryRoute(workspace, category)"
+                                    <router-link :to="categoryRoute(category)"
                                         class="tree-row-main u-min-w-0 tree-link">
                                         <div class="tree-icon icon-box">
                                             <v-icon size="18">mdi-folder-outline</v-icon>
@@ -132,7 +132,7 @@
                                         <div v-if="expandedProjects.includes(project.slug)"
                                             class="tree-children tree-children-articles">
                                             <router-link v-for="article in project.articles" :key="article.id"
-                                                :to="articleRoute(project, article)"
+                                                :to="articleRoute(article)"
                                                 class="tree-row tree-row-article tree-link">
                                                 <div class="tree-row-main u-min-w-0">
                                                     <div class="tree-icon icon-box">
@@ -142,13 +142,12 @@
                                                     <div class="tree-info">
                                                         <div class="tree-name">{{ article.title }}</div>
                                                         <div class="tree-meta">
-                                                    <span>{{ (article.tags ?? []).join(', ') }}</span>
-                                                    </div>
+                                                            <span>{{ formatArticleTags(article) }}</span>
+                                                            <span v-if="article.updated_at" class="dot">•</span>
+                                                    <span v-if="article.updated_at">{{ article.updated_at }}</span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                
-                                                <!-- Commented out Article arrow. (het heeft geen vervolg routes dus hoeft ook geen arrow.)-->
-                                                <!-- <v-icon size="18" class="project-arrow">mdi-chevron-right</v-icon> -->
                                             </router-link>
                                         </div>
                                     </div>
@@ -183,6 +182,23 @@ const error = ref('')
 const expandedWorkspaces = ref([])
 const expandedCategories = ref([])
 const expandedProjects = ref([])
+
+function normalizeTagNames(tags) {
+    if (!Array.isArray(tags)) return []
+
+    return tags
+        .map(tag => {
+            if (typeof tag === 'string') return tag
+            if (tag && typeof tag === 'object' && 'name' in tag) return tag.name
+            return ''
+        })
+        .filter(Boolean)
+}
+
+function formatArticleTags(article) {
+    const tagNames = normalizeTagNames(article?.tags)
+    return tagNames.length ? tagNames.join(', ') : 'Geen tags'
+}
 
 
 onMounted(async () => {
@@ -225,12 +241,12 @@ const filteredWorkspaces = computed(() => {
 
                             const articles = (project.articles ?? []).filter(article => {
                                 const title = (article.title ?? '').toLowerCase()
-                                const tags = Array.isArray(article.tags) ? article.tags : []
+                                const tags = normalizeTagNames(article.tags)
 
                                 return (
                                     title.includes(query) ||
                                     tags.some(tag =>
-                                        String(tag).toLowerCase().includes(query)
+                                        tag.toLowerCase().includes(query)
                                     )
                                 )
                             })
@@ -329,7 +345,6 @@ function projectRoute(project) {
 }
 
 function articleRoute(article) {
-    console.log('article:', article)  
     return {
         name: 'article',
         params: {

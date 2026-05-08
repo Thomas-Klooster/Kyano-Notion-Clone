@@ -5,6 +5,11 @@ export const getWorkspaces = async () => {
      return data;
 };
 
+export const getWorkspace = async (slug) => {
+     const { data } = await api.get(`workspaces/${slug}`)
+     return data;
+};
+
 export const createWorkspace = async () => {
      const  { data } = await api.post('workspaces')
      return data;

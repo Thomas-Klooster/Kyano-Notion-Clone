@@ -6,4 +6,8 @@ export const getCategories = async () => {
      return data;
 };
 
+export const getCategory = async (slug) => {
+     const { data } = await api.get(`categories/${slug}`)
+     return data;
+};
 

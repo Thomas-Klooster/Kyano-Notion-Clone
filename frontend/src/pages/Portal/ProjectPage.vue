@@ -64,7 +64,7 @@
                                 <div class="project-info">
                                     <div class="project-name">{{ article.title }}</div>
                                     <div class="project-meta">
-                                    <span>{{ (article.tags ?? []).join(', ') }}</span>
+                                        <span>{{ formatArticleTags(article) }}</span>
                                         <span class="dot">•</span>
                                         <span>{{ article.updated_at }}</span>
                                     </div>
@@ -87,8 +87,8 @@
 </template>
 
 <script setup>
-import { getProjects } from '@/services/projectService'
-import { computed, onMounted, ref } from 'vue'
+import { getProject } from '@/services/projectService'
+import { computed, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -98,26 +98,46 @@ const loading = ref(false)
 const error = ref(false)
 const project = ref({ name: '', workspace: '', articles: [] })
 
+function normalizeTagNames(tags) {
+    if (!Array.isArray(tags)) return []
 
+    return tags
+        .map(tag => {
+            if (typeof tag === 'string') return tag
+            if (tag && typeof tag === 'object' && 'name' in tag) return tag.name
+            return ''
+        })
+        .filter(Boolean)
+}
 
-onMounted(loadArticles)
+function formatArticleTags(article) {
+    const tagNames = normalizeTagNames(article?.tags)
+    return tagNames.length ? tagNames.join(', ') : 'Geen tags'
+}
+
+watch(
+    () => route.params.slug,
+    () => {
+        loadArticles()
+    },
+    { immediate: true }
+)
 
 async function loadArticles() {
 
      loading.value = true
      error.value = false
+     search.value = ''
+     project.value = { name: '', workspace: '', category: '', articles: [] }
 
      try {
-        const allProjects = await getProjects()
-        const current = allProjects.find(c => c.slug === route.params.slug)
-        if (current) {
-            project.value.name = current.name
-            project.value.category = current.category
-            project.value.workspace = current.workspace
-            project.value.articles = current.articles
-        }
+        const current = await getProject(route.params.slug)
+        project.value.name = current.name
+        project.value.category = current.category
+        project.value.workspace = current.workspace
+        project.value.articles = current.articles ?? []
      } catch(err) {
-        error.value = 'Geen artikelen gevonden'
+        error.value = 'Dit project kon niet worden gevonden.'
      } finally {
         loading.value = false
      }
@@ -135,11 +155,10 @@ const filteredArticles = computed(() => {
     return articles.filter(article =>
         article.title.toLowerCase().includes(query) ||
         article.status.toLowerCase().includes(query) ||
-        article.tags.some(tag => tag.toLowerCase().includes(query))
+        normalizeTagNames(article.tags).some(tag => tag.toLowerCase().includes(query))
     )
 })
 function goToArticle(slug) {
     router.push(`/article/${slug}`)
 }
 </script>
-

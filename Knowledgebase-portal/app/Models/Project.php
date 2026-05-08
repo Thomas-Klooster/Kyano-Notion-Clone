@@ -23,10 +23,11 @@ class Project extends Model
     ];
 
 
-    protected $casts = [
-       'created_at' => 'date:Y-m-d',
-       'updated_at' => 'date:Y-m-d',
-    ];
+    // protected $casts = [
+    //    'created_at' => 'date:Y-m-d',
+    //    'updated_at' => 'date:Y-m-d',
+    // ];
+
       public function getRouteKeyName() {
         return 'slug';
     }

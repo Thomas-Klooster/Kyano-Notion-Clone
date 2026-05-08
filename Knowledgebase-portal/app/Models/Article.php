@@ -29,8 +29,6 @@ class Article extends Model
     ];
 
     protected $casts = [
-        // 'created_at' => 'date:Y-m-d',
-        // 'updated_at' => 'date:Y-m-d',
         'visibility' => 'string',
         'status' => 'string'
         ];
@@ -49,10 +47,7 @@ class Article extends Model
             return $this->belongsTo(Workspace::class);
     }
 
-    //     public function projects() {
-    //         return $this->belongsTo(Project::class);
-    // }
-        public function project() {
+    public function project() {
             return $this->belongsTo(Project::class);
         }
         public function attachments() {

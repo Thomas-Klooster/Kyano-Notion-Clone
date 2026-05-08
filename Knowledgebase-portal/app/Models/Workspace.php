@@ -4,17 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Workspace extends Model
 {
     use HasFactory;
     
     protected $fillable = ['name', 'slug', 'owner_id'];
-
-    // protected $casts = [
-    //    'created_at' => 'date:Y-m-d',
-    //    'updated_at' => 'date:Y-m-d',
-    // ];
 
     public function owner() {
         return $this->belongsTo(User::class, 'owner_id');
@@ -31,7 +27,8 @@ class Workspace extends Model
         return
         $this->hasMany(Article::class);
     }
-        public function projects() {
+    
+    public function projects() {
         return
         $this->hasMany(Project::class);
     }
@@ -57,5 +54,16 @@ public function scopeVisibleTo($query, $user)
           });
     });
 }
+
+        protected static function boot(): void
+    {
+        parent::boot();
+
+        static::saving(function ($workspace) {
+            $workspace->slug = Str::slug($workspace->name);
+        });
+    }
+
+
 
 }

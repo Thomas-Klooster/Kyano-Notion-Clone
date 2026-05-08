@@ -96,7 +96,9 @@
                                     <div class="article-info">
                                         <div class="article-title">{{ article.title }}</div>
                                         <div class="article-meta">
-                                            <span>{{ (article.tags ?? []).join(', ') }}</span>
+                                            <span>{{ formatArticleTags(article) }}</span>
+                                            <span v-if="article.updated_at" class="dot">•</span>
+                                            <span v-if="article.updated_at">{{ article.updated_at }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -118,9 +120,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getCategories } from '@/services/categoryService'
+import { getCategory } from '@/services/categoryService'
 
 const route = useRoute()
 const router = useRouter()
@@ -129,25 +131,48 @@ const error = ref(false)
 const search = ref('')
 const expandedProjects = ref([])
 
+function normalizeTagNames(tags) {
+    if (!Array.isArray(tags)) return []
+
+    return tags
+        .map(tag => {
+            if (typeof tag === 'string') return tag
+            if (tag && typeof tag === 'object' && 'name' in tag) return tag.name
+            return ''
+        })
+        .filter(Boolean)
+}
+
+function formatArticleTags(article) {
+    const tagNames = normalizeTagNames(article?.tags)
+    return tagNames.length ? tagNames.join(', ') : 'Geen tags'
+}
+
 const category = ref({ name: '', workspace: '', projects: [], articles: [], tags: [] })
 
-onMounted(loadProjects)
+watch(
+    () => route.params.slug,
+    () => {
+        loadProjects()
+    },
+    { immediate: true }
+)
 
 async function loadProjects() {
    loading.value = true
     error.value = false
-    try {
-        const allCategories = await getCategories()
-        const current = allCategories.find(c => c.slug === route.params.slug)
+    search.value = ''
+    expandedProjects.value = []
+    category.value = { name: '', workspace: '', projects: [], articles: [], tags: [] }
 
-        if (current) {
-            category.value.name = current.name
-            category.value.workspace = current.workspace
-            category.value.projects = current.projects
-            category.value.articles = current.articles
-        }
+    try {
+        const current = await getCategory(route.params.slug)
+        category.value.name = current.name
+        category.value.workspace = current.workspace
+        category.value.projects = current.projects ?? []
+        category.value.articles = current.articles ?? []
     } catch (err) {
-        error.value = 'Geen projecten gevonden'
+        error.value = 'Deze categorie kon niet worden gevonden.'
     } finally {
         loading.value = false
     }
@@ -165,11 +190,11 @@ const filteredProjects = computed(() => {
 
             const articles = (project.articles ?? []).filter(article => {
                 const title = (article.title ?? '').toLowerCase()
-                const tags = Array.isArray(article.tags) ? article.tags : []
+                const tags = normalizeTagNames(article.tags)
 
                 return (
                     title.includes(query) ||
-                    tags.some(tag => String(tag).toLowerCase().includes(query))
+                    tags.some(tag => tag.toLowerCase().includes(query))
                 )
             })
 

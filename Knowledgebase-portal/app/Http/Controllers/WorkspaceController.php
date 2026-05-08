@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\addMemberRequest;
+use App\Http\Resources\WorkspaceResource;
 use App\Models\Workspace;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -16,10 +17,12 @@ class WorkspaceController extends Controller
 
 public function index()
 {
-    return Workspace::visibleTo(auth('sanctum')->user())
+    $workspaces = Workspace::visibleTo(auth('sanctum')->user())
         ->with('categories.projects.articles.tags')
         ->latest()
         ->get();
+
+    return WorkspaceResource::collection($workspaces);
 }
     public function store(WorkspaceRequest $request) {
         $this->authorize('create', Workspace::class);
@@ -34,10 +37,11 @@ public function index()
         $workspace->members()->attach(auth()->id(), ['role' => 'owner']);
         return response()->json($workspace, 201);
     }
-        public function show(Workspace $workspace) {
+    public function show(Workspace $workspace) {
         $this->authorize('view', $workspace);
-        return 
-        $workspace->load(['categories.projects.articles.tags']);
+        return new WorkspaceResource(
+            $workspace->load(['categories.projects.articles.tags'])
+        );
     }
     
     public function update(Workspace $workspace, WorkspaceUpdateRequest $request) {

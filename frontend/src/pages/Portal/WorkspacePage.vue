@@ -148,7 +148,9 @@
                                             <div class="article-info">
                                                 <div class="article-title">{{ article.title }}</div>
                                                 <div class="article-meta">
-                                                <span>{{ (article.tags ?? []).join(', ') }}</span>
+                                                    <span>{{ formatArticleTags(article) }}</span>
+                                                    <span v-if="article.updated_at" class="dot">•</span>
+                                                    <span v-if="article.updated_at">{{ article.updated_at }}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -174,8 +176,8 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { getWorkspaces } from '@/services/workspaceService'
+import { computed, ref, watch } from 'vue'
+import { getWorkspace } from '@/services/workspaceService'
 import { useRouter, useRoute } from "vue-router";
 
 const router = useRouter()
@@ -187,23 +189,47 @@ const error = ref(false)
 const expandedCategories = ref([])
 const expandedProjects = ref([])
 
+function normalizeTagNames(tags) {
+    if (!Array.isArray(tags)) return []
+
+    return tags
+        .map(tag => {
+            if (typeof tag === 'string') return tag
+            if (tag && typeof tag === 'object' && 'name' in tag) return tag.name
+            return ''
+        })
+        .filter(Boolean)
+}
+
+function formatArticleTags(article) {
+    const tagNames = normalizeTagNames(article?.tags)
+    return tagNames.length ? tagNames.join(', ') : 'Geen tags'
+}
+
 const categories = computed(() => workspace.value.categories ?? [])
 
-
-onMounted(loadCategories)
+watch(
+    () => route.params.slug,
+    () => {
+        loadCategories()
+    },
+    { immediate: true }
+)
 
 async function loadCategories() {
     loading.value = true
     error.value = false
+    search.value = ''
+    expandedCategories.value = []
+    expandedProjects.value = []
+    workspace.value = { name: '', categories: [], projects: [], articles: [] }
+
     try {
-        const allWorkspaces = await getWorkspaces()
-        const current = allWorkspaces.find(w => w.slug === route.params.slug)
-        if (current) {
-            workspace.value.name = current.name
-            workspace.value.categories = current.categories
-        }
+        const current = await getWorkspace(route.params.slug)
+        workspace.value.name = current.name
+        workspace.value.categories = current.categories ?? []
     } catch (err) {
-        error.value = 'Kon categorieën niet inladen...'
+        error.value = 'Deze workspace kon niet worden gevonden.'
     } finally {
         loading.value = false
     }
@@ -232,12 +258,12 @@ const filteredCategories = computed(() => {
 
                     const articles = (project.articles ?? []).filter(article =>{
                         const title = (article.title ?? '').toLowerCase()
-                        const tags = Array.isArray(article.tags) ? article.tags : []
+                        const tags = normalizeTagNames(article.tags)
 
                         return (
                             title.includes(query) ||
                             tags.some(tag =>
-                                String(tag).toLowerCase().includes(query)
+                                tag.toLowerCase().includes(query)
                             )
                         )
                     })
