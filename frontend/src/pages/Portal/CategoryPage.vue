@@ -81,7 +81,7 @@
                             <div
                                 v-for="article in project.articles"
                                 :key="article.slug"
-                                class="article-row article-row-clickable"
+                                class="tree-row tree-row-project"
                                 role="button"
                                 tabindex="0"
                                 @click="goToArticle(article.slug)"

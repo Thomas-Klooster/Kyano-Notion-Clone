@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -21,12 +20,6 @@ class Project extends Model
         'category_id',
         'workspace_id',
     ];
-
-
-    // protected $casts = [
-    //    'created_at' => 'date:Y-m-d',
-    //    'updated_at' => 'date:Y-m-d',
-    // ];
 
       public function getRouteKeyName() {
         return 'slug';
