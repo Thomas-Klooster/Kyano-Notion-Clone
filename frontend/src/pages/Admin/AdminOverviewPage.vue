@@ -133,8 +133,8 @@
 
 
             <div v-if="loading" class="empty-state">
-              <v-icon size="30">mdi-alert-outline</v-icon>
-              <p>{{ error }}</p>
+              <v-icon size="30">mdi-loading mdi-spin</v-icon>
+              <p>Artikelen zijn aan het laden...</p>
             </div>
 
             <div v-else-if="error" class="empty-state">
@@ -436,6 +436,17 @@
               </article>
             </template>
 
+            <div v-if="loading" class="empty-state">
+              <v-icon size="30">mdi-loading mdi-spin</v-icon>
+              <p>Workspaces zijn aan het inladen...</p>
+            </div>
+
+            <div v-else-if="error" class="empty-state">
+              <v-icon size="30">mdi-alert-outline</v-icon>
+              <p>{{ error }}</p>
+            </div>
+            
+            
             <div v-else class="empty-detail-state">
               <div class="empty-state-icon icon-box">
                 <v-icon size="24">mdi-cursor-default-click-outline</v-icon>
@@ -577,14 +588,9 @@
                   </div>
                 </div>
 
-
-
-
-
-
-                            <div v-if="loading" class="empty-state">
+                <div v-if="loading" class="empty-state">
               <v-icon size="30">mdi-alert-outline</v-icon>
-              <p>{{ error }}</p>
+              <p>Relaties zijn aan het laden...</p>
             </div>
 
             <div v-else-if="error" class="empty-state">
@@ -1065,7 +1071,10 @@ const customerDeleteTarget = computed(() =>
   customersData.value.find((customer) => customer.id === customerDeleteId.value) ?? null
 )
 
-const selectedCustomerId = computed(() => selectedCustomer.value)
+const selectedCustomerId = computed(() => {
+  if (selectedCustomer.value === 'Alle klanten') return null
+  return customersData.value.find(c => c.companyName === selectedCustomer.value)?.id ?? null
+})
 
 const customerWorkspaces = computed(() => {
   if (!selectedCustomerRecord.value) return []
@@ -1417,10 +1426,7 @@ function resetDraft() {
   draft.id = null
   draft.name = ''
   draft.summary = ''
-  draft.customer =
-    selectedCustomerId.value != null
-      ? customersData.value.find((customer) => customer.id === selectedCustomerId.value)?.companyName ?? ''
-      : customerOnlyRecords.value[0]?.companyName ?? ''
+  draft.customer = selectedCustomer.value !== 'Alle klanten' ? selectedCustomer.value : customerOnlyOptions.value[0] ?? ''
   draft.workspaceId = selectedWorkspaceId.value
   draft.categoryId = selectedCategoryId.value
   draft.projectId = selectedProjectId.value
