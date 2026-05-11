@@ -125,7 +125,7 @@
         </div>
 
         <div class="studio-layout">
-          <aside class="studio-tree-panel">
+          <aside class="studio-tree-panel" style="max-height: 120vh; overflow-y: auto;">
             <div class="panel-section-head">
               <div class="panel-kicker">Navigatie</div>
               <h3 class="panel-title">Structuur</h3>
@@ -262,7 +262,7 @@
             </div>
           </aside>
 
-          <section class="studio-detail-panel">
+          <section class="studio-detail-panel" style="max-height: 120vh; overflow-y: auto;">
             <template v-if="selectedEntity">
               <div class="detail-head">
                 <div>
@@ -441,13 +441,7 @@
               <p>Workspaces zijn aan het inladen...</p>
             </div>
 
-            <div v-else-if="error" class="empty-state">
-              <v-icon size="30">mdi-alert-outline</v-icon>
-              <p>{{ error }}</p>
-            </div>
-            
-            
-            <div v-else class="empty-detail-state">
+            <div v-else-if="error" class="empty-detail-state">
               <div class="empty-state-icon icon-box">
                 <v-icon size="24">mdi-cursor-default-click-outline</v-icon>
               </div>
@@ -475,7 +469,7 @@
 
         <div class="studio-layout">
 
-          <aside class="studio-tree-panel">
+          <aside class="studio-tree-panel" style="max-height: 120vh; overflow-y: auto;">
             <div class="panel-section-head">
               <div class="panel-kicker">Lijst</div>
               <h3 class="panel-title">Klanten</h3>
@@ -519,7 +513,7 @@
             </div>
           </aside>
 
-          <section class="studio-detail-panel">
+          <section class="studio-detail-panel" style="max-height: 120vh; overflow-y: auto;">
             <template v-if="selectedCustomerRecord">
               <div class="detail-head">
                 <div>

@@ -20,7 +20,7 @@
                     <h1 class="hero-title">{{ project.name }}</h1>
 
                     <p class="hero-subtitle" style="background: rgb(255, 255, 255, 0.15); padding: .75rem 1.5rem; border-radius: 1rem;">
-                        <h3>beschrijving</h3>
+                        <h3>Beschrijving</h3>
                         {{ projectDescription }}
                     </p>
                 </div>
