@@ -19,8 +19,9 @@
 
                     <h1 class="hero-title">{{ project.name }}</h1>
 
-                    <p class="hero-subtitle">
-                        Bekijk alle artikelen binnen dit project.
+                    <p class="hero-subtitle" style="background: rgb(255, 255, 255, 0.15); padding: .75rem 1.5rem; border-radius: 1rem;">
+                        <h3>beschrijving</h3>
+                        {{ projectDescription }}
                     </p>
                 </div>
             </section>
@@ -96,7 +97,7 @@ const router = useRouter()
 const search = ref('')
 const loading = ref(false)
 const error = ref(false)
-const project = ref({ name: '', workspace: '', articles: [] })
+const project = ref({ name: '', description: '', workspace: '', category: '', articles: [] })
 
 function normalizeTagNames(tags) {
     if (!Array.isArray(tags)) return []
@@ -115,6 +116,11 @@ function formatArticleTags(article) {
     return tagNames.length ? tagNames.join(', ') : 'Geen tags'
 }
 
+const projectDescription = computed(() => {
+    const description = project.value.description?.trim()
+    return description || 'Geen beschrijving beschikbaar voor dit project.'
+})
+
 watch(
     () => route.params.slug,
     () => {
@@ -128,11 +134,12 @@ async function loadArticles() {
      loading.value = true
      error.value = false
      search.value = ''
-     project.value = { name: '', workspace: '', category: '', articles: [] }
+     project.value = { name: '', description: '', workspace: '', category: '', articles: [] }
 
      try {
         const current = await getProject(route.params.slug)
         project.value.name = current.name
+        project.value.description = current.description ?? ''
         project.value.category = current.category
         project.value.workspace = current.workspace
         project.value.articles = current.articles ?? []
