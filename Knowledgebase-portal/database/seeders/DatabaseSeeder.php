@@ -38,22 +38,10 @@ class DatabaseSeeder extends Seeder
             'remember_token' => Str::random(10),
         ]);
 
-        DB::table('users')->insert([
-            'id' => 2,
-            'name' => 'RandomName',
-            'role' => 'klant',
-            'email' => 'Vincent@gmail.com',
-            'password' => Hash::make('WazZzaaaaaaa123!'),
-            'created_at' => now(),
-            'updated_at' => now(),
-            'email_verified_at' => now(),
-            'remember_token' => Str::random(10),
-        ]);
-
-
+        
         User::factory()
         ->count(30)
-        ->create();        
+        ->create();
         
         Workspace::factory()
         ->count(10)

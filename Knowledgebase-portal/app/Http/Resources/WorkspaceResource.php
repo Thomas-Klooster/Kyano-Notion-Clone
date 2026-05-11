@@ -21,6 +21,15 @@ class WorkspaceResource extends JsonResource
         'created_at' => $this->created_at->locale("nl")->diffForHumans(),
         'updated_at' => $this->updated_at->locale("nl")->diffForHumans(),
         'categories' => CategoryResource::collection($this->whenLoaded('categories')),
+        'members' => $this->whenLoaded('members', fn() => $this->members->map(fn($member) => [
+            'id' => $member->id,
+            'name' => $member->name,
+            'email' => $member->email,
+            'company' => $member->company,
+            'address' => $member->address,
+            'phone_number' => $member->phone_number,
+            'role' => $member->role,
+        ])->values()),
     ];
     }
 }

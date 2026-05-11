@@ -80,7 +80,7 @@ async function handleLogout() {
               <div class="sidebar-profile-name">{{ auth.user?.name }}</div>
               <div class="sidebar-profile-role">
                 <span class="sidebar-role-badge" :class="auth.isAdmin ? 'sidebar-role-badge--admin' : 'sidebar-role-badge--customer'">
-                  {{ auth.isAdmin ? 'Admin' : 'Klant' }}
+                  {{ auth.isAdmin ? 'Admin' : 'klant' }}
                 </span>
               </div>
             </div>

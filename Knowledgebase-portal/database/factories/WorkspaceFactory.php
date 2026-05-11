@@ -23,7 +23,14 @@ class WorkspaceFactory extends Factory
     public function definition(): array
     {
         $name = $this->faker->unique()->company();
-        $admin = User::where('email', 'Admin@gmail.com')->first();
+        $admin = User::firstOrCreate(
+            ['email' => 'Admin@gmail.com'],
+            [
+                'name' => 'Admin',
+                'role' => 'admin',
+                'password' => bcrypt('Admin@password'),
+            ],
+        );
 
         return [
             'name' => $name,
@@ -35,8 +42,10 @@ class WorkspaceFactory extends Factory
     public function configure(): static
     {
         return $this->afterCreating(function (Workspace $workspace) {
-            $workspace->members()->attach($workspace->owner_id, [
+            $workspace->members()->syncWithoutDetaching([
+                $workspace->owner_id => [
                 'role' => 'owner',
+                ],
             ]);
         });
     }

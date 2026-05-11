@@ -21,7 +21,7 @@ class WorkspacePolicy
     }
 
    public function create(User $user): bool{
-    return false;
+    return $user->role === 'admin';
     }
 
    public function update(User $user, Workspace $workspace): bool {
@@ -43,7 +43,7 @@ public function addMember(User $authUser, Workspace $workspace): bool
 {
     return $workspace->members()
         ->where('user_id', $authUser->id)
-        ->whereIn('workspace_role', ['owner', 'admin'])
+        ->wherePivotIn('role', ['owner', 'admin'])
         ->exists();
 }
     private function hasWorkspaceRole(User $user, Workspace $workspace, array $roles): bool {

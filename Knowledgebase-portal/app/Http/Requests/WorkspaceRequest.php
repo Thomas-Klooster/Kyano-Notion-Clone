@@ -11,16 +11,7 @@ class WorkspaceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-    $workspaceId = $this->input('workspace_id');
-    if(!$workspaceId) return 
-    in_array(auth('sanctum')->user()->role, ['admin', 'owner']);
-
-    $workspace = \App\Models\Workspace::find($workspaceId);
-    if (!$workspace) return false;
-
-    return auth('sanctum')->user()->role === 'admin' ||
-    $workspace->user_id === auth()->id();
-
+        return true;
     }
 
     /**

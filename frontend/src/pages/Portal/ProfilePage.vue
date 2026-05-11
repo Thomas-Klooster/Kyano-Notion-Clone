@@ -347,7 +347,7 @@ const userInitials = computed(() => {
 const roleLabel = computed(() => {
   const role = profile.role || auth.user?.role
   if (role === 'admin' || role === 'owner') return 'Admin'
-  if (role === 'customer') return 'Klant'
+  if (role === 'customer') return 'klant'
   return 'Gebruiker'
 })
 

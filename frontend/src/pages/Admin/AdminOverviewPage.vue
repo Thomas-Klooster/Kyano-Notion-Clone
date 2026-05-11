@@ -88,8 +88,8 @@
         class="entity-card card card-elevated card-rounded-2xl studio-card">
 
         <div class="studio-toolbar">
-          <v-select v-model="selectedCustomer" :items="customerOptions" variant="solo-filled" density="comfortable" flat
-            hide-details class="studio-toolbar-select" />
+          <v-select v-model="selectedCustomer" :items="customerOptions" item-title="title" item-value="value"
+            variant="solo-filled" density="comfortable" flat hide-details class="studio-toolbar-select" />
           <v-select v-model="selectedKind" :items="kindOptions" variant="solo-filled" density="comfortable" flat
             hide-details class="studio-toolbar-select" />
           <div class="search-field studio-search-field studio-toolbar-search">
@@ -131,7 +131,18 @@
               <h3 class="panel-title">Structuur</h3>
             </div>
 
-            <div v-if="filteredWorkspaces.length" class="tree-list">
+
+            <div v-if="loading" class="empty-state">
+              <v-icon size="30">mdi-alert-outline</v-icon>
+              <p>{{ error }}</p>
+            </div>
+
+            <div v-else-if="error" class="empty-state">
+              <v-icon size="30">mdi-alert-circle-outline</v-icon>
+              <p>{{ error }}</p>
+            </div>
+
+            <div v-else-if="filteredWorkspaces.length" class="tree-list">
               <article v-for="workspace in filteredWorkspaces" :key="workspace.id"
                 class="tree-card card card-elevated card-rounded-xl">
                 <div class="tree-row tree-row-root"
@@ -201,8 +212,6 @@
                               <div class="tree-row-info">
                                 <div class="tree-row-title">{{ project.name }}</div>
                                 <div class="tree-row-meta">
-                                  <span>{{ project.status }}</span>
-                                  <span class="dot">•</span>
                                   <span>{{ project.articles.length }} artikelen</span>
                                 </div>
                               </div>
@@ -285,7 +294,17 @@
                     </h4>
                   </div>
 
-                  <template v-if="selectedEntityType === 'workspace'">
+              <div v-if="loading" class="empty-state">
+              <v-icon size="30">mdi-alert-outline</v-icon>
+              <p>{{ error }}</p>
+            </div>
+
+            <div v-else-if="error" class="empty-state">
+              <v-icon size="30">mdi-alert-circle-outline</v-icon>
+              <p>{{ error }}</p>
+            </div>
+
+                  <template v-else-if="selectedEntityType === 'workspace'">
                     <div class="workspace-access-card">
                       <div class="workspace-access-header">
                         <div class="workspace-access-header-copy">
@@ -300,7 +319,7 @@
                             <input v-model="workspaceCustomerSearch" type="text" placeholder="Zoek klant" />
                           </div>
                           <v-btn variant="text" size="small"
-                            @click="updateWorkspaceCustomerAccess(selectedEntity.id, customerOnlyRecords.map(c => c.companyName))">
+                            @click="updateWorkspaceCustomerAccess(selectedEntity.id, customerOnlyRecords.map(c => c.id))">
                             Alles selecteren
                           </v-btn>
                           <v-btn variant="text" size="small" color="red"
@@ -316,8 +335,8 @@
                           <template #item.access="{ item }">
                             <div class="workspace-access-check">
                               <v-checkbox-btn
-                                :model-value="(selectedEntity.customerAccess || []).includes(item.companyName)"
-                                @update:model-value="toggleWorkspaceCustomerAccess(selectedEntity.id, item.companyName, $event)" />
+                              :model-value="(selectedEntity.customerAccess || []).includes(item.id)"
+                              @update:model-value="toggleWorkspaceCustomerAccess(selectedEntity.id, item.id, $event)" />
                             </div>
                           </template>
                           <template #item.name="{ item }">
@@ -356,10 +375,7 @@
                       <span class="meta-label">Bovenliggend item</span>
                       <span class="meta-value">{{ selectedParentLabel }}</span>
                     </div>
-                    <!-- <div class="meta-item" v-if="selectedEntityType === 'project'">
-                      <span class="meta-label">Status</span>
-                      <span class="meta-value">{{ selectedEntity.status }}</span>
-                    </div> -->
+                    
                     <div class="meta-item" v-if="selectedEntityType === 'article'">
                       <span class="meta-label">Laatst gewijzigd</span>
                       <span class="meta-value">{{ selectedEntity.updated_at }}</span>
@@ -410,7 +426,6 @@
                     </div>
                   </div>
                 </div>
-
                 <div v-else class="empty-state compact-empty child-empty">
                   <div class="empty-state-icon icon-box">
                     <v-icon size="24">mdi-plus-box-outline</v-icon>
@@ -477,7 +492,7 @@
                   </button>
                   <div class="tree-row-side">
                     <v-chip size="small" class="entity-chip">
-                      {{ customer.role === 'admin' ? 'Admin' : 'Klant' }}
+                      {{ customer.role === 'admin' ? 'Admin' : 'klant' }}
                     </v-chip>
                   </div>
                 </div>
@@ -538,7 +553,7 @@
                     </div>
                     <div class="meta-item">
                       <span class="meta-label">Workspaces</span>
-                      <span class="meta-value">{{ customerWorkspaceCount(selectedCustomerRecord.companyName) }}</span>
+                    <span class="meta-value">{{ customerWorkspaceCount(selectedCustomerRecord.id) }}</span>
                     </div>
                   </div>
                 </article>
@@ -562,7 +577,22 @@
                   </div>
                 </div>
 
-                <div v-if="customerWorkspaces.length" class="child-rows">
+
+
+
+
+
+                            <div v-if="loading" class="empty-state">
+              <v-icon size="30">mdi-alert-outline</v-icon>
+              <p>{{ error }}</p>
+            </div>
+
+            <div v-else-if="error" class="empty-state">
+              <v-icon size="30">mdi-alert-circle-outline</v-icon>
+              <p>{{ error }}</p>
+            </div>
+
+                <div v-else-if="customerWorkspaces.length" class="child-rows">
                   <div v-for="workspace in customerWorkspaces" :key="workspace.id" class="child-row">
                     <div class="child-row-main">
                       <div class="entity-icon icon-box entity-icon-soft">
@@ -590,7 +620,7 @@
                   <h3>Geen gekoppelde workspaces</h3>
                   <p>Deze klant heeft nog geen workspace in de structuur.</p>
                 </div>
-              </article>
+              </article> 
             </template>
 
             <div v-else class="empty-detail-state">
@@ -623,8 +653,8 @@
             :label="dialogType === 'article' ? 'Samenvatting' : 'Beschrijving'" variant="solo-filled" flat hide-details
             rows="4" class="notion-soft-input mb-4" />
           <v-select v-if="dialogType === 'workspace'" v-model="draft.customerAccess" :items="customerOnlyOptions"
-            label="Klanten met toegang" multiple chips closable-chips variant="solo-filled" flat hide-details
-            class="notion-soft-input mb-4" />
+            item-title="title" item-value="value" label="Klanten met toegang" multiple chips closable-chips
+            variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
           <v-select v-if="dialogType === 'category'" v-model="draft.workspaceId" :items="workspaceSelectOptions"
             item-title="label" item-value="value" label="Workspace" variant="solo-filled" flat hide-details
             class="notion-soft-input mb-4" />
@@ -719,18 +749,24 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
+import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { getAdminWorkspaces } from '@/services/workspaceService'
+import { getAdminUsers } from '@/services/userService'
 
 const activeTab = ref('content')
 
+const loading = ref(false)
+const error = ref('')
+
+
 const search = ref('')
 const customerSearch = ref('')
-const selectedCustomer = ref('Alle klanten')
+const selectedCustomer = ref(null)
 const selectedKind = ref('Alles')
 const router = useRouter()
 
-const expandedWorkspaces = ref([1])
+const expandedWorkspaces = ref([])
 const expandedCategories = ref([])
 const expandedProjects = ref([])
 
@@ -744,20 +780,20 @@ const deleteId = ref(null)
 const customerEditorOpen = ref(false)
 const customerDeleteOpen = ref(false)
 const customerDialogMode = ref('create')
-const selectedCustomerCrudId = ref(1)
+const selectedCustomerCrudId = ref(null)
 const customerDeleteId = ref(null)
 
 const selectedEntityType = ref('workspace')
-const selectedWorkspaceId = ref(1)
+const selectedWorkspaceId = ref(null)
 const selectedCategoryId = ref(null)
 const selectedProjectId = ref(null)
 const selectedArticleId = ref(null)
 
-const workspaceId = ref(3)
-const categoryId = ref(5)
-const projectId = ref(6)
-const articleId = ref(8)
-const customerId = ref(4)
+const workspaceId = ref(1)
+const categoryId = ref(1)
+const projectId = ref(1)
+const articleId = ref(1)
+const customerId = ref(1)
 
 const draft = reactive({
   id: null,
@@ -782,173 +818,24 @@ const customerDraft = reactive({
   password: '',
 })
 
-const customersData = ref([
-  {
-    id: 1,
-    companyName: 'Kyano Digital',
-    name: 'Kyano Team',
-    email: 'info@kyano.nl',
-    tel: '+31 6 12345678',
-    address: 'Moermanskweg 2-25, 9723 HM Groningen',
-    role: 'admin',
-  },
-  {
-    id: 2,
-    companyName: 'Studio North',
-    name: 'Mila de Vries',
-    email: 'hello@studionorth.nl',
-    tel: '+31 50 123 4567',
-    address: 'Atoomweg 6, 9743 AK Groningen',
-    role: 'customer',
-  },
-  {
-    id: 3,
-    companyName: 'Kawasaki',
-    name: 'Yasuhiko Hashimoto',
-    email: 'hello@kawasaki.jp',
-    tel: '+81 3-3435-2111',
-    address: '1 Chome-14-5 Kaigan, Minato City, Tokyo 105-0022, Japan',
-    role: 'customer',
-  },
-  {
-    id: 4,
-    companyName: 'Yamaha',
-    name: 'yamaha',
-    email: 'info@yamaha.jp',
-    tel: '+31 6 12345678',
-    address: 'Japan somwhere Tokyo',
-    role: 'customer',
-  },
-  {
-    id: 5,
-    companyName: 'Honda',
-    name: 'Honda',
-    email: 'hello@honda.jp',
-    tel: '+31 50 123 4567',
-    address: 'JAPAN',
-    role: 'customer',
-  },
-  {
-    id: 6,
-    companyName: 'suzuki',
-    name: 'suzuki',
-    email: 'hello@suzuki.jp',
-    tel: '+81 3-3435-2111',
-    address: '1 Chome-14-5 Kaigan, Minato City, Tokyo 105-0022, Japan',
-    role: 'customer',
-  },
-])
+const customersData = ref([])
 
-const workspaceData = ref([
-  {
-    id: 1,
-    name: 'Kyano Core',
-    customer: 'Kyano Digital',
-    description: 'Centrale workspace voor klantportalen en interne documentatie.',
-    categories: [
-      {
-        id: 1,
-        name: 'Development',
-        description: 'Technische documentatie en implementatieflows.',
-        projects: [
-          {
-            id: 1,
-            name: 'Knowledgebase Portal',
-            description: 'Documentatieportal voor klanten met projectspecifieke content.',
-            articles: [
-              {
-                id: 1,
-                title: 'Inloggen als klant',
-                slug: 'inloggen-als-klant',
-                status: 'Published',
-                updated_at: '2026-04-10',
-                summary: 'Uitleg over inloggen, autorisatie en toegang tot eigen projecten.',
-              },
-              {
-                id: 2,
-                title: 'Nieuwe artikelen publiceren',
-                slug: 'nieuwe-artikelen-publiceren',
-                status: 'Draft',
-                updated_at: '2026-04-11',
-                summary: 'Stappenplan voor het aanmaken en publiceren van nieuwe artikelen.',
-              },
-            ],
-          },
-          {
-            id: 2,
-            name: 'Customer Dashboard',
-            description: 'Dashboard voor klantnavigatie en projecttoegang.',
-            articles: [
-              {
-                id: 3,
-                title: 'Projecten filteren',
-                slug: 'projecten-filteren',
-                status: 'Published',
-                updated_at: '2026-04-08',
-                summary: 'Hoe klanten projecten en categorieën snel terugvinden.',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        id: 2,
-        name: 'Support',
-        description: 'FAQ, probleemoplossing en supportflows.',
-        projects: [
-          {
-            id: 3,
-            name: 'Support Center',
-            description: 'Supportdocumentatie voor veelgestelde vragen.',
-            articles: [
-              {
-                id: 4,
-                title: 'Problemen oplossen',
-                slug: 'problemen-oplossen',
-                status: 'Published',
-                updated_at: '2026-04-07',
-                summary: 'Veelvoorkomende issues en mogelijke oplossingen.',
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Studio North',
-    customer: 'Studio North',
-    description: 'Workspace voor onboarding en projectoverdracht.',
-    categories: [
-      {
-        id: 3,
-        name: 'Onboarding',
-        description: 'Content voor onboarding en overdracht.',
-        projects: [
-          {
-            id: 4,
-            name: 'Client Onboarding',
-            description: 'Onboardingproject voor nieuwe klanten.',
-            articles: [
-              {
-                id: 5,
-                title: 'Eerste oplevering bekijken',
-                slug: 'eerste-oplevering-bekijken',
-                status: 'Draft',
-                updated_at: '2026-04-09',
-                summary: 'Handleiding voor de eerste review door de klant.',
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-])
+const workspaceData = ref([])
 
-const customerOnlyOptions = computed(() => customersData.value.map((c) => c.companyName))
-const customerOptions = computed(() => ['Alle klanten', ...customerOnlyOptions.value])
+onMounted(async () => {
+  await loadOverviewData()
+})
+
+const customerOnlyOptions = computed(() =>
+  customerOnlyRecords.value.map((customer) => ({
+    title: formatCustomerOptionLabel(customer),
+    value: customer.id,
+  })),
+)
+const customerOptions = computed(() => [
+  { title: 'Alle klanten', value: null },
+  ...customerOnlyOptions.value,
+])
 const kindOptions = ['Alles', 'Workspaces', 'Categorieën', 'Projecten', 'Artikelen']
 const customerRoleOptions = ['admin', 'customer']
 const articleStatusOptions = ['Draft', 'Published', 'Archived']
@@ -967,13 +854,162 @@ const workspaceCustomerHeaders = [
   { title: 'Tel.', key: 'tel', width: 160 },
 ]
 
-function toggleWorkspaceCustomerAccess(workspaceId, companyName, enabled) {
+function formatCustomerOptionLabel(customer) {
+  const company = safeText(customer?.companyName, 'Onbekend bedrijf')
+  const name = safeText(customer?.name)
+  return name ? `${company} (${name})` : company
+}
+
+function extractCollection(payload) {
+  if (Array.isArray(payload)) return payload
+  if (Array.isArray(payload?.data)) return payload.data
+  return []
+}
+
+
+function normalizeRole(role) {
+  if (role === 'klant') return 'customer'
+  return role ?? 'customer'
+}
+
+function safeText(value, fallback = '') {
+  return typeof value === 'string' ? value : fallback
+}
+
+function normalizeArticle(article) {
+  return {
+    ...article,
+    summary: safeText(article.summary),
+    slug: safeText(article.slug),
+    status: safeText(article.status, 'Draft'),
+    updated_at: safeText(article.updated_at),
+  }
+}
+
+function normalizeProject(project) {
+  return {
+    ...project,
+    description: safeText(project.description),
+    status: safeText(project.status, 'Concept'),
+    articles: extractCollection(project.articles).map(normalizeArticle),
+  }
+}
+
+function normalizeCategory(category) {
+  return {
+    ...category,
+    description: safeText(category.description),
+    projects: extractCollection(category.projects).map(normalizeProject),
+  }
+}
+
+function normalizeWorkspace(workspace) {
+  const members = extractCollection(workspace.members).map((member) => ({
+    id: member.id,
+    name: safeText(member.name),
+    email: safeText(member.email),
+    companyName: safeText(member.company, 'Onbekend bedrijf'),
+    address: safeText(member.address),
+    tel: safeText(member.phone_number),
+    role: normalizeRole(member.role),
+  }))
+
+  const customerAccess = [...new Set(
+    members
+      .filter((member) => member.role !== 'admin')
+      .map((member) => member.id)
+      .filter(Boolean),
+  )]
+
+  return {
+    ...workspace,
+    description: safeText(workspace.description),
+    customer: customerAccess[0] ?? 'Geen klanten',
+    customerAccess,
+    members,
+    categories: extractCollection(workspace.categories).map(normalizeCategory),
+  }
+}
+
+function normalizeCustomer(user) {
+  return {
+    id: user.id,
+    companyName: safeText(user.company, 'Onbekend bedrijf'),
+    name: safeText(user.name),
+    email: safeText(user.email),
+    tel: safeText(user.phone_number),
+    address: safeText(user.address),
+    role: normalizeRole(user.role),
+  }
+}
+
+function syncLocalCounters() {
+  const workspaceIds = workspaceData.value.map((workspace) => workspace.id)
+  const categoryIds = workspaceData.value.flatMap((workspace) => workspace.categories.map((category) => category.id))
+  const projectIds = workspaceData.value.flatMap((workspace) =>
+    workspace.categories.flatMap((category) => category.projects.map((project) => project.id)),
+  )
+  const articleIds = workspaceData.value.flatMap((workspace) =>
+    workspace.categories.flatMap((category) =>
+      category.projects.flatMap((project) => project.articles.map((article) => article.id)),
+    ),
+  )
+  const customerIds = customersData.value.map((customer) => customer.id)
+
+  workspaceId.value = Math.max(0, ...workspaceIds) + 1
+  categoryId.value = Math.max(0, ...categoryIds) + 1
+  projectId.value = Math.max(0, ...projectIds) + 1
+  articleId.value = Math.max(0, ...articleIds) + 1
+  customerId.value = Math.max(0, ...customerIds) + 1
+}
+
+function initializeSelection() {
+  const firstWorkspace = workspaceData.value[0] ?? null
+  const firstCustomer = customersData.value[0] ?? null
+
+  if (firstWorkspace) {
+    selectedEntityType.value = 'workspace'
+    selectedWorkspaceId.value = firstWorkspace.id
+    selectedCategoryId.value = null
+    selectedProjectId.value = null
+    selectedArticleId.value = null
+    expandedWorkspaces.value = [firstWorkspace.id]
+  } else {
+    selectedWorkspaceId.value = null
+  }
+
+  selectedCustomerCrudId.value = firstCustomer?.id ?? null
+}
+
+async function loadOverviewData() {
+  loading.value = true
+  error.value = ''
+
+  try {
+    const [workspacesResponse, usersResponse] = await Promise.all([
+      getAdminWorkspaces(),
+      getAdminUsers(),
+    ])
+
+    workspaceData.value = extractCollection(workspacesResponse).map(normalizeWorkspace)
+    customersData.value = extractCollection(usersResponse).map(normalizeCustomer)
+
+    syncLocalCounters()
+    initializeSelection()
+  } catch (err) {
+    error.value = 'Kon de overzicht inladen.'
+  } finally {
+    loading.value = false
+  }
+}
+
+function toggleWorkspaceCustomerAccess(workspaceId, customerId, enabled) {
   const workspace = workspaceData.value.find((item) => item.id === workspaceId)
   if (!workspace) return
-  const currentAccess = workspace.customerAccess || []
+  const current = workspace.customerAccess || []
   workspace.customerAccess = enabled
-    ? currentAccess.includes(companyName) ? currentAccess : [...currentAccess, companyName]
-    : currentAccess.filter((name) => name !== companyName)
+    ? current.includes(customerId) ? current : [...current, customerId]
+    : current.filter((id) => id !== customerId)
 }
 
 const workspaceSelectOptions = computed(() =>
@@ -1011,12 +1047,12 @@ const filteredCustomers = computed(() => {
   return customersData.value.filter((customer) => {
     const q = normalizedCustomerSearch.value
     return (
-      customer.companyName.toLowerCase().includes(q) ||
-      customer.name.toLowerCase().includes(q) ||
-      customer.email.toLowerCase().includes(q) ||
-      customer.tel.toLowerCase().includes(q) ||
-      customer.address.toLowerCase().includes(q) ||
-      customer.role.toLowerCase().includes(q)
+      safeText(customer.companyName).toLowerCase().includes(q) ||
+      safeText(customer.name).toLowerCase().includes(q) ||
+      safeText(customer.email).toLowerCase().includes(q) ||
+      safeText(customer.tel).toLowerCase().includes(q) ||
+      safeText(customer.address).toLowerCase().includes(q) ||
+      safeText(customer.role).toLowerCase().includes(q)
     )
   })
 })
@@ -1029,17 +1065,20 @@ const customerDeleteTarget = computed(() =>
   customersData.value.find((customer) => customer.id === customerDeleteId.value) ?? null
 )
 
+const selectedCustomerId = computed(() => selectedCustomer.value)
+
 const customerWorkspaces = computed(() => {
   if (!selectedCustomerRecord.value) return []
   return workspaceData.value.filter(
-    (workspace) => workspace.customer === selectedCustomerRecord.value.companyName,
+    (workspace) => workspace.customerAccess.includes(selectedCustomerRecord.value.id),
   )
 })
 
 const filteredWorkspaces = computed(() => {
   return workspaceData.value
     .filter((workspace) => {
-      const customerMatch = selectedCustomer.value === 'Alle klanten' || workspace.customer === selectedCustomer.value
+      const customerMatch =
+      selectedCustomerId.value === null || workspace.customerAccess.includes(selectedCustomerId.value)
       if (!customerMatch) return false
       if (!normalizedSearch.value) return true
       return workspaceMatchesSearch(workspace)
@@ -1171,17 +1210,18 @@ function updateWorkspaceCustomerAccess(workspaceId, customers) {
 
 function formatWorkspaceCustomers(workspace) {
   if (!workspace?.customerAccess?.length) return 'Geen klanten'
-  if (workspace.customerAccess.length === 1) return workspace.customerAccess[0]
-  return `${workspace.customerAccess.length} klanten`
+  if (workspace.customerAccess.length === 1) {
+  return customersData.value.find(c => c.id === workspace.customerAccess[0])?.companyName ?? 'Onbekend'
+  } return `${workspace.customerAccess.length} klanten`
 }
 
 function workspaceMatchesSearch(workspace) {
   const q = normalizedSearch.value
   if (!q) return true
   return (
-    workspace.name.toLowerCase().includes(q) ||
-    workspace.customer.toLowerCase().includes(q) ||
-    workspace.description.toLowerCase().includes(q) ||
+    safeText(workspace.name).toLowerCase().includes(q) ||
+    safeText(workspace.customer).toLowerCase().includes(q) ||
+    safeText(workspace.description).toLowerCase().includes(q) ||
     workspace.categories.some((category) => categoryMatchesSearch(category, workspace))
   )
 }
@@ -1190,9 +1230,9 @@ function categoryMatchesSearch(category, workspace) {
   const q = normalizedSearch.value
   if (!q) return true
   return (
-    category.name.toLowerCase().includes(q) ||
-    category.description.toLowerCase().includes(q) ||
-    workspace.name.toLowerCase().includes(q) ||
+    safeText(category.name).toLowerCase().includes(q) ||
+    safeText(category.description).toLowerCase().includes(q) ||
+    safeText(workspace.name).toLowerCase().includes(q) ||
     category.projects.some((project) => projectMatchesSearch(project, category, workspace))
   )
 }
@@ -1201,11 +1241,11 @@ function projectMatchesSearch(project, category, workspace) {
   const q = normalizedSearch.value
   if (!q) return true
   return (
-    project.name.toLowerCase().includes(q) ||
-    project.description.toLowerCase().includes(q) ||
-    project.status.toLowerCase().includes(q) ||
-    category.name.toLowerCase().includes(q) ||
-    workspace.name.toLowerCase().includes(q) ||
+    safeText(project.name).toLowerCase().includes(q) ||
+    safeText(project.description).toLowerCase().includes(q) ||
+    safeText(project.status).toLowerCase().includes(q) ||
+    safeText(category.name).toLowerCase().includes(q) ||
+    safeText(workspace.name).toLowerCase().includes(q) ||
     project.articles.some((article) => articleMatchesSearch(article, project, category, workspace))
   )
 }
@@ -1214,13 +1254,13 @@ function articleMatchesSearch(article, project, category, workspace) {
   const q = normalizedSearch.value
   if (!q) return true
   return (
-    article.title.toLowerCase().includes(q) ||
-    article.summary.toLowerCase().includes(q) ||
-    article.slug.toLowerCase().includes(q) ||
-    article.status.toLowerCase().includes(q) ||
-    project.name.toLowerCase().includes(q) ||
-    category.name.toLowerCase().includes(q) ||
-    workspace.name.toLowerCase().includes(q)
+    safeText(article.title).toLowerCase().includes(q) ||
+    safeText(article.summary).toLowerCase().includes(q) ||
+    safeText(article.slug).toLowerCase().includes(q) ||
+    safeText(article.status).toLowerCase().includes(q) ||
+    safeText(project.name).toLowerCase().includes(q) ||
+    safeText(category.name).toLowerCase().includes(q) ||
+    safeText(workspace.name).toLowerCase().includes(q)
   )
 }
 
@@ -1246,8 +1286,8 @@ function countArticlesInCategory(category) {
   return category.projects.reduce((sum, project) => sum + project.articles.length, 0)
 }
 
-function customerWorkspaceCount(companyName) {
-  return workspaceData.value.filter((workspace) => workspace.customer === companyName).length
+function customerWorkspaceCount(customerId) {
+  return workspaceData.value.filter((workspace) => workspace.customerAccess.includes(customerId)).length
 }
 
 function isExpanded(list, id) {
@@ -1377,7 +1417,10 @@ function resetDraft() {
   draft.id = null
   draft.name = ''
   draft.summary = ''
-  draft.customer = selectedCustomer.value !== 'Alle klanten' ? selectedCustomer.value : customerOnlyOptions.value[0] ?? ''
+  draft.customer =
+    selectedCustomerId.value != null
+      ? customersData.value.find((customer) => customer.id === selectedCustomerId.value)?.companyName ?? ''
+      : customerOnlyRecords.value[0]?.companyName ?? ''
   draft.workspaceId = selectedWorkspaceId.value
   draft.categoryId = selectedCategoryId.value
   draft.projectId = selectedProjectId.value
@@ -1656,10 +1699,6 @@ function saveCustomerDraft() {
     customer.tel = customerDraft.tel
     customer.address = customerDraft.address
     customer.role = customerDraft.role
-    workspaceData.value.forEach((workspace) => {
-      if (workspace.customer === previousCompanyName) workspace.customer = customer.companyName
-    })
-    if (selectedCustomer.value === previousCompanyName) selectedCustomer.value = customer.companyName
     selectedCustomerCrudId.value = customer.id
   }
   customerEditorOpen.value = false
@@ -1688,6 +1727,4 @@ function slugify(value) {
     .replace(/-+/g, '-')
 }
 
-selectEntity('workspace', 1)
-selectCustomer(1)
 </script>

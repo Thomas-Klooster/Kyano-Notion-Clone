@@ -22,8 +22,8 @@ class addMemberRequest extends FormRequest
     public function rules(): array
     {
         return [
-        'user_id' => ['required', 'integer', 'exists:user,id'],
-        'role' => ['nullable', 'string', 'in:owner,admin,member'],
+        'user_id' => ['required', 'integer', 'exists:users,id'],
+        'role' => ['nullable', 'string', 'in:admin,member'],
 
         ];
     }

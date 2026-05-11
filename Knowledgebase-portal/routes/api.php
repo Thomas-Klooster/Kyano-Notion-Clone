@@ -18,8 +18,6 @@ Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::get('/reset-password/session', [AuthController::class, 'resetPasswordSession']);
 Route::post('/reset-password', [AuthController::class, 'newPassword']);
 // Route::post('/newPassword', [AuthController::class, 'newPassword']);
-Route::get('/workspace/invite/accept', [WorkspaceController::class, 'acceptInvite'])
-->name('workspace.invite.accept');    
 Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -53,10 +51,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/articles/{article}/feedback', [ArticleController::class, 'storeFeedback']);
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('categories/{category}', [CategoryController::class, 'show']);
-    });
+    Route::get('/workspace/invite/accept', [WorkspaceController::class, 'acceptInvite'])
+        ->name('workspace.invite.accept');
+});
 
 
-Route::middleware(['auth:sanctum', 'checkrole:owner'])->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('projects', ProjectsController::class)->except(['index', 'show']); 
     Route::apiResource('articles', ArticleController::class)->except(['index', 'show']);
     Route::apiResource('workspaces', WorkspaceController::class)->except(['index', 'show']);
