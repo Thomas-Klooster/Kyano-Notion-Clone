@@ -1,6 +1,6 @@
 import Home from '@/pages/Portal/DashboardPage.vue'
 import ProfilePage from '@/pages/Portal/ProfilePage.vue'
-
+import NotFoundComponent from '@/views/NotFoundComponent.vue'
 // AUTH
 import LoginPage from '@/pages/Auth/LoginPage.vue'
 import RegisterPage from '@/pages/Auth/RegisterPage.vue'
@@ -24,6 +24,13 @@ import { useAuthStore } from '@/stores/auth'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'Not Found',
+      component: NotFoundComponent,
+    },
+
     {
       path: '/',
       redirect: '/auth/login',

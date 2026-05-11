@@ -176,7 +176,7 @@
                   <v-icon size="18">mdi-calendar-check-outline</v-icon>
                 </div>
                 <div class="u-min-w-0">
-                  <div class="notion-stat-label">Gebruiker sinds</div>
+                  <div class="notion-stat-label">Klant sinds</div>
                   <div class="profile-stat-value">{{ createdAtLabel }}</div>
                 </div>
               </div>
@@ -348,7 +348,7 @@ const roleLabel = computed(() => {
   const role = profile.role || auth.user?.role
   if (role === 'admin' || role === 'owner') return 'Admin'
   if (role === 'customer') return 'klant'
-  return 'Gebruiker'
+  return 'Klant'
 })
 
 const createdAtLabel = computed(() => formatDate(profile.created_at || auth.user?.created_at))
