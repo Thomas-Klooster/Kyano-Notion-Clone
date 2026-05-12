@@ -22,7 +22,7 @@ class FeedbackRequest extends FormRequest
     public function rules(): array
     {
         return [
-        'comment' => 'required|string',
+        'feedback' => 'required|string',
         'helpful' => 'required|boolean',
         'article_id' => 'nullable|exists:article,id',
         ];
@@ -39,7 +39,7 @@ class FeedbackRequest extends FormRequest
 
     public function messages() {
         return [
-        'comment.required' => 'Beoordeel ons!',
+        'feedback.required' => 'Beoordeel ons!',
         'helpful.required' => 'Beoordeel.'
         ];
     }

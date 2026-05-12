@@ -158,6 +158,7 @@
 import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticle } from '@/services/articleService'
+// import { postFeedback } from '@/services/articleService'
 const feedbackTitle = ref('')
 const feedbackTextarea = ref(null)
 
@@ -170,6 +171,7 @@ const articleTags = computed(() => Array.isArray(article.value?.tags) ? article.
 const articleAttachments = computed(() => Array.isArray(article.value?.attachments) ? article.value.attachments : [])
 
 onMounted(loadArticles)
+// onMounted(postFeedback)
 
 async function loadArticles() {
     loading.value = true
@@ -202,10 +204,10 @@ const backToEditorRoute = computed(() => {
     const articleId = route.params.id
 
     if (articleId && articleId !== 'preview') {
-        return `/admin/articles/${articleId}/edit`
+        return `/admin/articles/edit`
     }
 
-    return '/admin/articles/new'
+    return '/admin/articles/${slug}/new'
 })
 
 function submitFeedback() {

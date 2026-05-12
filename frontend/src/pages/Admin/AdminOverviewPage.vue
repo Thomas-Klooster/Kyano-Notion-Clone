@@ -26,7 +26,7 @@
             </div>
             <div class="admin-stat-card__text">
               <div class="admin-stat-card__value">{{ counts.workspaces }}</div>
-              <div class="admin-stat-card__label">Workspaces</div>
+              <div class="admin-stat-card__label">{{filteredWorkspaces.length === 1 ? 'Workspace' : 'Workspaces'}}</div>
             </div>
           </div>
           <div class="admin-stat-card__bg-shape" aria-hidden="true" />
@@ -726,33 +726,28 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="customerDeleteOpen" max-width="520">
-      <v-card class="dialog-card card card-rounded-xl" rounded="xl">
-        <div class="dialog-head">
-          <div>
-            <div class="section-kicker">Verwijderen</div>
-            <h3 class="dialog-title">Deze klant verwijderen?</h3>
-          </div>
-        </div>
-        <div class="dialog-body">
-          <p class="detail-description mb-0">
-            Je staat op het punt om <strong>{{ customerDeleteTarget?.companyName }}</strong> te verwijderen.
-          </p>
-        </div>
-        <div class="u-gap-12 dialog-footer">
-          <v-btn variant="text" @click="customerDeleteOpen = false">Annuleren</v-btn>
-          <v-btn color="#DC3545" @click="confirmCustomerDelete">Verwijderen</v-btn>
-        </div>
-      </v-card>
-    </v-dialog>
-  </div>
+<v-dialog v-model="customerDeleteOpen" max-width="455">
+  <v-card class="dialog-card card card-rounded-xl" rounded="xl" style="overflow: hidden;">
+    <div class="delete-modal-inner">
+      <v-icon size="50" color="#DC3545" style="display:block; margin: 0 auto 12px;">mdi-alert-outline</v-icon>
+      <h3 class="delete-modal-title">Verwijder {{ customerDeleteTarget?.companyName }}?</h3>
+      <p class="delete-modal-body">
+        Je staat op het punt om <strong>{{ customerDeleteTarget?.companyName }}</strong> te verwijderen. Dit kan niet ongedaan worden gemaakt.
+      </p>
+      <div class="delete-modal-actions">
+        <button class="cancel-modal-button" variant="outlined" @click="customerDeleteOpen = false">Annuleren</button>
+        <button class="delete-modal-button" @click="confirmCustomerDelete">Verwijderen</button>
+      </div>
+    </div>
+  </v-card>
+</v-dialog>  </div>
 </template>
 
 <script setup>
 import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getAdminWorkspaces } from '@/services/workspaceService'
-import { getAdminUsers } from '@/services/userService'
+import { deleteUser, getAdminUsers, postUser, updateUser } from '@/services/userService'
 
 const activeTab = ref('content')
 
@@ -941,6 +936,37 @@ function normalizeCustomer(user) {
     address: safeText(user.address),
     role: normalizeRole(user.role),
   }
+}
+
+function buildUserPayload() {
+  const payload = {
+    company: customerDraft.companyName,
+    name: customerDraft.name,
+    email: customerDraft.email,
+    phone_number: customerDraft.tel,
+    address: customerDraft.address,
+    role: customerDraft.role,
+  }
+
+  if (customerDraft.password) {
+    payload.password = customerDraft.password
+  }
+
+  return payload
+}
+
+function upsertCustomerRecord(user) {
+  const normalizedCustomer = normalizeCustomer(user)
+  const existingIndex = customersData.value.findIndex((item) => item.id === normalizedCustomer.id)
+
+  if (existingIndex === -1) {
+    customersData.value.unshift(normalizedCustomer)
+  } else {
+    customersData.value.splice(existingIndex, 1, normalizedCustomer)
+  }
+
+  selectedCustomerCrudId.value = normalizedCustomer.id
+  syncLocalCounters()
 }
 
 function syncLocalCounters() {
@@ -1546,6 +1572,7 @@ function createEntity() {
   }
 }
 
+// Update Workspace?
 function updateEntity() {
   if (dialogType.value === 'workspace') {
     const workspace = findWorkspace(draft.id)
@@ -1676,32 +1703,20 @@ function openCustomerEditDialog(id) {
   customerEditorOpen.value = true
 }
 
-function saveCustomerDraft() {
-  if (customerDialogMode.value === 'create') {
-    const newCustomer = {
-      id: customerId.value++,
-      companyName: customerDraft.companyName,
-      name: customerDraft.name,
-      email: customerDraft.email,
-      tel: customerDraft.tel,
-      address: customerDraft.address,
-      role: customerDraft.role,
-    }
-    customersData.value.unshift(newCustomer)
-    selectedCustomerCrudId.value = newCustomer.id
-  } else {
-    const customer = customersData.value.find((item) => item.id === customerDraft.id)
-    if (!customer) return
-    const previousCompanyName = customer.companyName
-    customer.companyName = customerDraft.companyName
-    customer.name = customerDraft.name
-    customer.email = customerDraft.email
-    customer.tel = customerDraft.tel
-    customer.address = customerDraft.address
-    customer.role = customerDraft.role
-    selectedCustomerCrudId.value = customer.id
+async function saveCustomerDraft() {
+  error.value = ''
+
+  try {
+    const payload = buildUserPayload()
+    const user = customerDialogMode.value === 'create'
+      ? await postUser(payload)
+      : await updateUser(customerDraft.id, payload)
+
+    upsertCustomerRecord(user)
+    customerEditorOpen.value = false
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon de klant niet opslaan.'
   }
-  customerEditorOpen.value = false
 }
 
 function openCustomerDeleteDialog(id) {
@@ -1709,13 +1724,22 @@ function openCustomerDeleteDialog(id) {
   customerDeleteOpen.value = true
 }
 
-function confirmCustomerDelete() {
+async function confirmCustomerDelete() {
   const target = customerDeleteTarget.value
   if (!target) return
-  customersData.value = customersData.value.filter((customer) => customer.id !== target.id)
-  if (selectedCustomerCrudId.value === target.id) selectedCustomerCrudId.value = customersData.value[0]?.id ?? null
-  if (selectedCustomer.value === target.companyName) selectedCustomer.value = 'Alle klanten'
-  customerDeleteOpen.value = false
+
+  error.value = ''
+
+  try {
+    await deleteUser(target.id)
+    customersData.value = customersData.value.filter((customer) => customer.id !== target.id)
+    if (selectedCustomerCrudId.value === target.id) selectedCustomerCrudId.value = customersData.value[0]?.id ?? null
+    if (selectedCustomer.value === target.companyName) selectedCustomer.value = 'Alle klanten'
+    customerDeleteOpen.value = false
+    syncLocalCounters()
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon de klant niet verwijderen.'
+  }
 }
 
 function slugify(value) {

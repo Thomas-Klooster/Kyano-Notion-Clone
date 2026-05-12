@@ -113,7 +113,7 @@ public function show(Article $article)
     $feedback = $article->feedbacks()->updateOrCreate(
         ['user_id' => auth()->id()],    
         ['helpful' => $data['helpful'],
-         'comment' => $data['comment'],
+         'feedback' => $data['feedback'],
     ]);
 return response()->json($feedback, 201);
 }

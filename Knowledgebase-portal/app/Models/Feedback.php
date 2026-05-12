@@ -13,7 +13,7 @@ class Feedback extends Model
     'article_id',
     'user_id',
     'helpful',
-    'comment'
+    'feedback'
     ];
 
     protected $casts = [

@@ -19,6 +19,16 @@ export const postArticle = async (formData) => {
     return data;
 };
 
+
+export const postFeedback = async (formData) => {
+    const { data } = await api.post('feedback', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    })
+    return data;
+}
+
 export const updateArticle = async (formData) => {
     const { data } = await api.put('articles', formData, {
         headers: {

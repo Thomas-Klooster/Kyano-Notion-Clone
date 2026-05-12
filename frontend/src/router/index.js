@@ -183,13 +183,7 @@ const router = createRouter({
       //     meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Project detail page' },
       //   },
         {
-          path: 'articles',
-          name: 'admin-articles',
-          component: () => import('@/pages/Admin/Articles/ArticlesPage.vue'),
-          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Artikelen' },
-        },
-        {
-          path: 'articles/new',
+          path: 'articles/:slug/new',
           name: 'admin-articles-new',
           component: () => import('@/pages/Admin/Articles/ArticleEditorPage.vue'),
           meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Article editor page' },

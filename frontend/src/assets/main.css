@@ -2473,8 +2473,8 @@ body {
 
 .dialog-card { border: 1px solid var(--color-border-default); }
 .dialog-head, .dialog-actions { padding: 24px 24px 0; }
-.dialog-body { padding: 4px 24px 16px 24px; }
-.dialog-footer {padding: 0 0 24px 10px;}
+.dialog-body { padding: 4px 24px 0px 24px; }
+.dialog-footer {padding: 0 50px 24px 10px;}
 .dialog-actions {
   padding: 0 24px 24px;
   display: flex;
@@ -2483,6 +2483,54 @@ body {
 }
 
 .delete-btn { color: var(--color-danger) !important; }
+
+
+.cancel-modal-button {
+  width: 180px;
+  background-color: var(--color-brand-500);
+  color: white;
+  font-weight: 600;
+  border-radius: var(--radius-3xl);
+}
+
+.delete-modal-button {
+  width: 200px;
+  height: 55px;
+  background-color: #da0000;
+  color: #eef6ff !important;
+  font-weight: 600;
+  border-radius: var(--radius-3xl);
+}
+
+.delete-modal-inner {
+  padding: 32px 28px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.delete-modal-title {
+  margin: 0 0 10px;
+  color: var(--color-text-strong);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.delete-modal-body {
+  margin: 0 0 24px;
+  color: var(--color-text-muted-2);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.delete-modal-actions {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  width: 100%;
+}
+
 
 @media (max-width: 1180px) {
   .studio-layout { grid-template-columns: 1fr; }

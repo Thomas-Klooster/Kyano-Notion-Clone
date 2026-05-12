@@ -12,30 +12,22 @@ export const getAdminUsers = async () => {
      return data;
 }
 
-export const getUser = async () => {
-     const { data } = await api.get('users/{user}')
-     return data
-}
-
-export const postUser = async (formData) => {
-     const { data } = await api.post('users', formData, {
-          headers: {
-          'Content-Type': 'multipart/form-data'
-          }
-     })
-     return data;
-} 
-
-export const updateUser = async (formData) => {
-     const { data } = await api.put('users', formData, {
-          headers: {
-               'Content-Type': 'multipart/form-data' 
-          }
-     })
+export const getUser = async (userId) => {
+     const { data } = await api.get(`admin/users/${userId}`)
      return data;
 }
 
-export const deleteUser = async () => {
-     const { data } = await api.delete('users/{user}')
+export const postUser = async (payload) => {
+     const { data } = await api.post('admin/users', payload)
+     return data;
+}
+
+export const updateUser = async (userId, payload) => {
+     const { data } = await api.put(`admin/users/${userId}`, payload)
+     return data;
+}
+
+export const deleteUser = async (userId) => {
+     const { data } = await api.delete(`admin/users/${userId}`)
      return data;
 }
