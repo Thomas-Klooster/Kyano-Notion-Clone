@@ -2418,6 +2418,9 @@ body {
 }
 
 .meta-value {
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
   color: var(--color-text-strong);
   font-size: 0.96rem;
   line-height: 1.5;
@@ -2482,7 +2485,7 @@ body {
   align-items: center;
 }
 
-.delete-btn { color: var(--color-danger) !important; }
+.delete-btn { color: #da0000 !important; }
 
 
 .cancel-modal-button {
@@ -2495,7 +2498,7 @@ body {
 
 .delete-modal-button {
   width: 200px;
-  height: 55px;
+  height: 47px;
   background-color: #da0000;
   color: #eef6ff !important;
   font-weight: 600;

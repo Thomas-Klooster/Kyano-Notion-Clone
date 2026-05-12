@@ -523,9 +523,12 @@
                 </div>
                 <div class="entity-actions u-flex u-items-center u-wrap u-gap-10 detail-actions">
                   <v-btn size="small" variant="text"
-                    @click="openCustomerEditDialog(selectedCustomerRecord.id)">Bewerken</v-btn>
+                    @click="openCustomerEditDialog(selectedCustomerRecord.id)">
+                  <v-icon size="30">mdi-account-edit</v-icon>
+                  </v-btn>
                   <v-btn size="small" variant="text" class="delete-btn"
-                    @click="openCustomerDeleteDialog(selectedCustomerRecord.id)">Verwijderen</v-btn>
+                    @click="openCustomerDeleteDialog(selectedCustomerRecord.id)">
+                  <v-icon size="30">mdi-delete</v-icon></v-btn>
                 </div>
               </div>
 
