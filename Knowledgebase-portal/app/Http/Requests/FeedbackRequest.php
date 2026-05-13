@@ -22,8 +22,8 @@ class FeedbackRequest extends FormRequest
     public function rules(): array
     {
         return [
-        'feedback' => 'required|string',
-        'helpful' => 'nullable|boolean',
+        'feedback' => 'nullable|string',
+        'helpful' => 'required|boolean',
         'article_id' => 'nullable|exists:article,id',
         ];
     }
@@ -40,7 +40,7 @@ protected function prepareForValidation()
 }
     public function messages() {
         return [
-        'feedback.required' => 'Beoordeel ons!',
+        'helpful.required' => 'Beoordeel ons!',
         ];
     }
 }

@@ -104,8 +104,8 @@
     placeholder="Laat je feedback achter..." rows="1" @input="autoResizeTextarea" maxlength="500" />
 
     <v-alert v-if="feedbackError" type="error" variant="tonal" density="comfortable" closable 
-    class="feedback-error" @click:close="feedbackError = ''">
-    <p>Er ging iets mis, probeer later opnieuw.</p>
+    class="my-3" @click:close="feedbackError = ''">
+    {{ feedbackError }}
 </v-alert>
 
     <button class="feedback-submit" type="submit"
@@ -205,7 +205,7 @@ async function submitFeedback() {
         feedbackSent.value = true
         feedbackTitle.value = ''
     } catch (err) {
-        feedbackError.value = true
+        feedbackError.value = 'Beoordeel ons'
     }
 }
 
