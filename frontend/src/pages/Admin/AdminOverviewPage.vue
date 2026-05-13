@@ -82,6 +82,12 @@
           Klantenbeheer
           <span class="admin-tab-count">{{ customersData.length }}</span>
         </button>
+
+        <button class="admin-tab" :class="{ 'admin-tab--active': activeTab === 'Reviews'}"
+        @click="activeTab = 'Reviews'">
+        <v-icon size="16" class="admin-tab-icon">mdi-comment-outline</v-icon>
+        Feedback
+      </button> 
       </div>
 
       <section v-if="activeTab === 'content'" style="border-radius: 0 0 26px 26px !important;"
@@ -636,6 +642,32 @@
           </section>
         </div>
       </section>
+
+      <!-- Feedback Sectie (required frontend tho) -->
+      <section v-if="activeTab === 'Reviews'" style="border-radius: 0 0 26px 26px !important"
+      class="entity-card card card-elevated card-rounded-2xl studio-card">
+      <div class="studio-toolbox">
+
+
+
+
+                <div class="studio-layout">
+                <aside class="studio-tree-panel" style="max-height: 120vh; overflow-y: auto;">
+              <div class="panel-section-head">
+              <div class="panel-kicker">Lijst</div>
+              <h3 class="review-title">Beoordelingen</h3>
+              </div>
+              
+
+                </aside>
+                </div>
+      </div>
+    </section>
+    
+
+
+        
+    
     </div>
 
     <v-dialog v-model="editorOpen" max-width="680">
@@ -771,9 +803,6 @@ const loading = ref(false)
 const error = ref('')
 const showPassword = ref(false)
 const showConfirm = ref(false)
-const confirmFieldRef = ref(null)
-
-
 
 const search = ref('')
 const customerSearch = ref('')
@@ -1633,7 +1662,6 @@ function createEntity() {
   }
 }
 
-// Update Workspace?
 function updateEntity() {
   if (dialogType.value === 'workspace') {
     const workspace = findWorkspace(draft.id)

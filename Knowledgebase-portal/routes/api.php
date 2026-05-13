@@ -70,11 +70,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('projects', ProjectsController::class)->except(['AdminIndex']);
         Route::apiResource('categories', CategoryController::class)->except(['AdminIndex']);
         Route::apiResource('articles', ArticleController::class)->except(['AdminIndex']);
+        Route::get('/articles/{article}/feedbacks', [ArticleController::class, 'adminFeedbacks']);
         Route::apiResource('workspaces', WorkspaceController::class);
         Route::post('/workspaces/{workspace}/members', [WorkspaceController::class, 'addMember']);
         Route::get('/workspaces/{workspace}/available-users', [WorkspaceController::class, 'availableUsers']);
         Route::delete('/workspaces/{workspace}/members/{user}', [WorkspaceController::class, 'removeMember']);
         Route::apiResource('users', UserController::class);
+       
         // Route::post('/articles/attachment', [ArticleController::class, 'store']);
         // Route::get('/users/{id}',fn($id) => response()->json(User::findOrFail($id)));
         // Route::post('/users', [UserController::class, 'store']);

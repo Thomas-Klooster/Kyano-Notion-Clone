@@ -79,41 +79,43 @@
                                         {{ tag }}
                                     </span>
                                 </div>
-                            
                                 <span v-else class="article-pill u-inline-flex u-items-center">Geen tags</span>
-                
-                </div>
+                                </div>
 
-                <div class="sidebar-card card card-soft card-rounded-lg feedback-card">
-                    <div class="sidebar-label">Was Dit Artikel Nuttig?</div>
-
-                    <div class="useful-button-box">
-                        <button class="useful-button thumbs-up" type="button">
-                        <!-- Feedback - helpful boolean-->
-                            <v-icon>mdi-thumb-up</v-icon>
-                        </button>
-                        <button class="useful-button thumbs-down" type="button">
+                            <div v-if="feedbackSent" class="sidebar-card card card-soft card-rounded-lg feedback-card"> 
+                                <div class="sidebar-label">Bedankt voor je feedback!</div>
+                            <v-icon size="32" color="success">mdi-check-circle-outline</v-icon>
+                            </div>
+                            <form v-else class="sidebar-card card card-soft card-rounded-lg feedback-card"
+                            @submit.prevent="submitFeedback">
+                            <div class="sidebar-label">Was dit artikel nuttig?</div>
+                            <div class="useful-button-box">
+                                <button class="useful-button thumbs-up" type="button" :class="{ active: helpful === true }"
+                            @click="setHelpful(true)">
+                            <v-icon>mdi-thumb-up</v-icon></button>
+                            <button class="useful-button thumbs-down" type="button" :class="{ active: helpful === false }"
+                            @click="setHelpful(false)">
                             <v-icon>mdi-thumb-down</v-icon>
                         </button>
                     </div>
-                </div>
-                <form class="sidebar-card card card-soft card-rounded-lg feedback-card" @submit.prevent="submitFeedback">
-                    <div class="sidebar-label">Extra feedback</div>
 
-                    <!-- {{ comment }} -->
-                    <textarea ref="feedbackTextarea" v-model="feedbackTitle" class="feedback-input feedback-textarea"
-                        placeholder="Laat je feedback achter..." rows="1" @input="autoResizeTextarea" maxlength="500"></textarea>
+    <div class="sidebar-label" style="margin-top: 12px;">Extra feedback</div>
+    <textarea ref="feedbackTextarea" v-model="feedbackTitle" class="feedback-input feedback-textarea"
+    placeholder="Laat je feedback achter..." rows="1" @input="autoResizeTextarea" maxlength="500" />
 
-                        <!-- {{ OnSubmit }}-->
-                    <button class="feedback-submit" type="submit">
-                        Versturen
-                    </button>
-                </form>
+    <v-alert v-if="feedbackError" type="error" variant="tonal" density="comfortable" closable 
+    class="feedback-error" @click:close="feedbackError = ''">
+    <p>Er ging iets mis, probeer later opnieuw.</p>
+</v-alert>
+
+    <button class="feedback-submit" type="submit"
+        :disabled="helpful === null && !feedbackTitle.trim()">
+        Versturen
+    </button>
+</form>
             </aside>
-
             <main class="article-content">
                 <div class="article-cover"></div>
-
                 <article class="article-card card card-elevated card-rounded-2xl">
                     <div class="article-head card-head">
                         <div class="article-meta-line u-flex-center u-wrap u-gap-8" />
@@ -157,10 +159,12 @@
 <script setup>
 import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { getArticle } from '@/services/articleService'
-// import { postFeedback } from '@/services/articleService'
+import { getArticle, postFeedback } from '@/services/articleService'
 const feedbackTitle = ref('')
 const feedbackTextarea = ref(null)
+const helpful = ref(null)
+const feedbackSent = ref(false)
+const feedbackError = ref(false)
 
 const route = useRoute()
 const article = ref(null)
@@ -170,8 +174,8 @@ const project = computed(() => article.value?.project ?? null)
 const articleTags = computed(() => Array.isArray(article.value?.tags) ? article.value.tags : [])
 const articleAttachments = computed(() => Array.isArray(article.value?.attachments) ? article.value.attachments : [])
 
+
 onMounted(loadArticles)
-// onMounted(postFeedback)
 
 async function loadArticles() {
     loading.value = true
@@ -186,6 +190,25 @@ async function loadArticles() {
     }
 }
 
+function setHelpful(value) {
+    helpful.value = helpful.value === value ? null : value
+}
+
+async function submitFeedback() {
+    if (helpful.value === null && !feedbackTitle.value.trim()) return
+    feedbackError.value = false
+    try {
+        await postFeedback(route.params.slug, {
+            helpful: helpful.value,
+            feedback: feedbackTitle.value.trim()
+        })
+        feedbackSent.value = true
+        feedbackTitle.value = ''
+    } catch (err) {
+        feedbackError.value = true
+    }
+}
+
 function autoResizeTextarea() {
     const el = feedbackTextarea.value
     if (!el) return
@@ -193,12 +216,6 @@ function autoResizeTextarea() {
     el.style.height = 'auto'
     el.style.height = `${el.scrollHeight}px`
 }
- // remove
-// onMounted(() => {
-//     nextTick(() => {
-//         autoResizeTextarea()
-//     })
-// })
 
 const backToEditorRoute = computed(() => {
     const articleId = route.params.id
@@ -209,12 +226,6 @@ const backToEditorRoute = computed(() => {
 
     return '/admin/articles/${slug}/new'
 })
-
-function submitFeedback() {
-    console.log('Feedback verzonden:', feedbackTitle.value)
-
-    feedbackTitle.value = ''
-}
 
 function formatAttachmentSize(size) {
     const value = Number(size)

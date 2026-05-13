@@ -10,25 +10,17 @@ export const getProject = async (slug) => {
  return data;
 };
 
-export const storeProject = async (formData) => {
-   const { data } = await api.post('projects', formData, {
-     headers: {
-     'Content-Type': 'multipart/form-data'
-     }
-   });
+export const storeProject = async (payload) => {
+   const { data } = await api.post('projects', payload)
    return data;
 };
 
-export const updateProject = async (formData) => {
-     const { data } = await api.put('projects/{project}', formData, {
-          headers: {
-          'Content-Type': 'multipart/form-data'
-          }
-     });
+export const updateProject = async (projectId, payload) => {
+     const { data } = await api.put(`admin/projects/${projectId}`, payload)
      return data;
 };
 
-export const deleteProject = async () => {
-     const { data } = await api.delete('projects/{project}')
+export const deleteProject = async (projectId) => {
+     const { data } = await api.delete(`admin/projects/${projectId}`)
      return data;
 };

@@ -54,10 +54,14 @@ class Article extends Model
             return $this->hasMany(Attachment::class);
     }
 
+        public function feedback() {
+            return $this->hasMany(Feedback::class);
+    }
+
         public function feedbacks() {
             return $this->hasMany(Feedback::class);
     }
-    
+
         public function tags() {
             return $this->morphToMany(Tag::class, 'taggable');
 }

@@ -15,37 +15,29 @@ export const getWorkspace = async (slug) => {
      return data;
 };
 
-export const postWorkspace = async (formData) => {
-     const  { data } = await api.post('workspaces', formData, {
-          headers: {
-          'Content-Type': 'multipart/form-data'
-          }
-     });
+export const postWorkspace = async (payload) => {
+     const  { data } = await api.post('workspaces', payload)
      return data;
 };
 
 
-export const updateWorkspace = async (formData) => {
-     const { data } = await api.put('workspaces/{workspace}', formData, {
-          headers: {
-               'Content-Type': 'multipart/form-data'
-          }
-     })
+export const updateWorkspace = async (workspaceId, payload) => {
+     const { data } = await api.put(`admin/workspaces/${workspaceId}`, payload)
      return data;
 };
 
 
-export const deleteWorkspace = async () => {
-     const { data } = await api.delete('workspaces/{workspace}')
+export const deleteWorkspace = async (workspaceId) => {
+     const { data } = await api.delete(`workspaces/${workspaceId}`)
      return data;
 };
 
-export const addMember = async () => {
-     const { data } = await api.post('/workspaces/{workspace}/members')
+export const addMember = async (workspaceId) => {
+     const { data } = await api.post(`/workspaces/${workspaceId}/members`)
      return data;
 }
 
-export const removeMember = async () => {
-     const { data } = await api.post('/workspaces/{workspace}/members/{user}')
+export const removeMember = async (workspaceId, userId) => {
+     const { data } = await api.post(`/workspaces/${workspaceId}/members/${userId}`)
      return data;
 }

@@ -11,25 +11,17 @@ export const getCategory = async (slug) => {
      return data;
 };
 
-export const storeCategory = async (formData) => {
-     const { data } = await api.post('category', formData, {
-          headers: {
-          'Content-Type': 'multipart/form-data'
-          }
-     });
+export const storeCategory = async (payload) => {
+     const { data } = await api.post('category', payload)
      return data;
 };
 
-export const UpdateCategory = async (formData) => {
-     const { data } = await api.put('categories/{category}', formData, {
-          headers: {
-          'Content-Type': 'multipart/form-data'
-          }
-     });
+export const UpdateCategory = async (categoryId, payload) => {
+     const { data } = await api.put(`categories/${categoryId}`, payload)
      return data;
 };
 
-export const DeleteCategory = async () => {
-     const { data } = await api.delete('categories/{category}')
+export const DeleteCategory = async (categoryId) => {
+     const { data } = await api.delete(`categories/${categoryId}`)
      return data;
 }

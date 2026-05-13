@@ -23,24 +23,24 @@ class FeedbackRequest extends FormRequest
     {
         return [
         'feedback' => 'required|string',
-        'helpful' => 'required|boolean',
+        'helpful' => 'nullable|boolean',
         'article_id' => 'nullable|exists:article,id',
         ];
     }
 
 
     // Forces to accept the helpful boolean
-    protected function prepareForValidation()
+protected function prepareForValidation()
 {
-    $this->merge([
-        'helpful' => filter_var($this->helpful, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
-    ]);
+    if ($this->has('helpful') && !is_null($this->helpful)) {
+        $this->merge([
+            'helpful' => filter_var($this->helpful, FILTER_VALIDATE_BOOLEAN),
+        ]);
+    }
 }
-
     public function messages() {
         return [
         'feedback.required' => 'Beoordeel ons!',
-        'helpful.required' => 'Beoordeel.'
         ];
     }
 }

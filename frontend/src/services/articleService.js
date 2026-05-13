@@ -19,26 +19,26 @@ export const postArticle = async (formData) => {
     return data;
 };
 
-
-export const postFeedback = async (formData) => {
-    const { data } = await api.post('feedback', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    })
+export const postFeedback = async (articleSlug, payload) => {
+    const { data } = await api.post(`articles/${articleSlug}/feedback`, payload)
     return data;
 }
 
-export const updateArticle = async (formData) => {
-    const { data } = await api.put('articles', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    })
+export const getArticleFeedbacks = async (articleId) => {
+    const { data } = await api.get(`admin/articles/${articleId}/feedbacks`);
+    return data;
+}
+export const getFeedbacks = async () => {
+    const { data } = await api.get('feedback')
+    return data;
+}
+
+export const updateArticle = async (articleId, payload) => {
+    const { data } = await api.put(`admin/articles/${articleId}`, payload)
     return data;
 };
 
-export const deleteArticle = async () => {
-    const { data } = await api.delete('articles/{article}')
+export const deleteArticle = async (articleId) => {
+    const { data } = await api.delete(`admin/articles/${articleId}`)
     return data;
 }

@@ -115,9 +115,16 @@ public function show(Article $article)
         ['helpful' => $data['helpful'],
          'feedback' => $data['feedback'],
     ]);
-return response()->json($feedback, 201);
+    return response()->json($feedback, 201);
 }
 
+
+    public function adminFeedbacks(Article $article) {
+        $this->authorize('viewAny', Article::class);
+        $feedbacks = $article->feedbacks()->with('users')->latest()->get();
+        return response()->json($feedbacks);
+    }
+    
     public function AdminIndex(Request $request)
     {
         $query = Article::visibleTo(auth('sanctum')->user())
