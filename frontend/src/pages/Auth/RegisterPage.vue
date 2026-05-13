@@ -183,21 +183,6 @@
               <v-progress-circular v-if="loading" size="18" width="2" indeterminate color="white" />
               <span v-else>Account aanmaken</span>
             </button>
-<!-- 
-            <div class="u-divider auth-divider">
-              <span class="auth-divider-text">of ga verder met</span>
-            </div>
-
-            <div class="auth-social-btns">
-              <button type="button" class="auth-social-btn" @click="onSocial('google')">
-                <v-icon size="18">mdi-google</v-icon>
-                Google
-              </button>
-              <button type="button" class="auth-social-btn" @click="onSocial('microsoft')">
-                <v-icon size="18">mdi-microsoft</v-icon>
-                Microsoft
-              </button>
-            </div> -->
 
             <p class="auth-footer-text">
               Al een account?

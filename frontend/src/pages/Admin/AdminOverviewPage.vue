@@ -707,22 +707,35 @@
           </div>
         </div>
         <div class="dialog-body">
-          <v-text-field v-model="customerDraft.companyName" label="Bedrijfsnaam" variant="solo-filled" flat hide-details
+          <v-text-field v-model="customerDraft.name" label="Contactpersoon" :rules="nameRules" variant="solo-filled" flat hide-details="auto"
             class="notion-soft-input mb-4" />
-          <v-text-field v-model="customerDraft.name" label="Contactpersoon" variant="solo-filled" flat hide-details
+          <v-text-field v-model="customerDraft.companyName" label="Bedrijfsnaam" variant="solo-filled" flat hide-details="auto"
             class="notion-soft-input mb-4" />
-          <v-text-field v-model="customerDraft.email" label="E-mail" variant="solo-filled" flat hide-details
+          <v-text-field v-model="customerDraft.email" label="E-mail" :rules="emailRules" variant="solo-filled" flat hide-details="auto"
             class="notion-soft-input mb-4" />
-          <v-text-field v-model="customerDraft.tel" label="Telefoon" variant="solo-filled" flat hide-details
+          <v-text-field v-model="customerDraft.tel" label="Telefoon" :rules="phoneRules" variant="solo-filled" flat hide-details="auto"
             class="notion-soft-input mb-4" />
-          <v-textarea v-model="customerDraft.address" label="Adres" variant="solo-filled" flat hide-details rows="3"
+          <v-text-field v-model="customerDraft.address" label="Adres" variant="solo-filled" flat hide-details="auto"
             class="notion-soft-input mb-4" />
           <v-select v-model="customerDraft.role" :items="customerRoleOptions" label="Rol" variant="solo-filled" flat
             hide-details class="notion-soft-input mb-4" />
-          <v-text-field v-model="customerDraft.password" label="Wachtwoord" type="password" variant="solo-filled" flat
-            hide-details class="notion-soft-input" />
+          <v-text-field v-model="customerDraft.password" label="Wachtwoord" autocomplete="password" :rules="passwordRules"
+          prepend-inner-icon="mdi-lock-outline" :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+          :type="showPassword ? 'text' : 'password'"
+          @click:append-inner="showPassword = !showPassword"
+          variant="solo-filled" flat hide-details="auto" />
+          <v-text-field ref="confirmFieldRef" v-model="customerDraft.password_confirmation" autocomplete="new-password" :type="showConfirm ? 'text' : 'password'"
+          prepend-inner-icon="mdi-lock-check-outline" :append-inner-icon="showConfirm ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+          hide-details="auto" class="mt-4" @click:append-inner="showConfirm = !showConfirm"
+          label="Bevestig Wachtwoord" :rules="confirmRules" variant="solo-filled" flat />
         </div>
-        <div class="dialog-actions u-gap-12">
+            <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable
+              class="auth-alert mx-6"
+              @click:close="error = ''">
+              {{ error }}
+            </v-alert>
+
+        <div class="dialog-actions u-gap-12 mt-5">
           <v-btn variant="text" @click="customerEditorOpen = false">Annuleren</v-btn>
           <v-btn class="entity-create-btn" @click="saveCustomerDraft">Opslaan</v-btn>
         </div>
@@ -756,6 +769,10 @@ const activeTab = ref('content')
 
 const loading = ref(false)
 const error = ref('')
+const showPassword = ref(false)
+const showConfirm = ref(false)
+const confirmFieldRef = ref(null)
+
 
 
 const search = ref('')
@@ -793,6 +810,44 @@ const projectId = ref(1)
 const articleId = ref(1)
 const customerId = ref(1)
 
+
+
+const nameRules = [
+  (v) => !!v || 'Uw naam is verplicht.',
+  (v) => (v?.trim()?.length ?? 0) >= 2 || 'De naam moet minimaal 2 tekens lang zijn,',
+]
+
+const emailRules = [
+  (v) => !!v || 'Het invullen van een email is verplicht',
+  (v) => /.+@.+\..+/.test(v) || 'Voer een geldige emailadres in.'
+]
+
+const phoneRules = [
+  (v) => {
+    const trimmed = v?.trim();
+    if (!trimmed) return true;
+    return trimmed.length >= 3 || 'Het telefoonnummer moet minimaal 3 cijfers lang zijn.';
+  },
+  (v) => {
+    const trimmed = v?.trim();
+    if (!trimmed) return true;
+    return /^\d+$/.test(trimmed) || 'Het telefoonnummer mag alleen uit cijfers bestaan.';
+  }
+]
+
+const passwordRules = [
+  (v) => !!v || 'Het invullen van een wachtwoord is verplicht.',
+  (v) => (v?.length ?? 0) >= 8 || 'Het wachtwoord moet minimaal 8 tekens lang zijn.',
+  (v) => /[A-Z]/.test(v) || 'Moet een hoofdletter bevatten.',
+  (v) => /[a-z]/.test(v) || 'Moet een kleine letter bevatten.',
+  (v) => /[\d\W]/.test(v) || 'Moet een getal of speciaal teken bevatten.',
+]
+
+const confirmRules = computed(() => [
+  (v) => !!v || 'Bevestig uw wachtwoord.',
+  (v) => v === customerDraft.password || 'Wachtwoorden komen niet overeen.'
+])
+
 const draft = reactive({
   id: null,
   name: '',
@@ -814,6 +869,7 @@ const customerDraft = reactive({
   address: '',
   role: 'customer',
   password: '',
+  password_confirmation: '',
 })
 
 const customersData = ref([])
@@ -823,6 +879,7 @@ const workspaceData = ref([])
 onMounted(async () => {
   await loadOverviewData()
 })
+
 
 const customerOnlyOptions = computed(() =>
   customerOnlyRecords.value.map((customer) => ({
@@ -953,6 +1010,7 @@ function buildUserPayload() {
 
   if (customerDraft.password) {
     payload.password = customerDraft.password
+    payload.password_confirmation = customerDraft.password_confirmation
   }
 
   return payload

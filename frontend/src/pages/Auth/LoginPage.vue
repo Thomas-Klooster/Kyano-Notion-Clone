@@ -49,7 +49,6 @@
                 density="comfortable"
                 prepend-inner-icon="mdi-lock-outline"
                 :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                :rules="passwordRules"
                 hide-details="auto"
                 class="notion-soft-input"
                 @click:append-inner="showPassword = !showPassword"
@@ -135,13 +134,6 @@ const emailRules = [
   (v) => /.+@.+\..+/.test(v) || "Voer een emailadres in",
 ];
 
-const passwordRules = [
-  (v) => !!v || "Password is required",
-  (v) => (v?.length ?? 0) >= 8 || "Het wachtwoord moet minimaal 8 tekens lang zijn.",
-  (v) => /[A-Z]/.test(v) || "Het wachtwoord moet ten minste één hoofdletter bevatten.",
-  (v) => /[a-z]/.test(v) || "Het wachtwoord moet ten minste één kleine letter bevatten.",
-  (v) => /[\d\W]/.test(v) || "Het wachtwoord moet ten minste één cijfer of speciaal teken bevatten.",
-];
 
 const onSubmit = async () => {
   const { valid } = await formRef.value.validate();
