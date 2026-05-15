@@ -20,7 +20,7 @@ class AuthController extends Controller
     private function issueAuthTokens(User $user): array
     {
         return [
-            'accessToken' => $user->createToken('access-token', ['*'], now()->addMinutes(60))->plainTextToken,
+            'accessToken' => $user->createToken('access-token', ['*'], now()->addMinutes(90))->plainTextToken,
             'refreshToken' => $user->createToken('refresh-token', ['*'], now()->addDays(30))->plainTextToken,
         ];
     }

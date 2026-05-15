@@ -2174,6 +2174,7 @@ body {
   gap: 8px;
   color: var(--color-text-muted);
   font-size: 0.88rem;
+  margin-bottom: 11px;
 }
 
 .tree-row-side {
@@ -3967,6 +3968,25 @@ body {
   box-shadow: 0 2px 8px rgba(36, 161, 199, 0.22);
   letter-spacing: 0.02em;
 }
+
+
+.review-avatar {
+  width: 41px;
+  height: 41px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-600));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(36, 161, 199, 0.22);
+  letter-spacing: 0.02em;
+}
+
+
 
 .sidebar-profile-info {
   display: flex;

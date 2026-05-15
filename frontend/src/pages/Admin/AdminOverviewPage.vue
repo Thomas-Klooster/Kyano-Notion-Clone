@@ -649,21 +649,192 @@
       <div class="studio-toolbox">
 
 
+        <div class="studio-toolbar">
+<v-menu v-model="filterMenu"
+         :close-on-content-click="true"
+         location="bottom start">
 
+  <template #activator="{ props }">
+    <button v-bind="props"
+           icon
+           variant="outlined"
+           size="small">
+      <v-badge :model-value="activeFilter !== 'All'"
+               dot color="primary">
+        <v-icon>mdi-filter</v-icon>
+      </v-badge>
+    </button>
+  </template>
 
-                <div class="studio-layout">
-                <aside class="studio-tree-panel" style="max-height: 120vh; overflow-y: auto;">
+  <v-list density="compact"
+          :selected="[activeFilter]"
+          @update:selected="activeFilter = $event[0]">
+    <v-list-item v-for="opt in filterOptions"
+                  :key="opt.value"
+                  :value="opt.value"
+                  :prepend-icon="opt.icon"
+                  :title="opt.label" />
+  </v-list>
+</v-menu>          <!-- <select v-model="selectedCustomer" :items="customerOptions" item-title="title" item-value="value"
+          variant="solo-filled" density="comfortable" flat hide-details class="studio-toolbar-select">
+        </select> -->
+
+        <div class="search-field studio-search-field studio-toolbar-search">
+            <v-icon size="18">mdi-magnify</v-icon>
+            <input v-model="reviewSearch" type="text"
+            placeholder="Zoek op artikel, klant of feedback..." />
+          </div>
+
+          <div class="studio-toolbar-spacer" />
+        </div>
+    </div>
+            <div class="studio-layout">                
+            <aside class="studio-tree-panel" style="max-height: 120vh; overflow-y: auto;">
               <div class="panel-section-head">
               <div class="panel-kicker">Lijst</div>
               <h3 class="review-title">Beoordelingen</h3>
-              </div>
+              </div> 
+
               
 
-                </aside>
+            <div v-if="filteredReviewRecords.length" class="tree-list">
+              <article v-for="review in filteredReviewRecords" :key="review.id"
+                class="tree-card card card-elevated card-rounded-xl">
+                <div class="tree-row tree-row-root"
+                  :class="{ 'tree-row--selected': selectedReviewId === review.id }">
+                  <button class="tree-row-trigger" @click="selectReview(review.id)">
+                    <div class="tree-row-main u-min-w-0">
+              <div class="review-avatar">{{ review.reviewerInitials }}</div>
+                  <div class="tree-row-info">
+                        <div class="tree-row-title">{{ review.articleTitle }}</div>
+                        <div class="tree-row-meta">
+                          <span>{{ review.reviewerName }}</span>
+                          <span class="dot">•</span>
+                          <span>{{ reviewHelpfulLabel(review) }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                  <div class="tree-row-side">
+                    <v-chip size="small" class="entity-chip">
+                      {{ review.createdAt || review.updatedAt || 'Geen datum' }}
+                    </v-chip>
+                  </div>
                 </div>
-      </div>
-    </section>
-    
+              </article>
+            </div>
+
+            <div v-else class="empty-state compact-empty">
+              <div class="empty-state-icon icon-box">
+                <v-icon size="24">mdi-comment-outline</v-icon>
+              </div>
+              <h3>Geen feedback gevonden</h3>
+              <p>Pas je zoekopdracht of filter aan om beoordelingen te tonen.</p>
+            </div>
+          </aside>
+
+          <section class="studio-detail-panel" style="max-height: 120vh; overflow-y: auto;">
+            <template v-if="selectedReviewRecord">
+              <div class="detail-head">
+                <div>
+                  <div class="section-kicker">Feedback</div>
+                  <h3 class="detail-title">{{ selectedReviewRecord.articleTitle }}</h3>
+                  <p class="detail-subtitle">Feedback van {{ selectedReviewRecord.reviewerName }}.</p>
+                </div>
+              </div>
+
+              <div class="detail-grid">
+                <article class="detail-card card card-rounded-xl">
+                  <div class="detail-card-head">
+                    <div class="panel-kicker">Artikel</div>
+                    <h4 class="panel-title">Artikelinformatie</h4>
+                  </div>
+                  <div class="detail-meta-grid">
+                    <div class="meta-item">
+                      <span class="meta-label">Titel</span>
+                      <span class="meta-value">{{ selectedReviewRecord.articleTitle }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <span class="meta-label">Workspace</span>
+                      <span class="meta-value">{{ selectedReviewRecord.workspaceName || '-' }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <span class="meta-label">Categorie</span>
+                      <span class="meta-value">{{ selectedReviewRecord.categoryName || '-' }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <span class="meta-label">Project</span>
+                      <span class="meta-value">{{ selectedReviewRecord.projectName || '-' }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <span class="meta-label">Status</span>
+                      <span class="meta-value">{{ selectedReviewRecord.articleStatus }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <span class="meta-label">Laatst gewijzigd</span>
+                    <span class="meta-value">{{ selectedReviewRecord.articleUpdatedAt || '-' }}</span>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="detail-card card card-rounded-xl">
+                  <div class="detail-card-head">
+                    <div class="panel-kicker">Afzender</div>
+                    <h4 class="panel-title">Klantinformatie</h4>
+                  </div>
+                  <div class="detail-meta-grid">
+                    <div class="meta-item">
+                      <span class="meta-label">Naam</span>
+                      <span class="meta-value">{{ selectedReviewRecord.reviewerName }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <span class="meta-label">E-mail</span>
+                      <span class="meta-value">{{ selectedReviewRecord.reviewerEmail || '-' }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <span class="meta-label">Beoordeling</span>
+                      <span class="meta-value">{{ reviewHelpfulLabel(selectedReviewRecord) }}</span>
+                    </div>
+                    <div class="meta-item">
+                      <span class="meta-label">Verzonden op</span>
+                      <span class="meta-value">{{ selectedReviewRecord.createdAt || selectedReviewRecord.updatedAt || '-' }}</span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+
+              <article class="detail-card card card-rounded-xl child-list-card">
+                <div class="detail-card-head child-list-head">
+                  <div>
+                    <div class="panel-kicker">Feedback</div>
+                    <h4 class="panel-title">Ingezonden bericht</h4>
+                  </div>
+                </div>
+
+                <div class="review-feedback-box">
+                  <div class="entity-meta" style="margin-bottom: 12px;">
+                    <span>{{ reviewHelpfulLabel(selectedReviewRecord) }}</span>
+                    <span class="dot">•</span>
+                    <span>{{ selectedReviewRecord.createdAt || selectedReviewRecord.updatedAt || '-' }}</span>
+                  </div>
+                  <p class="detail-description mb-0">
+                    {{ selectedReviewRecord.hasFeedbackText ? selectedReviewRecord.feedbackText : 'Geen extra tekstfeedback ingevuld.' }}
+                  </p>
+                </div>
+              </article> 
+            </template>
+
+            <div v-else class="empty-detail-state">
+              <div class="empty-state-icon icon-box">
+                <v-icon size="24">mdi-comment-text-outline</v-icon>
+              </div>
+              <h3>Selecteer feedback</h3>
+              <p>Kies links een feedbackitem om de artikelinformatie en het bericht te bekijken.</p>
+            </div>
+          </section>
+        </div>
+      </section>
+
 
 
         
@@ -794,8 +965,11 @@
 <script setup>
 import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { getFeedbacks } from '@/services/articleService'
 import { getAdminWorkspaces } from '@/services/workspaceService'
 import { deleteUser, getAdminUsers, postUser, updateUser } from '@/services/userService'
+
+
 
 const activeTab = ref('content')
 
@@ -806,6 +980,7 @@ const showConfirm = ref(false)
 
 const search = ref('')
 const customerSearch = ref('')
+const reviewSearch = ref('')
 const selectedCustomer = ref(null)
 const selectedKind = ref('Alles')
 const router = useRouter()
@@ -826,6 +1001,7 @@ const customerDeleteOpen = ref(false)
 const customerDialogMode = ref('create')
 const selectedCustomerCrudId = ref(null)
 const customerDeleteId = ref(null)
+const selectedReviewId = ref(null)
 
 const selectedEntityType = ref('workspace')
 const selectedWorkspaceId = ref(null)
@@ -839,6 +1015,24 @@ const projectId = ref(1)
 const articleId = ref(1)
 const customerId = ref(1)
 
+
+const filterMenu = ref(false)
+const activeFilter = ref('All')
+
+const filterOptions = [
+  { value: 'A-Z',      label: 'A-Z', icon: 'mdi-arrow-up' },
+  { value: 'Z-A',   label: 'Z-A',   icon: 'mdi-arrow-down' },
+  { value: 'Gelezen',  label: 'Gelezen',  icon: 'mdi-email-check' },
+  { value: 'Ongelezen', label: 'Ongelezen', icon: 'mdi-email-alert' },
+
+]
+
+const getCustomerInitials = (name) => {
+  if (!name) return '?'
+  const parts = name.trim().split(' ')
+  if (parts.length === 1) return parts[0][0].toUpperCase()
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+}
 
 
 const nameRules = [
@@ -904,6 +1098,7 @@ const customerDraft = reactive({
 const customersData = ref([])
 
 const workspaceData = ref([])
+const reviewRecords = ref([])
 
 onMounted(async () => {
   await loadOverviewData()
@@ -1027,6 +1222,50 @@ function normalizeCustomer(user) {
   }
 }
 
+function flattenArticles(workspaces) {
+  return workspaces.flatMap((workspace) =>
+    workspace.categories.flatMap((category) =>
+      category.projects.flatMap((project) =>
+        project.articles.map((article) => ({
+          ...article,
+          workspaceId: workspace.id,
+          workspaceName: workspace.name,
+          categoryId: category.id,
+          categoryName: category.name,
+          projectId: project.id,
+          projectName: project.name,
+        })),
+      ),
+    ),
+  )
+}
+
+function normalizeReviewRecord(feedback, article) {
+  const reviewerName = safeText(feedback.user?.name, 'Onbekende klant')
+  const reviewerEmail = safeText(feedback.user?.email)
+  const feedbackText = safeText(feedback.feedback)
+
+  return {
+    id: feedback.id,
+    articleId: article.id,
+    articleTitle: safeText(article.title, 'Ongetiteld artikel'),
+    articleStatus: safeText(article.status, 'Draft'),
+    articleUpdatedAt: safeText(article.updated_at),
+    workspaceName: safeText(article.workspaceName),
+    categoryName: safeText(article.categoryName),
+    projectName: safeText(article.projectName),
+    reviewerId: feedback.user_id,
+    reviewerName,
+    reviewerEmail,
+    reviewerInitials: getCustomerInitials(reviewerName),
+    helpful: feedback.helpful,
+    feedbackText,
+    hasFeedbackText: Boolean(feedbackText),
+    createdAt: safeText(feedback.created_at),
+    updatedAt: safeText(feedback.updated_at),
+  }
+}
+
 function buildUserPayload() {
   const payload = {
     company: customerDraft.companyName,
@@ -1082,6 +1321,7 @@ function syncLocalCounters() {
 function initializeSelection() {
   const firstWorkspace = workspaceData.value[0] ?? null
   const firstCustomer = customersData.value[0] ?? null
+  const firstReview = reviewRecords.value[0] ?? null
 
   if (firstWorkspace) {
     selectedEntityType.value = 'workspace'
@@ -1095,6 +1335,7 @@ function initializeSelection() {
   }
 
   selectedCustomerCrudId.value = firstCustomer?.id ?? null
+  selectedReviewId.value = firstReview?.id ?? null
 }
 
 async function loadOverviewData() {
@@ -1109,6 +1350,7 @@ async function loadOverviewData() {
 
     workspaceData.value = extractCollection(workspacesResponse).map(normalizeWorkspace)
     customersData.value = extractCollection(usersResponse).map(normalizeCustomer)
+    reviewRecords.value = await loadReviewRecords(workspaceData.value)
 
     syncLocalCounters()
     initializeSelection()
@@ -1117,6 +1359,39 @@ async function loadOverviewData() {
   } finally {
     loading.value = false
   }
+}
+
+async function loadReviewRecords(workspaces) {
+  const articleMap = new Map(
+    flattenArticles(workspaces).map((article) => [article.id, article]),
+  )
+
+  const feedbacks = extractCollection(await getFeedbacks())
+
+  return feedbacks
+    .map((feedback) => {
+      const article = articleMap.get(feedback.article_id)
+
+      if (!article) {
+        const apiArticle = feedback.article ?? {}
+        return normalizeReviewRecord(feedback, {
+          id: feedback.article_id,
+          title: safeText(apiArticle.title, 'Ongetiteld artikel'),
+          status: safeText(apiArticle.status, 'Draft'),
+          updated_at: safeText(apiArticle.updated_at),
+          workspaceName: safeText(apiArticle.workspace?.name),
+          projectName: safeText(apiArticle.project?.name),
+          categoryName: '',
+        })
+      }
+
+      return normalizeReviewRecord(feedback, article)
+    })
+    .sort((a, b) => {
+      const first = a.createdAt || a.updatedAt || ''
+      const second = b.createdAt || b.updatedAt || ''
+      return second.localeCompare(first)
+    })
 }
 
 function toggleWorkspaceCustomerAccess(workspaceId, customerId, enabled) {
@@ -1173,8 +1448,38 @@ const filteredCustomers = computed(() => {
   })
 })
 
+const filteredReviewRecords = computed(() => {
+  const q = reviewSearch.value.trim().toLowerCase()
+
+  let records = reviewRecords.value.filter((review) => {
+    if (!q) return true
+
+    return (
+      safeText(review.articleTitle).toLowerCase().includes(q) ||
+      safeText(review.reviewerName).toLowerCase().includes(q) ||
+      safeText(review.reviewerEmail).toLowerCase().includes(q) ||
+      safeText(review.projectName).toLowerCase().includes(q) ||
+      safeText(review.categoryName).toLowerCase().includes(q) ||
+      safeText(review.workspaceName).toLowerCase().includes(q) ||
+      safeText(review.feedbackText).toLowerCase().includes(q)
+    )
+  })
+
+  if (activeFilter.value === 'A-Z') {
+    records = [...records].sort((a, b) => a.articleTitle.localeCompare(b.articleTitle))
+  } else if (activeFilter.value === 'Z-A') {
+    records = [...records].sort((a, b) => b.articleTitle.localeCompare(a.articleTitle))
+  }
+
+  return records
+})
+
 const selectedCustomerRecord = computed(() =>
   customersData.value.find((customer) => customer.id === selectedCustomerCrudId.value) ?? null
+)
+
+const selectedReviewRecord = computed(() =>
+  reviewRecords.value.find((review) => review.id === selectedReviewId.value) ?? null
 )
 
 const customerDeleteTarget = computed(() =>
@@ -1769,6 +2074,16 @@ function resetCustomerDraft() {
 
 function selectCustomer(id) {
   selectedCustomerCrudId.value = id
+}
+
+function selectReview(id) {
+  selectedReviewId.value = id
+}
+
+function reviewHelpfulLabel(review) {
+  if (review?.helpful === true) return 'Positief'
+  if (review?.helpful === false) return 'Negatief'
+  return 'Feedback'
 }
 
 function openCustomerCreateDialog() {

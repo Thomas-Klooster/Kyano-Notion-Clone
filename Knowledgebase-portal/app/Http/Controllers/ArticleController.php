@@ -11,6 +11,7 @@ use App\Models\Attachment;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Models\Project;
 use App\Models\Article;
+use App\Models\Feedback;
 use App\Http\Requests\ArticleRequest;
 use App\Http\Requests\FeedbackRequest;
 class ArticleController extends Controller
@@ -121,7 +122,24 @@ public function show(Article $article)
 
     public function adminFeedbacks(Article $article) {
         $this->authorize('viewAny', Article::class);
-        $feedbacks = $article->feedbacks()->with('users')->latest()->get();
+        $feedbacks = $article->feedbacks()->with('user')->latest()->get();
+        return response()->json($feedbacks);
+    }
+
+    public function adminAllFeedbacks()
+    {
+        $this->authorize('viewAny', Article::class);
+
+        $feedbacks = Feedback::query()
+            ->with([
+                'user:id,name,email',
+                'article:id,title,slug,status,updated_at,project_id,workspace_id',
+                'article.project:id,name',
+                'article.workspace:id,name',
+            ])
+            ->latest()
+            ->get();
+
         return response()->json($feedbacks);
     }
     

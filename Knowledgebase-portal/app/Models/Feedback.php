@@ -31,5 +31,9 @@ class Feedback extends Model
     return $this->belongsTo(Article::class);
     }
 
+    public function articles() {
+        return $this->belongsTo(Article::class);
+    }
+
 
 }

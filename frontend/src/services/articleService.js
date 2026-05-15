@@ -24,12 +24,13 @@ export const postFeedback = async (articleSlug, payload) => {
     return data;
 }
 
-export const getArticleFeedbacks = async (articleId) => {
-    const { data } = await api.get(`admin/articles/${articleId}/feedbacks`);
+export const getArticleFeedbacks = async (articleSlug) => {
+    const { data } = await api.get(`admin/articles/${articleSlug}/feedbacks`);
     return data;
 }
+
 export const getFeedbacks = async () => {
-    const { data } = await api.get('feedback')
+    const { data } = await api.get('admin/feedbacks')
     return data;
 }
 
