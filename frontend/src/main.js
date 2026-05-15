@@ -22,14 +22,6 @@ import { createVuetify } from 'vuetify'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import '@mdi/font/css/materialdesignicons.css'
 
-// Fonts
-import '@fontsource/roboto/100.css'
-import '@fontsource/roboto/300.css'
-import '@fontsource/roboto/400.css'
-import '@fontsource/roboto/500.css'
-import '@fontsource/roboto/700.css'
-import '@fontsource/roboto/900.css'
-
 const app = createApp(App)
 
 const pinia = createPinia()
@@ -63,6 +55,15 @@ window.addEventListener(AUTH_SESSION_EXPIRED_EVENT, async () => {
   }
 })
 
-auth.fetchUser().finally(() => {
-app.mount('#app')  
-})
+async function bootstrap() {
+  try {
+    await auth.refresh()
+    await auth.fetchUser()
+  } catch (e) {
+    auth.clearSession()
+  } finally {
+    app.mount('#app')
+  }
+}
+
+bootstrap()

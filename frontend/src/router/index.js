@@ -1,25 +1,5 @@
-import Home from '@/pages/Portal/DashboardPage.vue'
-import ProfilePage from '@/pages/Portal/ProfilePage.vue'
-import NotFoundComponent from '@/views/NotFoundComponent.vue'
-// AUTH
-import LoginPage from '@/pages/Auth/LoginPage.vue'
-import RegisterPage from '@/pages/Auth/RegisterPage.vue'
-import ForgotPasswordPage from '@/pages/Auth/ForgotPasswordPage.vue'
-import ResetPasswordPage from '@/pages/Auth/ResetPasswordPage.vue'
-
-// ADMIN
-import AdminOverviewPage from '@/pages/Admin/AdminOverviewPage.vue'
-// import CustomersPage from '@/pages/Admin/Customers/CustomersPage.vue'
-// import CustomerFormPage from '@/pages/Admin/Customers/CustomerFormPage.vue'
-// import ProjectsPage from '@/pages/Admin/Projects/ProjectsPage.vue'
-// import ProjectFormPage from '@/pages/Admin/Projects/ProjectFormPage.vue'
-// import ProjectDetailPage from '@/pages/Admin/Projects/ProjectDetailPage.vue'
-// import WorkspacesPage from '@/pages/Admin/Workspaces/WorkspacesPage.vue'
-// import CategoriesPage from '@/pages/Admin/Categories/CategoriesPage.vue'
-
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-// import CategoriesFormPage from '@/pages/Admin/Categories/CategoriesFormPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,7 +8,7 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'Not Found',
-      component: NotFoundComponent,
+      component: () => import('@/views/NotFoundComponent.vue'),
     },
 
     {
@@ -70,7 +50,7 @@ const router = createRouter({
     {
       path: '/profile',
       name: 'profile',
-      component: ProfilePage,
+      component: () => import('@/pages/Portal/ProfilePage.vue'),
       meta: { requiresAuth: true, breadcrumb: 'Profiel' },
     },
     {
@@ -85,23 +65,28 @@ const router = createRouter({
     {
       path: '/auth',
       children: [
-        { path: 'login', name: 'login', component: LoginPage, meta: { guestOnly: true, breadcrumb: 'Login' } },
+        {
+          path: 'login',
+          name: 'login',
+          component: () => import('@/pages/Auth/LoginPage.vue'),
+          meta: { guestOnly: true, breadcrumb: 'Login' },
+        },
         {
           path: 'register',
           name: 'register',
-          component: RegisterPage,
+          component: () => import('@/pages/Auth/RegisterPage.vue'),
           meta: { guestOnly: true, breadcrumb: 'Register' },
         },
         {
           path: 'forgot-password',
           name: 'forgot-password',
-          component: ForgotPasswordPage,
+          component: () => import('@/pages/Auth/ForgotPasswordPage.vue'),
           meta: { guestOnly: true, breadcrumb: 'Forgot Password' },
         },
         {
           path: 'reset-password',
           name: 'reset-password',
-          component: ResetPasswordPage,
+          component: () => import('@/pages/Auth/ResetPasswordPage.vue'),
           meta: { guestOnly: true, breadcrumb: 'Reset Password' },
         },
       ],
@@ -114,7 +99,7 @@ const router = createRouter({
         {
           path: '',
           name: 'admin-overview',
-          component: AdminOverviewPage,
+          component: () => import('@/pages/Admin/AdminOverviewPage.vue'),
         },
       //   {
       //     path: 'customers',
@@ -195,7 +180,7 @@ const router = createRouter({
           meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Article editor page' },
         },
         {
-          path: '/articles/:slug',
+          path: 'articles/:slug',
           name: 'article-preview',
           component: () => import('@/pages/Portal/ArticlePreviewPage.vue'),
           meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Article preview' },
@@ -209,7 +194,7 @@ router.beforeEach(async (to) => {
   const auth = useAuthStore()
 
   if (!auth.initialized) {
-    await auth.fetchUser()
+    return true
   }
 
   if (to.meta.requiresAuth && !auth.isAuthenticated) {

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\Cookie;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,13 @@ use App\Mail\OtpMail;
 
 class AuthController extends Controller
 {
+    private function issueAuthTokens(User $user): array
+    {
+        return [
+            'accessToken' => $user->createToken('access-token', ['*'], now()->addMinutes(60))->plainTextToken,
+            'refreshToken' => $user->createToken('refresh-token', ['*'], now()->addDays(30))->plainTextToken,
+        ];
+    }
 
     public function register(RegisterRequest $request) {
         $data = $request->validated();
@@ -29,38 +37,33 @@ class AuthController extends Controller
             'address' => $data['address']
             ]);
         Auth::login($user);
-
-        $accessToken = $user->createToken('access-token', ['*'], now()->addMinutes(60))->plainTextToken;
-        $refreshToken = $user->createToken('refresh-token', ['*'], now()->addMinutes(60))->plainTextToken;
+        $request->session()->regenerate();
+        $tokens = $this->issueAuthTokens($user);
 
         return response()->json([
             'message' => 'Geregistreerd!',
             'user'=> $user,
-            'accessToken' => $accessToken,
-            'refreshToken' => $refreshToken
+            'accessToken' => $tokens['accessToken'],
+            'refreshToken' => $tokens['refreshToken'],
         ], 201);
     }
 
     public function refresh(Request $request) {
-    $refreshToken = $request->input('refreshToken');
-    $token = PersonalAccessToken::findToken($refreshToken);
+            $refreshToken = $request->input('refreshToken');
+        $token = $refreshToken ? PersonalAccessToken::findToken($refreshToken) : null;
 
-    if (!$token || $token->expires_at->isPast()) {
-        return response()->json(['message' => 'token verlopen'], 401);
-    }
+        if (!$token || $token->name !== 'refresh-token' || ($token->expires_at && $token->expires_at->isPast())) {
+            return response()->json(['message' => 'token verlopen'], 401);
+        }
 
         $user = $token->tokenable;
         $token->delete();
+        $tokens = $this->issueAuthTokens($user);
 
-        $accessToken = $user->createToken('access-token', ['*'], now()->addMinutes(60))->plainTextToken;
-        $refreshToken = $user->createToken('refresh-token', ['*'], now()->addDays(30))->plainTextToken;
-
-        return response([
-        'accessToken' => $accessToken,
-        'refreshToken' => $refreshToken,
+        return response()->json([
+            'accessToken' => $tokens['accessToken'],
+            'refreshToken' => $tokens['refreshToken'],
         ]);
-
-
     }
 
    public function login(LoginRequest $request)
@@ -71,30 +74,33 @@ class AuthController extends Controller
     }
 
         $user = Auth::user();
-
-        $accessToken = $user->createToken('access-token', ['*'], now()->addMinutes(60))->plainTextToken;
-        $refreshToken = $user->createToken('refresh-token', ['*'], now()->addDays(30))->plainTextToken;
+        $request->session()->regenerate();
+        $tokens = $this->issueAuthTokens($user);
 
     
     return response()->json([
         'message' => 'Ingelogd!',
         'user' => Auth::user(),
-        'accessToken' => $accessToken,
-        'refreshToken' => $refreshToken,
+        'accessToken' => $tokens['accessToken'],
+        'refreshToken' => $tokens['refreshToken'],
         ]);
 
 }
 
 public function logout(Request $request) {
-
     if ($request->user()) {
     $request->user()->tokens()->delete();
     }
 
+    Auth::guard('web')->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
     return response()->json([
         'success' => true,
         'message' => 'Succesvol uitgelogd!'
-    ]);
+    ])->withoutCookie(Cookie::create('XSRF-TOKEN'))
+      ->withoutCookie(Cookie::create(config('session.cookie')));
 
     }    
 

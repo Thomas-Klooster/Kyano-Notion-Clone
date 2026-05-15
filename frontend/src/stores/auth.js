@@ -21,23 +21,40 @@ export const useAuthStore = defineStore('auth', {
     clearSession() {
       this.user = null;
       this.initialized = true;
-      localStorage.clear();
     },
-  
-
-    async fetchUser() {
+    async refresh() {
       try {
-        const { data } = await api.get('/me');
-        this.user = data;
-        return data;
+        const refreshToken = localStorage.getItem('refreshToken')
+
+        if (!refreshToken) {
+          return false
+        }
+
+        const { data } = await api.post('/auth/refresh', { refreshToken })
+        localStorage.setItem('accessToken', data.accessToken)
+        localStorage.setItem('refreshToken', data.refreshToken)
+        return true
       } catch {
-        this.user = null;
-        return null;
-      } finally {
-        this.initialized = true;
+        return false
       }
     },
+    
 
+    async fetchUser() {
+      this.loading = true
+    
+      try {
+        const { data } = await api.get('/me')
+        this.user = data
+        return data
+      } catch {
+        this.user = null
+        return null
+      } finally {
+        this.loading = false
+        this.initialized = true
+      }
+    },
     
     async logout() {
       try {
@@ -48,15 +65,15 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async forgotPassword(email) {
-      return api.post('/api/forgot-password', { email })
+      return api.post('/forgot-password', { email })
     },
 
     async verifyOtp(email, otp) {
-      return api.post('/api/verify-otp', { email, otp })
+      return api.post('/verify-otp', { email, otp })
     },
 
     async setNewPassword(payload) {
-      return api.post('/api/newPassword', payload)
+      return api.post('/reset-password', payload)
     },
   },
 })
