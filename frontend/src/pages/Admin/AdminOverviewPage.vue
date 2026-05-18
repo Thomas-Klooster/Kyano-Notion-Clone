@@ -924,22 +924,23 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="deleteOpen" max-width="520">
-      <v-card class="dialog-card card card-rounded-xl" rounded="xl">
-        <div class="dialog-head">
-          <div>
-            <div class="section-kicker">Verwijderen</div>
-            <h3 class="dialog-title">Weet je het zeker?</h3>
-          </div>
+    <v-dialog v-model="deleteOpen" max-width="396">
+      <v-card class="delete-modal">
+        <div class="delete-modal-head">
+          <span class="delete-modal-icon" aria-hidden="true">
+            <v-icon size="30">mdi-alert-circle-outline</v-icon>
+          </span>
         </div>
-        <div class="dialog-body">
-          <p class="detail-description mb-0">
-            Je staat op het punt om <strong>{{ deleteTarget?.name || deleteTarget?.title }}</strong> te verwijderen.
-          </p>
+
+        <div class="delete-modal-body">
+          <h3 class="delete-modal-title">{{ deleteTarget?.name || deleteTarget?.title }} verwijderen?</h3>
+          <p class="delete-modal-content">Weet je zeker dat je {{ deleteTarget?.name || deleteTarget?.title }} wilt verwijderen?</p>
+          <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>
-        <div class="u-gap-12 dialog-footer">
-          <v-btn variant="text" @click="deleteOpen = false">Annuleren</v-btn>
-          <v-btn color="#DC3545" @click="confirmDelete">Verwijderen</v-btn>
+
+        <div class="delete-modal-footer">
+          <button class="delete-modal-btn delete-modal-btn--secondary" type="button" @click="deleteOpen = false">Annuleren</button>
+          <button class="delete-modal-btn delete-modal-btn--warning" type="button" @click="confirmDelete">Verwijderen</button>
         </div>
       </v-card>
     </v-dialog>
@@ -988,37 +989,47 @@
       </v-card>
     </v-dialog>
 
-<v-dialog v-model="customerDeleteOpen" max-width="455">
-  <v-card class="dialog-card card card-rounded-xl" rounded="xl" style="overflow: hidden;">
-    <div class="delete-modal-inner">
-      <v-icon size="50" color="#DC3545" style="display:block; margin: 0 auto 12px;">mdi-alert-outline</v-icon>
-      <h3 class="delete-modal-title">Verwijder {{ customerDeleteTarget?.companyName }}?</h3>
-      <p class="delete-modal-body">
-        Je staat op het punt om <strong>{{ customerDeleteTarget?.companyName }}</strong> te verwijderen. Dit kan niet ongedaan worden gemaakt.
-      </p>
-      <div class="delete-modal-actions">
-        <button class="cancel-modal-button" variant="outlined" @click="customerDeleteOpen = false">Annuleren</button>
-        <button class="delete-modal-button" @click="confirmCustomerDelete">Verwijderen</button>
-      </div>
-    </div>
-  </v-card>
-</v-dialog>
+    <v-dialog v-model="customerDeleteOpen" max-width="396">
+      <v-card class="delete-modal" rounded="xl">
+        <div class="delete-modal-head">
+          <span class="delete-modal-icon" aria-hidden="true">
+            <v-icon size="30">mdi-alert-circle-outline</v-icon>
+          </span>
+        </div>
 
-<v-dialog v-model="reviewDeleteOpen" max-width="455">
-  <v-card class="dialog-card card card-rounded-xl" rounded="xl" style="overflow: hidden;">
-    <div class="delete-modal-inner">
-      <v-icon size="50" color="#DC3545" style="display:block; margin: 0 auto 12px;">mdi-alert-outline</v-icon>
-      <h3 class="delete-modal-title">Verwijder feedback van {{ reviewDeleteTarget?.reviewerName }}?</h3>
-      <p class="delete-modal-body">
-        Je staat op het punt om de feedback voor <strong>{{ reviewDeleteTarget?.articleTitle }}</strong> te verwijderen. Dit kan niet ongedaan worden gemaakt.
-      </p>
-      <div class="delete-modal-actions">
-        <button class="cancel-modal-button" variant="outlined" @click="reviewDeleteOpen = false">Annuleren</button>
-        <button class="delete-modal-button" @click="confirmReviewDelete">Verwijderen</button>
-      </div>
-    </div>
-  </v-card>
-</v-dialog>
+        <div class="delete-modal-body">
+          <h3 class="delete-modal-title">{{ customerDeleteTarget?.companyName }} verwijderen?</h3>
+          <p class="delete-modal-content">Weet je zeker dat je {{ customerDeleteTarget?.companyName }} wilt verwijderen?</p>
+          <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
+        </div>
+
+        <div class="delete-modal-footer">
+          <button class="delete-modal-btn delete-modal-btn--secondary" type="button" @click="customerDeleteOpen = false">Annuleren</button>
+          <button class="delete-modal-btn delete-modal-btn--warning" type="button" @click="confirmCustomerDelete">Verwijderen</button>
+        </div>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="reviewDeleteOpen" max-width="396">
+      <v-card class="delete-modal" rounded="xl">
+        <div class="delete-modal-head">
+          <span class="delete-modal-icon" aria-hidden="true">
+            <v-icon size="30">mdi-alert-circle-outline</v-icon>
+          </span>
+        </div>
+
+        <div class="delete-modal-body">
+          <h3 class="delete-modal-title">Feedback verwijderen?</h3>
+          <p class="delete-modal-content">Weet je zeker dat je de feedback voor {{ reviewDeleteTarget?.articleTitle }} wilt verwijderen?</p>
+          <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
+        </div>
+
+        <div class="delete-modal-footer">
+          <button class="delete-modal-btn delete-modal-btn--secondary" type="button" @click="reviewDeleteOpen = false">Annuleren</button>
+          <button class="delete-modal-btn delete-modal-btn--warning" type="button" @click="confirmReviewDelete">Verwijderen</button>
+        </div>
+      </v-card>
+    </v-dialog>
 </div>
 </template>
 
