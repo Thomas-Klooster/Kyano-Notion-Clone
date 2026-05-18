@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->boolean('helpful');
             $table->text('feedback')->nullable();
+            $table->boolean('is_read')->default(false);
             $table->timestamps();
         });
     }

@@ -511,6 +511,7 @@ body {
   background: var(--color-bg-chip);
   color: #44403c;
   border: 1px solid var(--color-border-muted);
+  margin-bottom: 8.5px;
 }
 
 .empty-state {
@@ -2486,7 +2487,10 @@ body {
   align-items: center;
 }
 
-.delete-btn { color: #da0000 !important; }
+.delete-btn {
+ color: #da0000 !important;
+ font-weight: 600;
+}
 
 
 .cancel-modal-button {
@@ -2659,6 +2663,15 @@ body {
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
+}
+
+.rating-box {
+  display: flex;
+  justify-content: end;
+}
+
+.rating-result {
+  display: flex;
 }
 
 .useful-button {
@@ -3986,6 +3999,91 @@ body {
   letter-spacing: 0.02em;
 }
 
+.review-rating-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 2px;
+  border-radius: 999px;
+  color: var(--color-text-strong);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.review-rating-chip--up {
+  border-color: var(--color-brand-500);
+  color: var(--color-brand-500);
+}
+
+.review-rating-chip--down {
+  border-color: #284e5a;
+  color: var(--color-brand-600);
+}
+
+.review-rating-chip--neutral {
+  border-color: var(--color-border-default);
+  background: var(--color-bg-hover-soft);
+  color: var(--color-text-secondary);
+}
+
+.review-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.review-switcher-count {
+  min-width: 48px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+
+.review-feedback-box {
+  margin-top: 8px;
+  padding: 18px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-surface);
+}
+
+.review-row-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.review-read-chip {
+  font-weight: 700;
+}
+
+.review-read-chip--read {
+  color: #1c7c54;
+  background: rgba(28, 124, 84, 0.12);
+}
+
+.review-read-chip--unread {
+  color: #b54708;
+  background: rgba(245, 158, 11, 0.18);
+}
+
+.review-feedback-meta {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: var(--color-text-muted);
+}
+
+.review-feedback-text {
+  margin-top: 0;
+  color: var(--color-text-primary);
+}
+
 
 
 .sidebar-profile-info {
@@ -4332,6 +4430,3 @@ body {
     line-height: 1.2;
     font-weight: 700;
 }
-
-
-

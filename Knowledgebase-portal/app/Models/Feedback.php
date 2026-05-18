@@ -13,19 +13,18 @@ class Feedback extends Model
     'article_id',
     'user_id',
     'helpful',
-    'feedback'
+    'feedback',
+    'is_read',
     ];
 
     protected $casts = [
-       'created_at' => 'date:Y-m-d',
-       'updated_at' => 'date:Y-m-d',
+    'helpful' => 'boolean',
+    'is_read' => 'boolean',
     ];
 
-
-
-   public function user() {
-   return $this->belongsTo(User::class);
-   }
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
    
     public function article() {
     return $this->belongsTo(Article::class);
@@ -34,6 +33,4 @@ class Feedback extends Model
     public function articles() {
         return $this->belongsTo(Article::class);
     }
-
-
 }

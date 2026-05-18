@@ -40,7 +40,7 @@ protected function prepareForValidation()
 }
     public function messages() {
         return [
-        'helpful.required' => 'Beoordeel ons!',
+        'helpful.required' => 'Een beoordeling is nodig om te versturen!',
         ];
     }
 }

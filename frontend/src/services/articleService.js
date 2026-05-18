@@ -34,6 +34,18 @@ export const getFeedbacks = async () => {
     return data;
 }
 
+export const markFeedbackAsRead = async (feedbackId, isRead = true) => {
+    const { data } = await api.patch(`admin/feedbacks/${feedbackId}/read`, {
+        is_read: isRead,
+    })
+    return data
+}
+
+export const deleteFeedback = async (feedbackId) => {
+    const { data } = await api.delete(`admin/feedbacks/${feedbackId}`)
+    return data
+}
+
 export const updateArticle = async (articleId, payload) => {
     const { data } = await api.put(`admin/articles/${articleId}`, payload)
     return data;

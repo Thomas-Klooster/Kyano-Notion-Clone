@@ -111,10 +111,11 @@ public function show(Article $article)
     public function storeFeedback(FeedbackRequest $request, Article $article) {
     $this->authorize('view', $article);
     $data = $request->validated();
-    $feedback = $article->feedbacks()->updateOrCreate(
-        ['user_id' => auth()->id()],    
-        ['helpful' => $data['helpful'],
-         'feedback' => $data['feedback'],
+    $feedback = $article->feedbacks()->create([
+        'user_id' => auth()->id(),
+        'helpful' => $data['helpful'],
+        'feedback' => $data['feedback'],
+        'is_read' => false,
     ]);
     return response()->json($feedback, 201);
 }
@@ -141,6 +142,30 @@ public function show(Article $article)
             ->get();
 
         return response()->json($feedbacks);
+    }
+
+    public function markFeedbackAsRead(Request $request, Feedback $feedback)
+    {
+        $this->authorize('viewAny', Article::class);
+
+        $data = $request->validate([
+            'is_read' => ['sometimes', 'boolean'],
+        ]);
+
+        $feedback->update([
+            'is_read' => $data['is_read'] ?? true,
+        ]);
+
+        return response()->json($feedback->fresh());
+    }
+
+    public function destroyFeedback(Feedback $feedback)
+    {
+        $this->authorize('viewAny', Article::class);
+
+        $feedback->delete();
+
+        return response()->json(['deleted' => true]);
     }
     
     public function AdminIndex(Request $request)

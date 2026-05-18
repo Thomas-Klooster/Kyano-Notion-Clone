@@ -204,7 +204,7 @@ async function submitFeedback() {
         feedbackSent.value = true
         feedbackTitle.value = ''
     } catch (err) {
-        feedbackError.value = 'Beoordeel ons'
+        feedbackError.value = 'Een beoordeling is nodig om te versturen!'
     }
 }
 

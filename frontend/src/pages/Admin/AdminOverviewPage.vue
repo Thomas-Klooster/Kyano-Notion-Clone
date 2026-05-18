@@ -87,6 +87,7 @@
         @click="activeTab = 'Reviews'">
         <v-icon size="16" class="admin-tab-icon">mdi-comment-outline</v-icon>
         Feedback
+        <span class="admin-tab-count">{{ reviewRecords.length }}</span>
       </button> 
       </div>
 
@@ -643,7 +644,6 @@
         </div>
       </section>
 
-      <!-- Feedback Sectie (required frontend tho) -->
       <section v-if="activeTab === 'Reviews'" style="border-radius: 0 0 26px 26px !important"
       class="entity-card card card-elevated card-rounded-2xl studio-card">
       <div class="studio-toolbox">
@@ -675,9 +675,7 @@
                   :prepend-icon="opt.icon"
                   :title="opt.label" />
   </v-list>
-</v-menu>          <!-- <select v-model="selectedCustomer" :items="customerOptions" item-title="title" item-value="value"
-          variant="solo-filled" density="comfortable" flat hide-details class="studio-toolbar-select">
-        </select> -->
+</v-menu>
 
         <div class="search-field studio-search-field studio-toolbar-search">
             <v-icon size="18">mdi-magnify</v-icon>
@@ -709,16 +707,26 @@
                         <div class="tree-row-title">{{ review.articleTitle }}</div>
                         <div class="tree-row-meta">
                           <span>{{ review.reviewerName }}</span>
-                          <span class="dot">•</span>
-                          <span>{{ reviewHelpfulLabel(review) }}</span>
                         </div>
                       </div>
                     </div>
                   </button>
                   <div class="tree-row-side">
-                    <v-chip size="small" class="entity-chip">
-                      {{ review.createdAt || review.updatedAt || 'Geen datum' }}
-                    </v-chip>
+                    <div class="review-row-side">
+                      <v-icon size="20" :class="reviewHelpfulClass(review)">
+                        {{ reviewHelpfulIcon(review) }}
+                      </v-icon>
+                      <v-chip
+                        size="small"
+                        variant="tonal"
+                        class="review-read-chip"
+                        :class="reviewReadClass(review)">
+                        {{ reviewReadLabel(review) }}
+                      </v-chip>
+                      <v-chip size="small" class="entity-chip">
+                        {{ review.submittedAt || 'Geen datum' }}
+                      </v-chip>
+                    </div>
                   </div>
                 </div>
               </article>
@@ -738,9 +746,19 @@
               <div class="detail-head">
                 <div>
                   <div class="section-kicker">Feedback</div>
+                  
                   <h3 class="detail-title">{{ selectedReviewRecord.articleTitle }}</h3>
-                  <p class="detail-subtitle">Feedback van {{ selectedReviewRecord.reviewerName }}.</p>
+                  <p class="detail-subtitle">
+                    {{ articleReviewRecords.length }} feedback{{ articleReviewRecords.length === 1 ? '' : 's' }} voor dit artikel.
+                  </p>
                 </div>
+                <div class="entity-actions u-flex u-items-center u-wrap u-gap-10 detail-actions">
+                  <v-btn size="small" variant="text" class="delete-btn"
+                    @click="openReviewDeleteDialog(activeArticleReview.id)">
+                  Verwijder Feedback
+                </v-btn>
+                </div>
+
               </div>
 
               <div class="detail-grid">
@@ -772,7 +790,7 @@
                     </div>
                     <div class="meta-item">
                       <span class="meta-label">Laatst gewijzigd</span>
-                    <span class="meta-value">{{ selectedReviewRecord.articleUpdatedAt || '-' }}</span>
+                    <span class="meta-value">{{ selectedReviewRecord.articleUpdated_at || '-' }}</span>
                     </div>
                   </div>
                 </article>
@@ -785,19 +803,23 @@
                   <div class="detail-meta-grid">
                     <div class="meta-item">
                       <span class="meta-label">Naam</span>
-                      <span class="meta-value">{{ selectedReviewRecord.reviewerName }}</span>
+                      <span class="meta-value">{{ activeArticleReview.reviewerName }}</span>
                     </div>
                     <div class="meta-item">
                       <span class="meta-label">E-mail</span>
-                      <span class="meta-value">{{ selectedReviewRecord.reviewerEmail || '-' }}</span>
+                      <span class="meta-value">{{ activeArticleReview.reviewerEmail || '-' }}</span>
                     </div>
                     <div class="meta-item">
                       <span class="meta-label">Beoordeling</span>
-                      <span class="meta-value">{{ reviewHelpfulLabel(selectedReviewRecord) }}</span>
+                      <div class="meta-value">
+                        <span class="review-rating-chip" :class="reviewHelpfulClass(activeArticleReview)">
+                          <v-icon size="20">{{ reviewHelpfulIcon(activeArticleReview) }}</v-icon>
+                        </span>
+                      </div>
                     </div>
                     <div class="meta-item">
                       <span class="meta-label">Verzonden op</span>
-                      <span class="meta-value">{{ selectedReviewRecord.createdAt || selectedReviewRecord.updatedAt || '-' }}</span>
+                      <span class="meta-value">{{ activeArticleReview.submittedAt || '-' }}</span>
                     </div>
                   </div>
                 </article>
@@ -809,16 +831,33 @@
                     <div class="panel-kicker">Feedback</div>
                     <h4 class="panel-title">Ingezonden bericht</h4>
                   </div>
+                  <div v-if="articleReviewRecords.length > 1" class="review-switcher">
+                    <v-btn size="small" variant="text" @click="selectPreviousArticleReview">
+                      <v-icon size="16">mdi-chevron-left</v-icon>
+                    </v-btn>
+                    <span class="review-switcher-count">
+                      {{ activeArticleReviewIndex + 1 }} / {{ articleReviewRecords.length }}
+                    </span>
+                    <v-btn size="small" variant="text" @click="selectNextArticleReview">
+                      <v-icon size="16">mdi-chevron-right</v-icon>
+                    </v-btn>
+                  </div>
                 </div>
 
                 <div class="review-feedback-box">
-                  <div class="entity-meta" style="margin-bottom: 12px;">
-                    <span>{{ reviewHelpfulLabel(selectedReviewRecord) }}</span>
+                  <div class="entity-meta review-feedback-meta">
+                    <span class="review-rating-chip" :class="reviewHelpfulClass(activeArticleReview)">
+                      <v-icon size="18">{{ reviewHelpfulIcon(activeArticleReview) }}</v-icon>
+                    </span>
                     <span class="dot">•</span>
-                    <span>{{ selectedReviewRecord.createdAt || selectedReviewRecord.updatedAt || '-' }}</span>
+                    <span>{{ reviewReadLabel(activeArticleReview) }}</span>
+                    <span class="dot">•</span>
+                    <span>{{ activeArticleReview.reviewerName }}</span>
+                    <span class="dot">•</span>
+                    <span>{{ activeArticleReview.submittedAt || '-' }}</span>
                   </div>
-                  <p class="detail-description mb-0">
-                    {{ selectedReviewRecord.hasFeedbackText ? selectedReviewRecord.feedbackText : 'Geen extra tekstfeedback ingevuld.' }}
+                  <p class="detail-description review-feedback-text mb-0">
+                    {{ activeArticleReview.hasFeedbackText ? activeArticleReview.feedbackText : 'Geen extra tekstfeedback ingevuld.' }}
                   </p>
                 </div>
               </article> 
@@ -959,13 +998,30 @@
       </div>
     </div>
   </v-card>
-</v-dialog>  </div>
+</v-dialog>
+
+<v-dialog v-model="reviewDeleteOpen" max-width="455">
+  <v-card class="dialog-card card card-rounded-xl" rounded="xl" style="overflow: hidden;">
+    <div class="delete-modal-inner">
+      <v-icon size="50" color="#DC3545" style="display:block; margin: 0 auto 12px;">mdi-alert-outline</v-icon>
+      <h3 class="delete-modal-title">Verwijder feedback van {{ reviewDeleteTarget?.reviewerName }}?</h3>
+      <p class="delete-modal-body">
+        Je staat op het punt om de feedback voor <strong>{{ reviewDeleteTarget?.articleTitle }}</strong> te verwijderen. Dit kan niet ongedaan worden gemaakt.
+      </p>
+      <div class="delete-modal-actions">
+        <button class="cancel-modal-button" variant="outlined" @click="reviewDeleteOpen = false">Annuleren</button>
+        <button class="delete-modal-button" @click="confirmReviewDelete">Verwijderen</button>
+      </div>
+    </div>
+  </v-card>
+</v-dialog>
+</div>
 </template>
 
 <script setup>
 import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { getFeedbacks } from '@/services/articleService'
+import { deleteFeedback, getFeedbacks, markFeedbackAsRead } from '@/services/articleService'
 import { getAdminWorkspaces } from '@/services/workspaceService'
 import { deleteUser, getAdminUsers, postUser, updateUser } from '@/services/userService'
 
@@ -998,9 +1054,11 @@ const deleteId = ref(null)
 
 const customerEditorOpen = ref(false)
 const customerDeleteOpen = ref(false)
+const reviewDeleteOpen = ref(false)
 const customerDialogMode = ref('create')
 const selectedCustomerCrudId = ref(null)
 const customerDeleteId = ref(null)
+const reviewDeleteId = ref(null)
 const selectedReviewId = ref(null)
 
 const selectedEntityType = ref('workspace')
@@ -1244,13 +1302,19 @@ function normalizeReviewRecord(feedback, article) {
   const reviewerName = safeText(feedback.user?.name, 'Onbekende klant')
   const reviewerEmail = safeText(feedback.user?.email)
   const feedbackText = safeText(feedback.feedback)
+  const isRead = feedback.is_read === true || feedback.is_read === 1 || feedback.is_read === '1'
+  const helpfulValue = feedback.helpful === 1 || feedback.helpful === '1' || feedback.helpful === true
+    ? 1 : feedback.helpful === 0 || feedback.helpful === '0' || feedback.helpful === false ? 0 : null
+  const createdAtRaw = safeText(feedback.created_at)
+  const updatedAtRaw = safeText(feedback.updated_at)
+  const submittedAtRaw = getLatestTimestamp(createdAtRaw, updatedAtRaw)
 
   return {
     id: feedback.id,
     articleId: article.id,
     articleTitle: safeText(article.title, 'Ongetiteld artikel'),
     articleStatus: safeText(article.status, 'Draft'),
-    articleUpdatedAt: safeText(article.updated_at),
+    articleUpdated_at: safeText(article.updated_at),
     workspaceName: safeText(article.workspaceName),
     categoryName: safeText(article.categoryName),
     projectName: safeText(article.projectName),
@@ -1258,12 +1322,56 @@ function normalizeReviewRecord(feedback, article) {
     reviewerName,
     reviewerEmail,
     reviewerInitials: getCustomerInitials(reviewerName),
-    helpful: feedback.helpful,
+    helpful: helpfulValue,
+    isRead,
     feedbackText,
     hasFeedbackText: Boolean(feedbackText),
-    createdAt: safeText(feedback.created_at),
-    updatedAt: safeText(feedback.updated_at),
+    submittedAt: formatRelativeDate(submittedAtRaw),
+    submittedAtRaw,
+    created_at: formatRelativeDate(createdAtRaw),
+    updated_at: formatRelativeDate(updatedAtRaw),
+    createdAtRaw,
+    updatedAtRaw,
   }
+}
+
+function formatRelativeDate(value) {
+  if (!value) return ''
+
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+
+  const diffMs = date.getTime() - Date.now()
+  const diffSeconds = Math.round(diffMs / 1000)
+  const absSeconds = Math.abs(diffSeconds)
+  const formatter = new Intl.RelativeTimeFormat('nl', { numeric: 'auto' })
+
+  if (absSeconds < 45) return 'zojuist'
+  if (absSeconds < 2700) return formatter.format(Math.round(diffSeconds / 60), 'minute')
+  if (absSeconds < 64800) return formatter.format(Math.round(diffSeconds / 3600), 'hour')
+  if (absSeconds < 561600) return formatter.format(Math.round(diffSeconds / 86400), 'day')
+  if (absSeconds < 2419200) return formatter.format(Math.round(diffSeconds / 604800), 'week')
+  if (absSeconds < 29030400) return formatter.format(Math.round(diffSeconds / 2592000), 'month')
+
+  return formatter.format(Math.round(diffSeconds / 31536000), 'year')
+}
+
+function getLatestTimestamp(createdAt, updatedAt) {
+  const created = createdAt ? new Date(createdAt) : null
+  const updated = updatedAt ? new Date(updatedAt) : null
+
+  if (updated && !Number.isNaN(updated.getTime()) && created && !Number.isNaN(created.getTime())) {
+    return updated > created ? updatedAt : createdAt
+  }
+
+  if (updated && !Number.isNaN(updated.getTime())) return updatedAt
+  if (created && !Number.isNaN(created.getTime())) return createdAt
+
+  return updatedAt || createdAt || ''
+}
+
+function isReviewRead(review) {
+  return review?.isRead === true
 }
 
 function buildUserPayload() {
@@ -1388,8 +1496,8 @@ async function loadReviewRecords(workspaces) {
       return normalizeReviewRecord(feedback, article)
     })
     .sort((a, b) => {
-      const first = a.createdAt || a.updatedAt || ''
-      const second = b.createdAt || b.updatedAt || ''
+      const first = a.submittedAtRaw || ''
+      const second = b.submittedAtRaw || ''
       return second.localeCompare(first)
     })
 }
@@ -1469,6 +1577,10 @@ const filteredReviewRecords = computed(() => {
     records = [...records].sort((a, b) => a.articleTitle.localeCompare(b.articleTitle))
   } else if (activeFilter.value === 'Z-A') {
     records = [...records].sort((a, b) => b.articleTitle.localeCompare(a.articleTitle))
+  } else if (activeFilter.value === 'Gelezen') {
+    records = records.filter((review) => isReviewRead(review))
+  } else if (activeFilter.value === 'Ongelezen') {
+    records = records.filter((review) => !isReviewRead(review))
   }
 
   return records
@@ -1482,8 +1594,26 @@ const selectedReviewRecord = computed(() =>
   reviewRecords.value.find((review) => review.id === selectedReviewId.value) ?? null
 )
 
+const articleReviewRecords = computed(() => {
+  if (!selectedReviewRecord.value) return []
+
+  return reviewRecords.value.filter((review) => review.articleId === selectedReviewRecord.value.articleId)
+})
+
+const activeArticleReviewIndex = computed(() =>
+  articleReviewRecords.value.findIndex((review) => review.id === selectedReviewId.value),
+)
+
+const activeArticleReview = computed(() =>
+  articleReviewRecords.value[activeArticleReviewIndex.value] ?? selectedReviewRecord.value,
+)
+
 const customerDeleteTarget = computed(() =>
   customersData.value.find((customer) => customer.id === customerDeleteId.value) ?? null
+)
+
+const reviewDeleteTarget = computed(() =>
+  reviewRecords.value.find((review) => review.id === reviewDeleteId.value) ?? null
 )
 
 const selectedCustomerId = computed(() => {
@@ -2076,14 +2206,106 @@ function selectCustomer(id) {
   selectedCustomerCrudId.value = id
 }
 
-function selectReview(id) {
+async function updateReviewReadState(id, isRead = true) {
+  const review = reviewRecords.value.find((item) => item.id === id)
+  if (!review || review.isRead === isRead) return
+
+  const previousReadState = review.isRead
+  review.isRead = isRead
+
+  try {
+    await markFeedbackAsRead(id, isRead)
+  } catch (err) {
+    review.isRead = previousReadState
+  }
+}
+
+async function selectReview(id) {
   selectedReviewId.value = id
+  await updateReviewReadState(id, true)
 }
 
 function reviewHelpfulLabel(review) {
-  if (review?.helpful === true) return 'Positief'
-  if (review?.helpful === false) return 'Negatief'
+  if (review?.helpful === 1) return 'Thumbs up'
+  if (review?.helpful === 0) return 'Thumbs down'
   return 'Feedback'
+}
+
+function reviewHelpfulClass(review) {
+  if (review?.helpful === 1) return 'review-rating-chip--up'
+  if (review?.helpful === 0) return 'review-rating-chip--down'
+  return 'review-rating-chip--neutral'
+}
+
+function reviewHelpfulIcon(review) {
+  if (review?.helpful === 1) return 'mdi-thumb-up'
+  if (review?.helpful === 0) return 'mdi-thumb-down'
+  return 'mdi-comment-outline'
+}
+
+function selectPreviousArticleReview() {
+  if (!articleReviewRecords.value.length) return
+
+  const currentIndex = activeArticleReviewIndex.value <= 0
+    ? articleReviewRecords.value.length - 1
+    : activeArticleReviewIndex.value - 1
+
+  selectReview(articleReviewRecords.value[currentIndex].id)
+}
+
+function selectNextArticleReview() {
+  if (!articleReviewRecords.value.length) return
+
+  const currentIndex = activeArticleReviewIndex.value >= articleReviewRecords.value.length - 1
+    ? 0
+    : activeArticleReviewIndex.value + 1
+
+  selectReview(articleReviewRecords.value[currentIndex].id)
+}
+
+function reviewReadLabel(review) {
+  return isReviewRead(review) ? 'Gelezen' : 'Ongelezen'
+}
+
+function reviewReadClass(review) {
+  return isReviewRead(review) ? 'review-read-chip--read' : 'review-read-chip--unread'
+}
+
+function openReviewDeleteDialog(id) {
+  reviewDeleteId.value = id
+  reviewDeleteOpen.value = true
+}
+
+async function confirmReviewDelete() {
+  const target = reviewDeleteTarget.value
+  if (!target) return
+
+  error.value = ''
+
+  try {
+    await deleteFeedback(target.id)
+
+    const articleReviews = reviewRecords.value.filter((review) => review.articleId === target.articleId)
+    const deletedIndex = articleReviews.findIndex((review) => review.id === target.id)
+    const nextReviewId = articleReviews[deletedIndex + 1]?.id ?? articleReviews[deletedIndex - 1]?.id ?? null
+
+    reviewRecords.value = reviewRecords.value.filter((review) => review.id !== target.id)
+    reviewDeleteOpen.value = false
+    reviewDeleteId.value = null
+
+    if (!reviewRecords.value.length) {
+      selectedReviewId.value = null
+      return
+    }
+
+    if (selectedReviewId.value === target.id) {
+      selectedReviewId.value = nextReviewId && reviewRecords.value.some((review) => review.id === nextReviewId)
+        ? nextReviewId
+        : reviewRecords.value[0]?.id ?? null
+    }
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon de feedback niet verwijderen.'
+  }
 }
 
 function openCustomerCreateDialog() {
