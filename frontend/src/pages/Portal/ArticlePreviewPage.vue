@@ -17,7 +17,6 @@
                     <div class="article-topbar-left">
                         <div class="article-badge">
                             <v-icon size="16">mdi-eye-outline</v-icon>
-                            <!-- Delete? -->
                             <span>Preview</span>
                         </div>
                     </div>
@@ -51,20 +50,17 @@
                         <div class="sidebar-meta-list u-flex-col u-gap-12">
                             <div class="sidebar-meta-row u-flex-between u-gap-12">
                                 <span>Project</span>
-                                <!-- {{ Project }} bij titel-->
-                                <strong>{{ project?.name }}</strong>
+                                <strong>{{ project.name }}</strong>
                             </div>
 
                             <div class="sidebar-meta-row u-flex-between u-gap-12">
                                 <span>Status</span>
-                                <!-- {{ status }}-->
-                                <strong>{{ article?.status }}</strong>
+                                <strong>{{ article.status }}</strong>
                             </div>
 
                             <div class="sidebar-meta-row u-flex-between u-gap-12">
                                 <span>Bijgewerkt</span>
-                                <!-- {{ timestamp }} -->
-                                <strong>{{ article?.updated_at }}</strong>
+                                <strong>{{ article.updated_at }}</strong>
                             </div>
                         </div>
                     </div>

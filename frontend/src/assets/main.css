@@ -4011,6 +4011,23 @@ body {
   line-height: 1;
 }
 
+
+.feedback-view-feed {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  height: 25px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(36, 161, 199, 0.12);
+  color: var(--color-brand-500);
+  letter-spacing: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
 .review-rating-chip--up {
   border-color: var(--color-brand-500);
   color: var(--color-brand-500);
@@ -4071,12 +4088,25 @@ body {
 }
 
 .review-feedback-meta {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   display: flex;
+  max-width: 700px;
+  flex-direction: row;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
   color: var(--color-text-muted);
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.review-rating-chip-row {
+  display: flex;
+  align-items: center;
 }
 
 .review-feedback-text {

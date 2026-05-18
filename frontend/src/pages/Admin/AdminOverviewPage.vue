@@ -362,7 +362,7 @@
                             <span class="workspace-access-tel">{{ item.tel }}</span>
                           </template>
                           <template #item.role="{ item }">
-                            <v-chip size="small" variant="tonal" class="entity-chip"
+                          <v-chip size="small" variant="tonal" class="entity-chip"
                               :class="item.role === 'admin' ? 'entity-chip-admin' : 'entity-chip-customer'">
                               {{ item.role }}
                             </v-chip>
@@ -843,21 +843,30 @@
                     </v-btn>
                   </div>
                 </div>
-
                 <div class="review-feedback-box">
+                <div class="review-header">
                   <div class="entity-meta review-feedback-meta">
-                    <span class="review-rating-chip" :class="reviewHelpfulClass(activeArticleReview)">
-                      <v-icon size="18">{{ reviewHelpfulIcon(activeArticleReview) }}</v-icon>
-                    </span>
-                    <span class="dot">•</span>
+                  <div class="feedback-view-feed">
                     <span>{{ reviewReadLabel(activeArticleReview) }}</span>
+                  </div>  
                     <span class="dot">•</span>
                     <span>{{ activeArticleReview.reviewerName }}</span>
                     <span class="dot">•</span>
                     <span>{{ activeArticleReview.submittedAt || '-' }}</span>
                   </div>
-                  <p class="detail-description review-feedback-text mb-0">
-                    {{ activeArticleReview.hasFeedbackText ? activeArticleReview.feedbackText : 'Geen extra tekstfeedback ingevuld.' }}
+                  <div class="review-rating-chip-row">
+                    <span
+                      class="review-rating-chip"
+                      :class="reviewHelpfulClass(activeArticleReview)">
+                      <v-icon size="22">
+                        {{ reviewHelpfulIcon(activeArticleReview) }}
+                      </v-icon>
+                    </span>
+                  </div>
+                </div>
+
+                    <p class="detail-description review-feedback-text mb-0">
+                    {{ activeArticleReview.hasFeedbackText ? activeArticleReview.feedbackText : 'Geen extra feedback ingevuld.' }}
                   </p>
                 </div>
               </article> 
@@ -873,11 +882,6 @@
           </section>
         </div>
       </section>
-
-
-
-        
-    
     </div>
 
     <v-dialog v-model="editorOpen" max-width="680">
