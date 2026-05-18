@@ -30,13 +30,8 @@
               </p>
             </div>
 
-            <v-btn
-              type="button"
-              variant="outlined"
-              class="profile-secondary-action"
-              :disabled="profileSaving || !hasProfileChanges"
-              @click="resetProfileForm"
-            >
+            <v-btn type="button" variant="outlined" class="profile-secondary-action"
+              :disabled="profileSaving || !hasProfileChanges" @click="resetProfileForm">
               <template #prepend>
                 <v-icon size="16">mdi-restore</v-icon>
               </template>
@@ -49,104 +44,48 @@
               <div class="profile-form-grid">
                 <div class="profile-field profile-field-full">
                   <label class="notion-meta-label">Volledige naam</label>
-                  <v-text-field
-                    v-model="profile.name"
-                    placeholder="Jouw naam"
-                    autocomplete="name"
-                    variant="solo-filled"
-                    flat
-                    density="comfortable"
-                    prepend-inner-icon="mdi-account-outline"
-                    :rules="nameRules"
-                    hide-details="auto"
-                    class="notion-soft-input"
-                  />
+                  <v-text-field v-model="profile.name" placeholder="Jouw naam" autocomplete="name" variant="solo-filled"
+                    flat density="comfortable" prepend-inner-icon="mdi-account-outline" :rules="nameRules"
+                    hide-details="auto" class="notion-soft-input" />
                 </div>
 
                 <div class="profile-field profile-field-full">
                   <label class="notion-meta-label">E-mailadres</label>
-                  <v-text-field
-                    v-model="profile.email"
-                    placeholder="naam@bedrijf.com"
-                    autocomplete="email"
-                    type="email"
-                    variant="solo-filled"
-                    flat
-                    density="comfortable"
-                    prepend-inner-icon="mdi-email-outline"
-                    :rules="emailRules"
-                    hide-details="auto"
-                    class="notion-soft-input"
-                  />
+                  <v-text-field v-model="profile.email" placeholder="naam@bedrijf.com" autocomplete="email" type="email"
+                    variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-email-outline"
+                    :rules="emailRules" hide-details="auto" class="notion-soft-input" />
                 </div>
 
                 <div class="profile-field">
                   <label class="notion-meta-label">Bedrijf</label>
-                  <v-text-field
-                    v-model="profile.company"
-                    placeholder="Bedrijfsnaam"
-                    autocomplete="organization"
-                    variant="solo-filled"
-                    flat
-                    density="comfortable"
-                    prepend-inner-icon="mdi-domain"
-                    hide-details="auto"
-                    class="notion-soft-input"
-                  />
+                  <v-text-field v-model="profile.company" placeholder="Bedrijfsnaam" autocomplete="organization"
+                    variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-domain" hide-details="auto"
+                    class="notion-soft-input" />
                 </div>
 
                 <div class="profile-field">
                   <label class="notion-meta-label">Telefoonnummer</label>
-                  <v-text-field
-                    v-model="profile.phone_number"
-                    placeholder="0612345678"
-                    autocomplete="tel"
-                    type="tel"
-                    variant="solo-filled"
-                    flat
-                    density="comfortable"
-                    prepend-inner-icon="mdi-phone-outline"
-                    :rules="phoneRules"
-                    hide-details="auto"
-                    class="notion-soft-input"
-                  />
+                  <v-text-field v-model="profile.phone_number" placeholder="0612345678" autocomplete="tel" type="tel"
+                    variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-phone-outline"
+                    :rules="phoneRules" hide-details="auto" class="notion-soft-input" />
                 </div>
 
                 <div class="profile-field profile-field-full">
                   <label class="notion-meta-label">Adres</label>
-                  <v-text-field
-                    v-model="profile.address"
-                    placeholder="Straatnaam 1, Plaats"
-                    autocomplete="street-address"
-                    variant="solo-filled"
-                    flat
-                    density="comfortable"
-                    prepend-inner-icon="mdi-map-marker-outline"
-                    hide-details="auto"
-                    class="notion-soft-input"
-                  />
+                  <v-text-field v-model="profile.address" placeholder="Straatnaam 1, Plaats"
+                    autocomplete="street-address" variant="solo-filled" flat density="comfortable"
+                    prepend-inner-icon="mdi-map-marker-outline" hide-details="auto" class="notion-soft-input" />
                 </div>
               </div>
 
-              <v-alert
-                v-if="profileMessage.text"
-                :type="profileMessage.type"
-                variant="tonal"
-                density="comfortable"
-                closable
-                class="profile-alert"
-                @click:close="profileMessage.text = ''"
-              >
+              <v-alert v-if="profileMessage.text" :type="profileMessage.type" variant="tonal" density="comfortable"
+                closable class="profile-alert" @click:close="profileMessage.text = ''">
                 {{ profileMessage.text }}
               </v-alert>
 
               <div class="notion-form-actions profile-form-actions">
-                <v-btn
-                  type="submit"
-                  class="entity-create-btn"
-                  :loading="profileSaving"
-                  :disabled="!profileFormValid || profileSaving || !hasProfileChanges"
-                >
+                <v-btn type="submit" class="entity-create-btn" :loading="profileSaving"
+                  :disabled="!profileFormValid || profileSaving || !hasProfileChanges">
                   Profiel opslaan
                 </v-btn>
               </div>
@@ -204,60 +143,31 @@
               <v-form ref="passwordFormRef" v-model="passwordFormValid" @submit.prevent="savePassword">
                 <div class="profile-field">
                   <label class="notion-meta-label">Nieuw wachtwoord</label>
-                  <v-text-field
-                    v-model="passwordForm.password"
-                    placeholder="••••••••"
-                    autocomplete="new-password"
-                    :type="showNewPassword ? 'text' : 'password'"
-                    variant="solo-filled"
-                    flat
-                    density="comfortable"
+                  <v-text-field v-model="passwordForm.password" placeholder="••••••••" autocomplete="new-password"
+                    :type="showNewPassword ? 'text' : 'password'" variant="solo-filled" flat density="comfortable"
                     prepend-inner-icon="mdi-lock-check-outline"
                     :append-inner-icon="showNewPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                    :rules="newPasswordRules"
-                    hide-details="auto"
-                    class="notion-soft-input"
-                    @click:append-inner="showNewPassword = !showNewPassword"
-                  />
+                    :rules="newPasswordRules" hide-details="auto" class="notion-soft-input"
+                    @click:append-inner="showNewPassword = !showNewPassword" />
                 </div>
 
                 <div class="profile-field">
                   <label class="notion-meta-label">Herhaal nieuw wachtwoord</label>
-                  <v-text-field
-                    v-model="passwordForm.password_confirmation"
-                    placeholder="••••••••"
-                    autocomplete="new-password"
-                    :type="showConfirmPassword ? 'text' : 'password'"
-                    variant="solo-filled"
-                    flat
-                    density="comfortable"
-                    prepend-inner-icon="mdi-lock-reset"
+                  <v-text-field v-model="passwordForm.password_confirmation" placeholder="••••••••"
+                    autocomplete="new-password" :type="showConfirmPassword ? 'text' : 'password'" variant="solo-filled"
+                    flat density="comfortable" prepend-inner-icon="mdi-lock-reset"
                     :append-inner-icon="showConfirmPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                    :rules="confirmPasswordRules"
-                    hide-details="auto"
-                    class="notion-soft-input"
-                    @click:append-inner="showConfirmPassword = !showConfirmPassword"
-                  />
+                    :rules="confirmPasswordRules" hide-details="auto" class="notion-soft-input"
+                    @click:append-inner="showConfirmPassword = !showConfirmPassword" />
                 </div>
 
-                <v-alert
-                  v-if="passwordMessage.text"
-                  :type="passwordMessage.type"
-                  variant="tonal"
-                  density="comfortable"
-                  closable
-                  class="profile-alert"
-                  @click:close="passwordMessage.text = ''"
-                >
+                <v-alert v-if="passwordMessage.text" :type="passwordMessage.type" variant="tonal" density="comfortable"
+                  closable class="profile-alert" @click:close="passwordMessage.text = ''">
                   {{ passwordMessage.text }}
                 </v-alert>
 
-                <v-btn
-                  type="submit"
-                  class="entity-create-btn profile-full-action"
-                  :loading="passwordSaving"
-                  :disabled="!passwordFormValid || passwordSaving"
-                >
+                <v-btn type="submit" class="entity-create-btn profile-full-action" :loading="passwordSaving"
+                  :disabled="!passwordFormValid || passwordSaving">
                   Wachtwoord opslaan
                 </v-btn>
               </v-form>

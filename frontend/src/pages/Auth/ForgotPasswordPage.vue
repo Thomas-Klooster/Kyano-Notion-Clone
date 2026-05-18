@@ -19,58 +19,33 @@
             <template v-if="stage === STAGES.REQUEST || stage === STAGES.CODE_SENT">
               <div class="auth-field-group">
                 <label class="auth-label">E-mailadres</label>
-                <v-text-field
-                  ref="emailField"
-                  v-model.trim="email"
-                  placeholder="naam@bedrijf.com"
-                  autocomplete="email"
-                  type="email"
-                  variant="solo-filled"
-                  flat
-                  density="comfortable"
-                  prepend-inner-icon="mdi-email-outline"
-                  :rules="emailRules"
-                  hide-details="auto"
-                  class="notion-soft-input"
-                  :readonly="stage === STAGES.CODE_SENT"
-                  @keydown.enter.prevent="onSubmit"
-                />
+                <v-text-field ref="emailField" v-model.trim="email" placeholder="naam@bedrijf.com" autocomplete="email"
+                  type="email" variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-email-outline"
+                  :rules="emailRules" hide-details="auto" class="notion-soft-input"
+                  :readonly="stage === STAGES.CODE_SENT" @keydown.enter.prevent="onSubmit" />
               </div>
 
               <v-alert v-if="successMessage" type="success" variant="tonal" density="comfortable" class="auth-alert">
                 {{ successMessage }}
               </v-alert>
-              <v-alert v-if="errorMessage" type="error" variant="tonal" density="comfortable" closable class="auth-alert" @click:close="clearMessages">
+              <v-alert v-if="errorMessage" type="error" variant="tonal" density="comfortable" closable
+                class="auth-alert" @click:close="clearMessages">
                 {{ errorMessage }}
               </v-alert>
 
-              <button
-                type="submit"
-                class="auth-submit-btn"
-                :class="{ 'auth-submit-btn--loading': loading }"
-                :disabled="loading"
-              >
+              <button type="submit" class="auth-submit-btn" :class="{ 'auth-submit-btn--loading': loading }"
+                :disabled="loading">
                 <v-progress-circular v-if="loading" size="18" width="2" indeterminate color="white" />
                 <span v-else>{{ stage === STAGES.CODE_SENT ? 'Code opnieuw sturen' : 'Resetcode versturen' }}</span>
               </button>
 
-              <button
-                v-if="stage === STAGES.CODE_SENT"
-                type="button"
-                class="auth-outline-btn"
-                :disabled="loading"
-                @click="goToVerifyStage"
-              >
+              <button v-if="stage === STAGES.CODE_SENT" type="button" class="auth-outline-btn" :disabled="loading"
+                @click="goToVerifyStage">
                 Ik heb mijn code ontvangen
               </button>
 
-              <button
-                v-if="stage === STAGES.CODE_SENT"
-                type="button"
-                class="auth-ghost-btn"
-                :disabled="loading"
-                @click="useAnotherEmail"
-              >
+              <button v-if="stage === STAGES.CODE_SENT" type="button" class="auth-ghost-btn" :disabled="loading"
+                @click="useAnotherEmail">
                 Ander e-mailadres gebruiken
               </button>
             </template>
@@ -78,52 +53,28 @@
             <template v-else-if="stage === STAGES.VERIFY">
               <div class="auth-field-group">
                 <label class="auth-label">E-mailadres</label>
-                <v-text-field
-                  :model-value="email"
-                  variant="solo-filled"
-                  flat
-                  density="comfortable"
-                  prepend-inner-icon="mdi-email-outline"
-                  readonly
-                  hide-details
-                  class="notion-soft-input"
-                />
+                <v-text-field :model-value="email" variant="solo-filled" flat density="comfortable"
+                  prepend-inner-icon="mdi-email-outline" readonly hide-details class="notion-soft-input" />
               </div>
 
               <div class="auth-field-group">
                 <label class="auth-label">Verificatiecode</label>
                 <div class="auth-otp-row">
-                  <v-text-field
-                    v-for="(char, index) in otp"
-                    :key="index"
-                    :ref="(el) => setOtpRef(el, index)"
-                    :model-value="otp[index]"
-                    variant="solo-filled"
-                    flat
-                    density="comfortable"
-                    maxlength="1"
-                    hide-details
-                    class="notion-soft-input otp-input"
-                    inputmode="text"
-                    autocomplete="one-time-code"
-                    @update:model-value="(value) => onOtpInput(index, value)"
-                    @keydown.backspace="onOtpBackspace(index)"
-                    @paste="onOtpPaste"
-                  />
+                  <v-text-field v-for="(char, index) in otp" :key="index" :ref="(el) => setOtpRef(el, index)"
+                    :model-value="otp[index]" variant="solo-filled" flat density="comfortable" maxlength="1"
+                    hide-details class="notion-soft-input otp-input" inputmode="text" autocomplete="one-time-code"
+                    @update:model-value="(value) => onOtpInput(index, value)" @keydown.backspace="onOtpBackspace(index)"
+                    @paste="onOtpPaste" />
                 </div>
               </div>
 
-              <v-alert v-if="errorMessage" type="error" variant="tonal" density="comfortable" closable class="auth-alert" @click:close="clearMessages">
+              <v-alert v-if="errorMessage" type="error" variant="tonal" density="comfortable" closable
+                class="auth-alert" @click:close="clearMessages">
                 {{ errorMessage }}
               </v-alert>
 
-              <button
-                type="button"
-                class="auth-submit-btn"
-                :class="{ 'auth-submit-btn--loading': loading }"
-                :disabled="loading || otpCode.length !== OTP_LENGTH"
-                @click="verifyOtp"
-              >
+              <button type="button" class="auth-submit-btn" :class="{ 'auth-submit-btn--loading': loading }"
+                :disabled="loading || otpCode.length !== OTP_LENGTH" @click="verifyOtp">
                 <v-progress-circular v-if="loading" size="18" width="2" indeterminate color="white" />
                 <span v-else>Verifiëren</span>
               </button>
@@ -284,5 +235,5 @@ function handleRequestError(error, messages = {}) {
   console.error(error);
 }
 
-function goToLogin() { router.push({ name: "login" }).catch(() => {}); }
+function goToLogin() { router.push({ name: "login" }).catch(() => { }); }
 </script>

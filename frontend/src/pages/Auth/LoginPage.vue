@@ -17,19 +17,9 @@
 
             <div class="auth-field-group">
               <label class="auth-label">E-mailadres</label>
-              <v-text-field
-                v-model="email"
-                placeholder="naam@bedrijf.com"
-                autocomplete="email"
-                type="email"
-                variant="solo-filled"
-                flat
-                density="comfortable"
-                prepend-inner-icon="mdi-email-outline"
-                :rules="emailRules"
-                hide-details="auto"
-                class="notion-soft-input"
-              />
+              <v-text-field v-model="email" placeholder="naam@bedrijf.com" autocomplete="email" type="email"
+                variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-email-outline"
+                :rules="emailRules" hide-details="auto" class="notion-soft-input" />
             </div>
 
             <div class="auth-field-group">
@@ -39,21 +29,12 @@
                   Wachtwoord vergeten?
                 </button>
               </div>
-              <v-text-field
-                v-model="password"
-                placeholder="••••••••"
-                autocomplete="current-password"
-                :type="showPassword ? 'text' : 'password'"
-                variant="solo-filled"
-                flat
-                density="comfortable"
+              <v-text-field v-model="password" placeholder="••••••••" autocomplete="current-password"
+                :type="showPassword ? 'text' : 'password'" variant="solo-filled" flat density="comfortable"
                 prepend-inner-icon="mdi-lock-outline"
-                :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                hide-details="auto"
-                class="notion-soft-input"
-                @click:append-inner="showPassword = !showPassword"
-                @keydown.enter="onSubmit"
-              />
+                :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" hide-details="auto"
+                class="notion-soft-input" @click:append-inner="showPassword = !showPassword"
+                @keydown.enter="onSubmit" />
             </div>
 
             <div class="auth-remember-row">
@@ -63,24 +44,13 @@
               </label>
             </div>
 
-            <v-alert
-              v-if="errorMessage"
-              type="error"
-              variant="tonal"
-              density="comfortable"
-              closable
-              class="auth-alert"
-              @click:close="errorMessage = ''"
-            >
+            <v-alert v-if="errorMessage" type="error" variant="tonal" density="comfortable" closable class="auth-alert"
+              @click:close="errorMessage = ''">
               {{ errorMessage }}
             </v-alert>
 
-            <button
-              type="submit"
-              class="auth-submit-btn"
-              :class="{ 'auth-submit-btn--loading': loading }"
-              :disabled="!formValid || loading"
-            >
+            <button type="submit" class="auth-submit-btn" :class="{ 'auth-submit-btn--loading': loading }"
+              :disabled="!formValid || loading">
               <v-progress-circular v-if="loading" size="18" width="2" indeterminate color="white" />
               <span v-else>Inloggen</span>
             </button>
@@ -156,11 +126,11 @@ const onSubmit = async () => {
 
 
 function onForgotPassword() {
-  router.push({ name: "forgot-password" }).catch(() => {});
+  router.push({ name: "forgot-password" }).catch(() => { });
 }
 
 function onGoToRegister() {
-  router.push({ name: "register" }).catch(() => {});
+  router.push({ name: "register" }).catch(() => { });
 }
 
 function onSocial(provider) {

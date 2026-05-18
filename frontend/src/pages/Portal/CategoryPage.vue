@@ -1,18 +1,19 @@
 <template>
-  <div class="entity-page admin-studio-page">
-    <div class="entity-shell page-shell admin-studio-shell">
-      <section class="entity-hero hero admin-hero">
-        <div class="admin-hero-bg-shapes" aria-hidden="true">
-          <div class="admin-hero-shape admin-hero-shape-1" />
-          <div class="admin-hero-shape admin-hero-shape-2" />
-        </div>
+    <div class="entity-page admin-studio-page">
+        <div class="entity-shell page-shell admin-studio-shell">
+            <section class="entity-hero hero admin-hero">
+                <div class="admin-hero-bg-shapes" aria-hidden="true">
+                    <div class="admin-hero-shape admin-hero-shape-1" />
+                    <div class="admin-hero-shape admin-hero-shape-2" />
+                </div>
                 <div class="hero-content u-min-w-0">
                     <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
                         <span class="hero-pill u-inline-flex u-items-center">Categorie</span>
                         <!-- <span class="hero-meta-separator">•</span> -->
                         <span>{{ category.workspace }}</span>
                         <span class="hero-meta-separator">•</span>
-                        <span>{{ filteredProjects.length === 1 ? '1 project' : `${filteredProjects.length} projecten` }}</span>
+                        <span>{{ filteredProjects.length === 1 ? '1 project' : `${filteredProjects.length} projecten`
+                            }}</span>
                     </div>
 
                     <h1 class="hero-title">{{ category.name }}</h1>
@@ -39,8 +40,8 @@
                 </div>
 
                 <div v-if="loading" class="empty-state">
-                <v-icon size="24">mdi-loading mdi-spin</v-icon>
-                <p>Projecten zijn aan het laden...</p>    
+                    <v-icon size="24">mdi-loading mdi-spin</v-icon>
+                    <p>Projecten zijn aan het laden...</p>
                 </div>
 
                 <div v-else-if="error" class="empty-state">
@@ -71,23 +72,18 @@
                             <button class="project-row-right u-gap-12 tree-toggle" type="button"
                                 @click.stop="toggleProject(project.slug)">
                                 <v-icon size="18" class="project-arrow">
-                                    {{ expandedProjects.includes(project.slug) ? 'mdi-chevron-down' : 'mdi-chevron-right'
+                                    {{ expandedProjects.includes(project.slug) ? 'mdi-chevron-down' :
+                                        'mdi-chevron-right'
                                     }}
                                 </v-icon>
                             </button>
                         </div>
 
                         <div v-if="expandedProjects.includes(project.slug)" class="article-list">
-                            <div
-                                v-for="article in project.articles"
-                                :key="article.slug"
-                                class="tree-row tree-row-project"
-                                role="button"
-                                tabindex="0"
-                                @click="goToArticle(article.slug)"
-                                @keydown.enter="goToArticle(article.slug)"
-                                @keydown.space.prevent="goToArticle(article.slug)"
-                            >
+                            <div v-for="article in project.articles" :key="article.slug"
+                                class="tree-row tree-row-project" role="button" tabindex="0"
+                                @click="goToArticle(article.slug)" @keydown.enter="goToArticle(article.slug)"
+                                @keydown.space.prevent="goToArticle(article.slug)">
                                 <div class="article-row-main u-min-w-0">
                                     <div class="article-icon">
                                         <v-icon size="18">mdi-file-document-outline</v-icon>
@@ -159,7 +155,7 @@ watch(
 )
 
 async function loadProjects() {
-   loading.value = true
+    loading.value = true
     error.value = false
     search.value = ''
     expandedProjects.value = []
@@ -223,5 +219,4 @@ function goToProject(slug) {
 function goToArticle(slug) {
     router.push(`/article/${slug}`)
 }
-
 </script>

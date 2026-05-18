@@ -1,11 +1,11 @@
 <template>
-  <div class="entity-page admin-studio-page">
-    <div class="entity-shell page-shell admin-studio-shell">
-      <section class="entity-hero hero admin-hero">
-        <div class="admin-hero-bg-shapes" aria-hidden="true">
-          <div class="admin-hero-shape admin-hero-shape-1" />
-          <div class="admin-hero-shape admin-hero-shape-2" />
-        </div>
+    <div class="entity-page admin-studio-page">
+        <div class="entity-shell page-shell admin-studio-shell">
+            <section class="entity-hero hero admin-hero">
+                <div class="admin-hero-bg-shapes" aria-hidden="true">
+                    <div class="admin-hero-shape admin-hero-shape-1" />
+                    <div class="admin-hero-shape admin-hero-shape-2" />
+                </div>
                 <div class="hero-content u-min-w-0">
                     <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
                         <span class="hero-pill u-inline-flex u-items-center">Project</span>
@@ -14,14 +14,16 @@
                         <span class="hero-meta-separator">•</span>
                         <span>{{ project.category }}</span>
                         <span class="hero-meta-separator">•</span>
-                        <span>{{ filteredArticles.length === 1 ? '1 artikel' : `${filteredArticles.length} artikelen`}}</span>
+                        <span>{{ filteredArticles.length === 1 ? '1 artikel' : `${filteredArticles.length}
+                            artikelen`}}</span>
                     </div>
 
                     <h1 class="hero-title">{{ project.name }}</h1>
 
-                    <p class="hero-subtitle" style="background: rgb(255, 255, 255, 0.15); padding: .75rem 1.5rem; border-radius: 1rem;">
-                        <h3>Beschrijving</h3>
-                        {{ projectDescription }}
+                    <p class="hero-subtitle"
+                        style="background: rgb(255, 255, 255, 0.15); padding: .75rem 1.5rem; border-radius: 1rem;">
+                    <h3>Beschrijving</h3>
+                    {{ projectDescription }}
                     </p>
                 </div>
             </section>
@@ -42,8 +44,8 @@
                 </div>
 
                 <div v-if="loading" class="empty-state">
-                <v-icon size="24">mdi-loading mdi-spin</v-icon>
-                <p>Projecten zijn aan het laden...</p>                    
+                    <v-icon size="24">mdi-loading mdi-spin</v-icon>
+                    <p>Projecten zijn aan het laden...</p>
                 </div>
 
                 <div v-else-if="error" class="empty-state">
@@ -131,30 +133,30 @@ watch(
 
 async function loadArticles() {
 
-     loading.value = true
-     error.value = false
-     search.value = ''
-     project.value = { name: '', description: '', workspace: '', category: '', articles: [] }
+    loading.value = true
+    error.value = false
+    search.value = ''
+    project.value = { name: '', description: '', workspace: '', category: '', articles: [] }
 
-     try {
+    try {
         const current = await getProject(route.params.slug)
         project.value.name = current.name
         project.value.description = current.description ?? ''
         project.value.category = current.category
         project.value.workspace = current.workspace
         project.value.articles = current.articles ?? []
-     } catch(err) {
+    } catch (err) {
         error.value = 'Dit project kon niet worden gevonden.'
-     } finally {
+    } finally {
         loading.value = false
-     }
+    }
 
 }
 
 
 
 const filteredArticles = computed(() => {
-    const articles = project.value.articles ?? []  
+    const articles = project.value.articles ?? []
     const query = search.value.trim().toLowerCase()
 
     if (!query) return articles

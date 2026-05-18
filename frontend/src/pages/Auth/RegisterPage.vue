@@ -17,140 +17,65 @@
 
             <div class="auth-field-group">
               <label class="auth-label">Volledige naam</label>
-              <v-text-field
-                v-model="name"
-                placeholder="Jouw naam..."
-                autocomplete="name"
-                variant="solo-filled"
-                flat
-                density="comfortable"
-                prepend-inner-icon="mdi-account-outline"
-                :rules="nameRules"
-                hide-details="auto"
-                class="notion-soft-input"
-                @keydown.enter.prevent="focusEmail"
-              />
+              <v-text-field v-model="name" placeholder="Jouw naam..." autocomplete="name" variant="solo-filled" flat
+                density="comfortable" prepend-inner-icon="mdi-account-outline" :rules="nameRules" hide-details="auto"
+                class="notion-soft-input" @keydown.enter.prevent="focusEmail" />
             </div>
 
             <div class="auth-field-group">
               <label class="auth-label">E-mailadres</label>
-              <v-text-field
-                ref="emailField"
-                v-model="email"
-                placeholder="naam@bedrijf.com"
-                autocomplete="email"
-                type="email"
-                variant="solo-filled"
-                flat
-                density="comfortable"
-                prepend-inner-icon="mdi-email-outline"
-                :rules="emailRules"
-                hide-details="auto"
-                class="notion-soft-input"
-                @keydown.enter.prevent="focusAddress"
-              />
+              <v-text-field ref="emailField" v-model="email" placeholder="naam@bedrijf.com" autocomplete="email"
+                type="email" variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-email-outline"
+                :rules="emailRules" hide-details="auto" class="notion-soft-input"
+                @keydown.enter.prevent="focusAddress" />
             </div>
 
             <div class="auth-field-group">
               <label class="auth-label">Adres</label>
-              <v-text-field
-                ref="addressField"
-                v-model="address"
-                placeholder="Optioneel*"
-                autocomplete="street-address"
-                type="text"
-                variant="solo-filled"
-                flat
-                density="comfortable"
-                prepend-inner-icon="mdi-map-marker-outline"
-                hide-details="auto"
-                class="notion-soft-input"
-                @keydown.enter.prevent="focusPhoneNumber"
-              />
+              <v-text-field ref="addressField" v-model="address" placeholder="Optioneel*" autocomplete="street-address"
+                type="text" variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-map-marker-outline"
+                hide-details="auto" class="notion-soft-input" @keydown.enter.prevent="focusPhoneNumber" />
             </div>
 
             <div class="auth-field-group">
               <label class="auth-label">Telefoonnummer</label>
-              <v-text-field
-                ref="phoneField"
-                v-model="phone_number"
-                placeholder="Optioneel*"
-                autocomplete="tel"
-                type="tel"
-                variant="solo-filled"
-                flat
-                density="comfortable"
-                prepend-inner-icon="mdi-phone-outline"
-                :rules="phoneRules"
-                hide-details="auto"
-                class="notion-soft-input"
-                @keydown.enter.prevent="focusCompany"
-              />
+              <v-text-field ref="phoneField" v-model="phone_number" placeholder="Optioneel*" autocomplete="tel"
+                type="tel" variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-phone-outline"
+                :rules="phoneRules" hide-details="auto" class="notion-soft-input"
+                @keydown.enter.prevent="focusCompany" />
             </div>
 
             <div class="auth-field-group">
               <label class="auth-label">Bedrijfsnaam</label>
-              <v-text-field
-                ref="companyField"
-                v-model="company"
-                placeholder="Optioneel*"
-                autocomplete="organization"
-                type="text"
-                variant="solo-filled"
-                flat
-                density="comfortable"
-                prepend-inner-icon="mdi-briefcase-outline"
-                hide-details="auto"
-                class="notion-soft-input"
-                @keydown.enter.prevent="focusPassword"
-              />
+              <v-text-field ref="companyField" v-model="company" placeholder="Optioneel*" autocomplete="organization"
+                type="text" variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-briefcase-outline"
+                hide-details="auto" class="notion-soft-input" @keydown.enter.prevent="focusPassword" />
             </div>
 
 
             <div class="auth-field-group">
               <label class="auth-label">Wachtwoord</label>
-              <v-text-field
-                ref="passwordField"
-                v-model="password"
-                placeholder="••••••••"
-                autocomplete="new-password"
-                :type="showPassword ? 'text' : 'password'"
-                variant="solo-filled"
-                flat
-                density="comfortable"
+              <v-text-field ref="passwordField" v-model="password" placeholder="••••••••" autocomplete="new-password"
+                :type="showPassword ? 'text' : 'password'" variant="solo-filled" flat density="comfortable"
                 prepend-inner-icon="mdi-lock-outline"
-                :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                :rules="passwordRules"
-                hide-details="auto"
-                class="notion-soft-input"
-                @click:append-inner="showPassword = !showPassword"
-                @keydown.enter.prevent="focusConfirm"
-              />
+                :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" :rules="passwordRules"
+                hide-details="auto" class="notion-soft-input" @click:append-inner="showPassword = !showPassword"
+                @keydown.enter.prevent="focusConfirm" />
             </div>
 
             <div class="auth-field-group">
               <label class="auth-label">Wachtwoord bevestigen</label>
-              <v-text-field
-                ref="confirmField"
-                v-model="password_confirmation"
-                placeholder="••••••••"
-                autocomplete="new-password"
-                :type="showConfirm ? 'text' : 'password'"
-                variant="solo-filled"
-                flat
-                density="comfortable"
-                prepend-inner-icon="mdi-lock-check-outline"
-                :append-inner-icon="showConfirm ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                :rules="confirmRules"
-                hide-details="auto"
-                class="notion-soft-input"
-                @click:append-inner="showConfirm = !showConfirm"
-                @keydown.enter.prevent="onSubmit"
-              />
-            </div> 
+              <v-text-field ref="confirmField" v-model="password_confirmation" placeholder="••••••••"
+                autocomplete="new-password" :type="showConfirm ? 'text' : 'password'" variant="solo-filled" flat
+                density="comfortable" prepend-inner-icon="mdi-lock-check-outline"
+                :append-inner-icon="showConfirm ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" :rules="confirmRules"
+                hide-details="auto" class="notion-soft-input" @click:append-inner="showConfirm = !showConfirm"
+                @keydown.enter.prevent="onSubmit" />
+            </div>
 
             <div class="auth-terms-row">
-              <v-checkbox v-model="acceptTerms" density="compact" hide-details="auto" :rules="termsRules" class="auth-checkbox">
+              <v-checkbox v-model="acceptTerms" density="compact" hide-details="auto" :rules="termsRules"
+                class="auth-checkbox">
                 <template #label>
                   <span class="auth-terms-text">
                     Ik ga akkoord met de
@@ -162,24 +87,13 @@
               </v-checkbox>
             </div>
 
-            <v-alert
-              v-if="errorMessage"
-              type="error"
-              variant="tonal"
-              density="comfortable"
-              closable
-              class="auth-alert"
-              @click:close="errorMessage = ''"
-            >
+            <v-alert v-if="errorMessage" type="error" variant="tonal" density="comfortable" closable class="auth-alert"
+              @click:close="errorMessage = ''">
               {{ errorMessage }}
             </v-alert>
 
-            <button
-              type="submit"
-              class="auth-submit-btn"
-              :class="{ 'auth-submit-btn--loading': loading }"
-              :disabled="!formValid || loading"
-            >
+            <button type="submit" class="auth-submit-btn" :class="{ 'auth-submit-btn--loading': loading }"
+              :disabled="!formValid || loading">
               <v-progress-circular v-if="loading" size="18" width="2" indeterminate color="white" />
               <span v-else>Account aanmaken</span>
             </button>
@@ -248,7 +162,7 @@ const phoneRules = [
     if (!trimmed) return true;
     return /^\d+$/.test(trimmed) || 'Het telefoonnummer mag alleen uit cijfers bestaan.';
   }
-]   
+]
 
 const passwordRules = [
   (v) => !!v || 'Het invullen van een wachtwoord is verplicht.',
@@ -266,9 +180,9 @@ const confirmRules = computed(() => [
 const termsRules = [(v) => v === true || 'U moet de voorwaarden accepteren om verder te gaan.']
 
 function focusEmail() { emailField.value?.focus?.() }
-function focusAddress() {addressField.value?.focus?.()}
-function focusPhoneNumber() {phoneField.value?.focus?.()}
-function focusCompany() {companyField.value?.focus()} 
+function focusAddress() { addressField.value?.focus?.() }
+function focusPhoneNumber() { phoneField.value?.focus?.() }
+function focusCompany() { companyField.value?.focus() }
 function focusPassword() { passwordField.value?.focus?.() }
 function focusConfirm() { confirmField.value?.focus?.() }
 
@@ -295,7 +209,7 @@ const onSubmit = async () => {
 // }
 
 function goToLogin() {
-  router.push({ name: 'login' }).catch(() => {})
+  router.push({ name: 'login' }).catch(() => { })
 }
 
 function onOpenTerms() { console.log('Open terms') }

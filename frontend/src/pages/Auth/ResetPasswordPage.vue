@@ -33,64 +33,31 @@
 
             <div class="auth-field-group">
               <label class="auth-label">Nieuw wachtwoord</label>
-              <v-text-field
-                ref="passwordField"
-                v-model="password"
-                placeholder="••••••••"
-                autocomplete="new-password"
-                :type="showPassword ? 'text' : 'password'"
-                variant="solo-filled"
-                flat
-                density="comfortable"
+              <v-text-field ref="passwordField" v-model="password" placeholder="••••••••" autocomplete="new-password"
+                :type="showPassword ? 'text' : 'password'" variant="solo-filled" flat density="comfortable"
                 prepend-inner-icon="mdi-lock-outline"
-                :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                :rules="passwordRules"
-                hide-details="auto"
-                class="notion-soft-input"
-                @click:append-inner="showPassword = !showPassword"
-                @keydown.enter.prevent="focusConfirm"
-              />
+                :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" :rules="passwordRules"
+                hide-details="auto" class="notion-soft-input" @click:append-inner="showPassword = !showPassword"
+                @keydown.enter.prevent="focusConfirm" />
             </div>
 
             <div class="auth-field-group">
               <label class="auth-label">Wachtwoord bevestigen</label>
-              <v-text-field
-                ref="confirmField"
-                v-model="confirmPassword"
-                placeholder="••••••••"
-                autocomplete="new-password"
-                :type="showConfirm ? 'text' : 'password'"
-                variant="solo-filled"
-                flat
-                density="comfortable"
-                prepend-inner-icon="mdi-lock-check-outline"
-                :append-inner-icon="showConfirm ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                :rules="confirmRules"
-                hide-details="auto"
-                class="notion-soft-input"
-                @click:append-inner="showConfirm = !showConfirm"
-                @keydown.enter.prevent="onSubmit"
-              />
+              <v-text-field ref="confirmField" v-model="confirmPassword" placeholder="••••••••"
+                autocomplete="new-password" :type="showConfirm ? 'text' : 'password'" variant="solo-filled" flat
+                density="comfortable" prepend-inner-icon="mdi-lock-check-outline"
+                :append-inner-icon="showConfirm ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" :rules="confirmRules"
+                hide-details="auto" class="notion-soft-input" @click:append-inner="showConfirm = !showConfirm"
+                @keydown.enter.prevent="onSubmit" />
             </div>
 
-            <v-alert
-              v-if="errorMessage"
-              type="error"
-              variant="tonal"
-              density="comfortable"
-              closable
-              class="auth-alert"
-              @click:close="errorMessage = ''"
-            >
+            <v-alert v-if="errorMessage" type="error" variant="tonal" density="comfortable" closable class="auth-alert"
+              @click:close="errorMessage = ''">
               {{ errorMessage }}
             </v-alert>
 
-            <button
-              type="submit"
-              class="auth-submit-btn"
-              :class="{ 'auth-submit-btn--loading': loading }"
-              :disabled="!formValid || loading"
-            >
+            <button type="submit" class="auth-submit-btn" :class="{ 'auth-submit-btn--loading': loading }"
+              :disabled="!formValid || loading">
               <v-progress-circular v-if="loading" size="18" width="2" indeterminate color="white" />
               <span v-else>Wachtwoord opslaan</span>
             </button>
@@ -151,7 +118,7 @@ async function validateResetSession() {
     passwordField.value?.focus?.();
   } catch (error) {
     checkingSession.value = false;
-    router.push({ name: "forgot-password" }).catch(() => {});
+    router.push({ name: "forgot-password" }).catch(() => { });
   }
 }
 
@@ -183,5 +150,5 @@ async function onSubmit() {
   }
 }
 
-function goToLogin() { router.push({ name: "login" }).catch(() => {}); }
+function goToLogin() { router.push({ name: "login" }).catch(() => { }); }
 </script>

@@ -1,134 +1,133 @@
     <template>
-    <div v-if="loading" class="empty-state">
-        <v-icon size="24">mdi-loading mdi-spin</v-icon>
-        <p>Artikel is aan het laden...</p>
-    </div>
-
-    <div v-else-if="error" class="empty-state">
-        <div style="margin-top: 300px;">
-        <v-icon size="40">mdi-alert-circle-outline</v-icon>
-            <h2>{{ error }}</h2>
+        <div v-if="loading" class="empty-state">
+            <v-icon size="24">mdi-loading mdi-spin</v-icon>
+            <p>Artikel is aan het laden...</p>
         </div>
-    </div>
 
-    <div v-else-if="article" class="article-page">
-        <div class="article-topbar">
-            <div class="article-topbar-inner">
-                <div class="article-topbar-left">
-                    <div class="article-badge">
-                        <v-icon size="16">mdi-eye-outline</v-icon>
-                        <!-- Delete? -->
-                        <span>Preview</span>
-                    </div>
-                </div>
-
-                <div class="article-topbar-right">
-                    <v-btn variant="text" rounded="lg" prepend-icon="mdi-arrow-left" :to="backToEditorRoute">
-                        Terug naar editor
-                    </v-btn>
-                </div>
+        <div v-else-if="error" class="empty-state">
+            <div style="margin-top: 300px;">
+                <v-icon size="40">mdi-alert-circle-outline</v-icon>
+                <h2>{{ error }}</h2>
             </div>
         </div>
 
-        <div class="entity-shell page-shell article-grid">
-            <aside class="article-sidebar">
-                <div class="sidebar-card card card-soft card-rounded-lg">
-                    <div class="sidebar-label">In dit artikel</div>
-
-                    <!-- Kopjes bij id geen slug -->
-                    <nav class="toc-nav">
-                        <a href="#" class="toc-link active">Introductie</a>
-                        <a href="#" class="toc-link">Meer Introductie</a>
-                        <a href="#" class="toc-link">Nog meer introductie</a>
-                        <a href="#" class="toc-link">Geen introductie meer</a>
-                        <a href="#" class="toc-link">Bijlagen</a>
-                    </nav>
-                </div>
-
-                <div class="sidebar-card card card-soft card-rounded-lg">
-                    <div class="sidebar-label">Artikelinformatie</div>
-
-                    <div class="sidebar-meta-list u-flex-col u-gap-12">
-                        <div class="sidebar-meta-row u-flex-between u-gap-12">
-                            <span>Project</span>
-                            <!-- {{ Project }} bij titel-->
-                    <strong>{{ project?.name }}</strong>
-                        </div>
-
-                        <div class="sidebar-meta-row u-flex-between u-gap-12">
-                            <span>Status</span>
-                            <!-- {{ status }}-->
-                            <strong>{{ article?.status }}</strong>
-                        </div>
-
-                        <div class="sidebar-meta-row u-flex-between u-gap-12">
-                            <span>Bijgewerkt</span>
-                            <!-- {{ timestamp }} -->
-                            <strong>{{article?.updated_at}}</strong>
+        <div v-else-if="article" class="article-page">
+            <div class="article-topbar">
+                <div class="article-topbar-inner">
+                    <div class="article-topbar-left">
+                        <div class="article-badge">
+                            <v-icon size="16">mdi-eye-outline</v-icon>
+                            <!-- Delete? -->
+                            <span>Preview</span>
                         </div>
                     </div>
+
+                    <div class="article-topbar-right">
+                        <v-btn variant="text" rounded="lg" prepend-icon="mdi-arrow-left" :to="backToEditorRoute">
+                            Terug naar editor
+                        </v-btn>
+                    </div>
                 </div>
+            </div>
 
-                <div class="sidebar-card card card-soft card-rounded-lg">
-                <div class="sidebar-label">Tags</div>
-                <div v-if="articleTags.length" class="tag-grid flex-wrap">
-                                    <span
-                                        v-for="tag in articleTags"
-                                        :key="tag"
-                                        class="article-pill u-inline-flex u-items-center">
-                                        {{ tag }}
-                                    </span>
-                                </div>
-                                <span v-else class="article-pill u-inline-flex u-items-center">Geen tags</span>
-                                </div>
+            <div class="entity-shell page-shell article-grid">
+                <aside class="article-sidebar">
+                    <div class="sidebar-card card card-soft card-rounded-lg">
+                        <div class="sidebar-label">In dit artikel</div>
 
-                            <div v-if="feedbackSent" class="sidebar-card card card-soft card-rounded-lg feedback-card"> 
-                                <div class="sidebar-label">Bedankt voor je feedback!</div>
-                            <v-icon size="32" color="success">mdi-check-circle-outline</v-icon>
+                        <!-- Kopjes bij id geen slug -->
+                        <nav class="toc-nav">
+                            <a href="#" class="toc-link active">Introductie</a>
+                            <a href="#" class="toc-link">Meer Introductie</a>
+                            <a href="#" class="toc-link">Nog meer introductie</a>
+                            <a href="#" class="toc-link">Geen introductie meer</a>
+                            <a href="#" class="toc-link">Bijlagen</a>
+                        </nav>
+                    </div>
+
+                    <div class="sidebar-card card card-soft card-rounded-lg">
+                        <div class="sidebar-label">Artikelinformatie</div>
+
+                        <div class="sidebar-meta-list u-flex-col u-gap-12">
+                            <div class="sidebar-meta-row u-flex-between u-gap-12">
+                                <span>Project</span>
+                                <!-- {{ Project }} bij titel-->
+                                <strong>{{ project?.name }}</strong>
                             </div>
-                            <form v-else class="sidebar-card card card-soft card-rounded-lg feedback-card"
-                            @submit.prevent="submitFeedback">
-                            <div class="sidebar-label">Was dit artikel nuttig?</div>
-                            <div class="useful-button-box">
-                                <button class="useful-button thumbs-up" type="button" :class="{ active: helpful === true }"
-                            @click="setHelpful(true)">
-                            <v-icon>mdi-thumb-up</v-icon></button>
-                            <button class="useful-button thumbs-down" type="button" :class="{ active: helpful === false }"
-                            @click="setHelpful(false)">
-                            <v-icon>mdi-thumb-down</v-icon>
+
+                            <div class="sidebar-meta-row u-flex-between u-gap-12">
+                                <span>Status</span>
+                                <!-- {{ status }}-->
+                                <strong>{{ article?.status }}</strong>
+                            </div>
+
+                            <div class="sidebar-meta-row u-flex-between u-gap-12">
+                                <span>Bijgewerkt</span>
+                                <!-- {{ timestamp }} -->
+                                <strong>{{ article?.updated_at }}</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-card card card-soft card-rounded-lg">
+                        <div class="sidebar-label">Tags</div>
+                        <div v-if="articleTags.length" class="tag-grid flex-wrap">
+                            <span v-for="tag in articleTags" :key="tag"
+                                class="article-pill u-inline-flex u-items-center">
+                                {{ tag }}
+                            </span>
+                        </div>
+                        <span v-else class="article-pill u-inline-flex u-items-center">Geen tags</span>
+                    </div>
+
+                    <div v-if="feedbackSent" class="sidebar-card card card-soft card-rounded-lg feedback-card">
+                        <div class="sidebar-label">Bedankt voor je feedback!</div>
+                        <v-icon size="32" color="success">mdi-check-circle-outline</v-icon>
+                    </div>
+                    <form v-else class="sidebar-card card card-soft card-rounded-lg feedback-card"
+                        @submit.prevent="submitFeedback">
+                        <div class="sidebar-label">Was dit artikel nuttig?</div>
+                        <div class="useful-button-box">
+                            <button class="useful-button thumbs-up" type="button" :class="{ active: helpful === true }"
+                                @click="setHelpful(true)">
+                                <v-icon>mdi-thumb-up</v-icon></button>
+                            <button class="useful-button thumbs-down" type="button"
+                                :class="{ active: helpful === false }" @click="setHelpful(false)">
+                                <v-icon>mdi-thumb-down</v-icon>
+                            </button>
+                        </div>
+
+                        <div class="sidebar-label" style="margin-top: 12px;">Extra feedback</div>
+                        <textarea ref="feedbackTextarea" v-model="feedbackTitle"
+                            class="feedback-input feedback-textarea" placeholder="Laat je feedback achter..." rows="1"
+                            @input="autoResizeTextarea" maxlength="500" />
+
+                        <v-alert v-if="feedbackError" type="error" variant="tonal" density="comfortable" closable
+                            class="my-3" @click:close="feedbackError = ''">
+                            {{ feedbackError }}
+                        </v-alert>
+
+                        <button class="feedback-submit" type="submit"
+                            :disabled="helpful === null && !feedbackTitle.trim()">
+                            Versturen
                         </button>
-                    </div>
+                    </form>
+                </aside>
+                <main class="article-content">
+                    <div class="article-cover"></div>
+                    <article class="article-card card card-elevated card-rounded-2xl">
+                        <div class="article-head card-head">
+                            <div class="article-meta-line u-flex-center u-wrap u-gap-8" />
 
-    <div class="sidebar-label" style="margin-top: 12px;">Extra feedback</div>
-    <textarea ref="feedbackTextarea" v-model="feedbackTitle" class="feedback-input feedback-textarea"
-    placeholder="Laat je feedback achter..." rows="1" @input="autoResizeTextarea" maxlength="500" />
+                            <h1 class="article-title-input">{{ article.title }}</h1>
 
-    <v-alert v-if="feedbackError" type="error" variant="tonal" density="comfortable" closable 
-    class="my-3" @click:close="feedbackError = ''">
-    {{ feedbackError }}
-</v-alert>
-
-    <button class="feedback-submit" type="submit"
-        :disabled="helpful === null && !feedbackTitle.trim()">
-        Versturen
-    </button>
-</form>
-            </aside>
-            <main class="article-content">
-                <div class="article-cover"></div>
-                <article class="article-card card card-elevated card-rounded-2xl">
-                    <div class="article-head card-head">
-                        <div class="article-meta-line u-flex-center u-wrap u-gap-8" />
-
-                        <h1 class="article-title-input">{{article.title}}</h1>
-
-                        <p class="article-subtitle">
-                            {{ article.summary }}
-                        </p>
-                    </div>
+                            <p class="article-subtitle">
+                                {{ article.summary }}
+                            </p>
+                        </div>
 
 
-                <div class="article-body" v-html="article.content" />
+                        <div class="article-body" v-html="article.content" />
                         <div v-if="articleAttachments.length" class="resource-grid">
                             <div v-for="attachment in articleAttachments" :key="attachment.id" class="resource-card">
                                 <div class="resource-icon">
@@ -140,21 +139,21 @@
                                     </div>
                                     <div class="resource-subtitle">
                                         {{ formatAttachmentSize(attachment.size) }}</div>
-                                    </button>
+                                </button>
                             </div>
-                     </div>
-                </article>
-            </main>
+                        </div>
+                    </article>
+                </main>
+            </div>
         </div>
-    </div>
 
-    <div v-else class="empty-state">
-        <div style="margin-top: 300px;">
-            <v-icon size="40">mdi-file-document-outline</v-icon>
-            <h2>Artikel niet gevonden.</h2>
+        <div v-else class="empty-state">
+            <div style="margin-top: 300px;">
+                <v-icon size="40">mdi-file-document-outline</v-icon>
+                <h2>Artikel niet gevonden.</h2>
+            </div>
         </div>
-    </div>
-</template>
+    </template>
 
 <script setup>
 import { computed, ref, onMounted } from 'vue'

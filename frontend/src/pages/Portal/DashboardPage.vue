@@ -1,18 +1,19 @@
 <template>
-  <div class="entity-page admin-studio-page">
-    <div class="entity-shell page-shell admin-studio-shell">
-      <section class="entity-hero hero admin-hero">
-        <div class="admin-hero-bg-shapes" aria-hidden="true">
-          <div class="admin-hero-shape admin-hero-shape-1" />
-          <div class="admin-hero-shape admin-hero-shape-2" />
-        </div>
+    <div class="entity-page admin-studio-page">
+        <div class="entity-shell page-shell admin-studio-shell">
+            <section class="entity-hero hero admin-hero">
+                <div class="admin-hero-bg-shapes" aria-hidden="true">
+                    <div class="admin-hero-shape admin-hero-shape-1" />
+                    <div class="admin-hero-shape admin-hero-shape-2" />
+                </div>
                 <div class="hero-content u-min-w-0">
                     <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
                         <span class="hero-pill u-inline-flex u-items-center">Klantportaal</span>
                         <!-- <span class="hero-meta-separator">•</span> -->
-                        <span>{{ filteredWorkspaces.length === 1 ? '1 workspace' : `${filteredWorkspaces.length} workspaces` }}</span>
+                        <span>{{ filteredWorkspaces.length === 1 ? '1 workspace' : `${filteredWorkspaces.length}
+                            workspaces` }}</span>
                     </div>
-                    
+
                     <h1 class="hero-title">Dashboard</h1>
 
                     <p class="hero-subtitle">
@@ -105,7 +106,8 @@
                                 <div v-if="expandedCategories.includes(category.slug)" class="tree-children">
                                     <div v-for="project in category.projects" :key="project.id" class="tree-group">
                                         <div class="tree-row tree-row-project">
-                                            <router-link :to="projectRoute(project)" class="tree-row-main u-min-w-0 tree-link">
+                                            <router-link :to="projectRoute(project)"
+                                                class="tree-row-main u-min-w-0 tree-link">
                                                 <div class="tree-icon icon-box">
                                                     <v-icon size="18">mdi-briefcase-outline</v-icon>
                                                 </div>
@@ -120,20 +122,19 @@
                                                 </div>
                                             </router-link>
 
-                                            <button class="tree-toggle" type="button" 
-                                                 @click="toggleProject(project.slug)"> 
-                                                <v-icon size="18"> 
-                                                    {{ expandedProjects.includes(project.slug) ? 'mdi-chevron-down' : 
-                                                         'mdi-chevron-right' }} 
-                                                </v-icon> 
-                                             </button>
+                                            <button class="tree-toggle" type="button"
+                                                @click="toggleProject(project.slug)">
+                                                <v-icon size="18">
+                                                    {{ expandedProjects.includes(project.slug) ? 'mdi-chevron-down' :
+                                                        'mdi-chevron-right' }}
+                                                </v-icon>
+                                            </button>
                                         </div>
 
                                         <div v-if="expandedProjects.includes(project.slug)"
                                             class="tree-children tree-children-articles">
                                             <router-link v-for="article in project.articles" :key="article.id"
-                                                :to="articleRoute(article)"
-                                                class="tree-row tree-row-article tree-link">
+                                                :to="articleRoute(article)" class="tree-row tree-row-article tree-link">
                                                 <div class="tree-row-main u-min-w-0">
                                                     <div class="tree-icon icon-box">
                                                         <v-icon size="18">mdi-file-document-outline</v-icon>
@@ -144,7 +145,8 @@
                                                         <div class="tree-meta">
                                                             <span>{{ formatArticleTags(article) }}</span>
                                                             <span v-if="article.updated_at" class="dot">•</span>
-                                                    <span v-if="article.updated_at">{{ article.updated_at }}</span>
+                                                            <span v-if="article.updated_at">{{ article.updated_at
+                                                            }}</span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -156,7 +158,7 @@
                         </div>
                     </div>
                 </div>
-                
+
 
                 <div v-else class="empty-state">
                     <div class="empty-state-icon icon-box">
@@ -202,15 +204,15 @@ function formatArticleTags(article) {
 
 
 onMounted(async () => {
-  
- loading.value = true;
-  try {
-    workspaces.value = await getWorkspaces();
-  } catch (err) {
-    error.value = 'Kon workspaces niet laden...';
-  } finally {
-    loading.value = false;
-  }
+
+    loading.value = true;
+    try {
+        workspaces.value = await getWorkspaces();
+    } catch (err) {
+        error.value = 'Kon workspaces niet laden...';
+    } finally {
+        loading.value = false;
+    }
 });
 
 const filteredWorkspaces = computed(() => {
@@ -337,7 +339,7 @@ function categoryRoute(category) {
 
 function projectRoute(project) {
     return {
-    name: 'project',
+        name: 'project',
         params: {
             slug: project.slug,
         },
