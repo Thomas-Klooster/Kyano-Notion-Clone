@@ -17,9 +17,9 @@
 
             <div class="auth-field-group">
               <label class="auth-label">E-mailadres</label>
-              <v-text-field v-model="email" placeholder="naam@bedrijf.com" autocomplete="email" type="email"
+              <v-text-field v-model="email" placeholder="naam@bedrijf.com"  autocomplete="email" type="email"
                 variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-email-outline"
-                :rules="emailRules" hide-details="auto" class="notion-soft-input" />
+                :rules="emailRules" hide-details="auto" class="notion-soft-input" @keydown.enter.prevent="focusPassword" />
             </div>
 
             <div class="auth-field-group">
@@ -29,7 +29,7 @@
                   Wachtwoord vergeten?
                 </button>
               </div>
-              <v-text-field v-model="password" placeholder="••••••••" autocomplete="current-password"
+              <v-text-field v-model="password" ref="passwordField" placeholder="••••••••" autocomplete="current-password"
                 :type="showPassword ? 'text' : 'password'" variant="solo-filled" flat density="comfortable"
                 prepend-inner-icon="mdi-lock-outline"
                 :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" hide-details="auto"
@@ -94,10 +94,15 @@ const formValid = ref(false);
 const loading = ref(false);
 const email = ref("");
 const password = ref("");
+const passwordField = ref(null)
 const remember = ref(true);
 const showPassword = ref(false);
 const errorMessage = ref("");
 const router = useRouter();
+
+
+function focusPassword() { passwordField.value?.focus?.() }
+
 
 const emailRules = [
   (v) => !!v || "Het invullen van een email is verplicht.",

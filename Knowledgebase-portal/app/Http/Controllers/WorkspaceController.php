@@ -57,11 +57,19 @@ public function index()
     public function update(Workspace $workspace, WorkspaceUpdateRequest $request) {
         $this->authorize('update', $workspace);
         $data = $request->validated();
+        $workspace->update(['name' => $data['name']]);
 
-        $workspace->update($data);
-        return response()->json($workspace);
+    if (isset($data['customer_ids'])) {
+        $currentOwner = $workspace->owner_id;
+
+        $syncData = collect($data['customer_ids'])
+         ->mapWithKeys(fn($id) => [$id => ['role' => 'member']])
+         ->toArray();
+        $syncData[$currentOwner] = ['role' => 'owner'];
+        $workspace->members()->sync($syncData);
     }
-
+    return response()->json($workspace->load('members'));
+}
     public function workspaceArticles(Workspace $workspace) {
         $this->authorize('view', $workspace);
         return $workspace->articles()->get();

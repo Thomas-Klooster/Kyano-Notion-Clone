@@ -1,4 +1,4 @@
-import api from "@/api/api";
+import api from '@/api/api';
 
 export const getWorkspaces = async () => {
      const { data } = await api.get('workspaces')
@@ -21,11 +21,10 @@ export const postWorkspace = async (payload) => {
 };
 
 
-export const updateWorkspace = async (workspaceId, payload) => {
-     const { data } = await api.put(`admin/workspaces/${workspaceId}`, payload)
+export const updateWorkspace = async (slug, payload) => {
+     const { data } = await api.put(`admin/workspaces/${slug}`, payload)
      return data;
 };
-
 
 export const deleteWorkspace = async (workspaceId) => {
      const { data } = await api.delete(`workspaces/${workspaceId}`)

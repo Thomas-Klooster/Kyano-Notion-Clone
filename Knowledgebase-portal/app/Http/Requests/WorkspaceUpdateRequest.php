@@ -19,10 +19,11 @@ class WorkspaceUpdateRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
-        return [
-            'name' => 'sometimes|required|string',
-        ];
-    }
-}
+        public function rules(): array
+{
+    return [
+        'name'          => ['sometimes', 'string', 'max:255'],
+        'customer_ids'  => ['sometimes', 'array'],
+        'customer_ids.*'=> ['integer', 'exists:users,id'],
+    ];
+}}

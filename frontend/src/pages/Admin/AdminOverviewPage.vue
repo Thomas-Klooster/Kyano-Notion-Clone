@@ -325,7 +325,13 @@
                             <v-icon size="18">mdi-magnify</v-icon>
                             <input v-model="workspaceCustomerSearch" type="text" placeholder="Zoek klant" />
                           </div>
-                          <v-btn variant="text" size="small"
+                        <v-btn size="small" variant="text" @click="saveWorkspaceMembers(selectedEntityType, selectedEntity.id)">
+                        Opslaan
+                        </v-btn>
+                        <v-snackbar v-model="snackbar" timer="bottom" :timer-color="timerColor" :color="snackbarColor" :timeout="3000" location="top end">
+                        {{ snackbarMessage }}
+                      </v-snackbar>
+                           <v-btn variant="text" size="small"
                             @click="updateWorkspaceCustomerAccess(selectedEntity.id, customerOnlyRecords.map(c => c.id))">
                             Alles selecteren
                           </v-btn>
@@ -758,7 +764,6 @@
                   Verwijder Feedback
                 </v-btn>
                 </div>
-
               </div>
 
               <div class="detail-grid">
@@ -1037,7 +1042,7 @@
 import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { deleteFeedback, getFeedbacks, markFeedbackAsRead } from '@/services/articleService'
-import { getAdminWorkspaces } from '@/services/workspaceService'
+import { getAdminWorkspaces, postWorkspace, updateWorkspace } from '@/services/workspaceService'
 import { deleteUser, getAdminUsers, postUser, updateUser } from '@/services/userService'
 
 
@@ -1087,7 +1092,10 @@ const categoryId = ref(1)
 const projectId = ref(1)
 const articleId = ref(1)
 const customerId = ref(1)
-
+const snackbar = ref(false)
+const snackbarMessage = ref('')
+const snackbarColor = ref('success')
+const timerColor = ref('success')
 
 const filterMenu = ref(false)
 const activeFilter = ref('All')
@@ -1154,6 +1162,7 @@ const draft = reactive({
   projectId: null,
   status: '',
   slug: '',
+  customerAccess: []
 })
 
 const customerDraft = reactive({
@@ -1177,6 +1186,14 @@ onMounted(async () => {
   await loadOverviewData()
 })
 
+  async function reloadWorkspaces() {
+  const workspacesResponse = await getAdminWorkspaces()
+  workspaceData.value = extractCollection(workspacesResponse).map(normalizeWorkspace)
+
+  if (selectedWorkspaceId.value) {
+    selectEntity('workspace', selectedWorkspaceId.value)
+  }
+}
 
 const customerOnlyOptions = computed(() =>
   customerOnlyRecords.value.map((customer) => ({
@@ -1992,6 +2009,7 @@ function resetDraft() {
   draft.projectId = selectedProjectId.value
   draft.status = ''
   draft.slug = ''
+  draft.customerAccess = []
 }
 
 function openCreateDialog(type, defaults = null) {
@@ -2021,9 +2039,11 @@ function openEditDialog(type, id) {
 
   if (type === 'workspace') {
     draft.id = entity.id
+    draft.slug = entity.slug
     draft.name = entity.name
     draft.summary = entity.description ?? ''
     draft.customer = entity.customer
+    draft.customerAccess = entity.customerAccess ?? []
   }
 
   if (type === 'category') {
@@ -2056,6 +2076,29 @@ function openEditDialog(type, id) {
   editorOpen.value = true
 }
 
+  async function saveWorkspaceMembers() {
+    error.value = ''
+  try {
+    const payload = {
+      name: selectedEntity.value.name,
+      customer_ids: selectedEntity.value.customerAccess ?? [],
+    }
+    await updateWorkspace(selectedEntity.value.slug, payload)
+    await reloadWorkspaces()
+
+    snackbarMessage.value = 'Wijzigingen zijn opgeslagen!'
+    snackbarColor.value = '#24a1c7'
+    timerColor.value = '#24a1c7'
+    snackbar.value = true
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon de leden niet opslaan.'
+
+    snackbarMessage.value = error.value
+    snackbarColor.value = 'error'
+    snackbar.value = true
+  }
+}
+
 function openCreateChildDialog() {
   if (selectedEntityType.value === 'workspace' && selectedEntity.value) {
     openCreateDialog('category', { workspaceId: selectedEntity.value.id })
@@ -2071,15 +2114,33 @@ function openCreateChildDialog() {
   }
 }
 
-function saveDraft() {
-  if (dialogMode.value === 'create') createEntity()
-  else updateEntity()
-  editorOpen.value = false
-}
+  async function saveDraft() {
+    error.value = ''
+    try {
+      if (dialogType.value === 'workspace') {
+        const payload = {
+          name: draft.name,
+          customer_ids: draft.customerAccess ?? [],
+        }
+        if (dialogMode.value === 'create') {
+          const response = await postWorkspace(payload)
+          draft.id = response.id
+        } else {
+          await updateWorkspace(draft.slug, payload)
+          await reloadWorkspaces()
+        }
+      }
+      if (dialogMode.value === 'create') createEntity()
+      else updateEntity()
+      editorOpen.value = false
+    } catch (err) {
+      error.value = err.response?.data?.message ?? 'Kon de workspace niet aanmaken.'
+    }
+  }
 
 function createEntity() {
   if (dialogType.value === 'workspace') {
-    const newWorkspace = { id: workspaceId.value++, name: draft.name, customer: draft.customer, description: draft.summary, categories: [] }
+    const newWorkspace = { name: draft.name, customer: draft.customer, description: draft.summary, categories: [] }
     workspaceData.value.unshift(newWorkspace)
     selectEntity('workspace', newWorkspace.id)
     return
@@ -2238,12 +2299,6 @@ async function updateReviewReadState(id, isRead = true) {
 async function selectReview(id) {
   selectedReviewId.value = id
   await updateReviewReadState(id, true)
-}
-
-function reviewHelpfulLabel(review) {
-  if (review?.helpful === 1) return 'Thumbs up'
-  if (review?.helpful === 0) return 'Thumbs down'
-  return 'Feedback'
 }
 
 function reviewHelpfulClass(review) {
