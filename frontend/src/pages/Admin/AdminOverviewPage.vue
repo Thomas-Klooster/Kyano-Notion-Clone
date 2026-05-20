@@ -291,7 +291,6 @@
                   </v-btn>
                 </div>
               </div>
-
               <div class="detail-grid">
                 <article class="detail-card card card-rounded-xl"
                   :class="{ 'detail-card-full': selectedEntityType === 'workspace' }">
@@ -654,32 +653,20 @@
       class="entity-card card card-elevated card-rounded-2xl studio-card">
       <div class="studio-toolbox">
 
-
-        <div class="studio-toolbar">
-<v-menu v-model="filterMenu"
-         :close-on-content-click="true"
-         location="bottom start">
-
-  <template #activator="{ props }">
-    <button v-bind="props"
-           icon
-           variant="outlined"
-           size="small">
-      <v-badge :model-value="activeFilter !== 'All'"
-               dot color="primary">
+    <div class="studio-toolbar">
+    <v-menu v-model="filterMenu" :close-on-content-click="true" location="bottom start">
+    <template #activator="{ props }">
+    <button v-bind="props" icon variant="outlined" size="small">
+      <v-badge :model-value="activeFilter !== 'All'" dot color="primary">
         <v-icon>mdi-filter</v-icon>
       </v-badge>
     </button>
   </template>
 
-  <v-list density="compact"
-          :selected="[activeFilter]"
-          @update:selected="activeFilter = $event[0]">
-    <v-list-item v-for="opt in filterOptions"
-                  :key="opt.value"
-                  :value="opt.value"
-                  :prepend-icon="opt.icon"
-                  :title="opt.label" />
+  <v-list density="compact" :selected="[activeFilter]"
+  @update:selected="activeFilter = $event[0]">
+  <v-list-item v-for="opt in filterOptions"
+  :key="opt.value" :value="opt.value" :prepend-icon="opt.icon" :title="opt.label" />
   </v-list>
 </v-menu>
 
@@ -688,7 +675,6 @@
             <input v-model="reviewSearch" type="text"
             placeholder="Zoek op artikel, klant of feedback..." />
           </div>
-
           <div class="studio-toolbar-spacer" />
         </div>
     </div>
@@ -698,8 +684,6 @@
               <div class="panel-kicker">Lijst</div>
               <h3 class="review-title">Beoordelingen</h3>
               </div> 
-
-              
 
             <div v-if="filteredReviewRecords.length" class="tree-list">
               <article v-for="review in filteredReviewRecords" :key="review.id"
@@ -929,8 +913,8 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="deleteOpen" max-width="396">
-      <v-card class="delete-modal">
+    <v-dialog v-model="workspaceDeleteOpen" max-width="396">
+      <v-card class="delete-modal" v-if="workspaceDeleteTarget">
         <div class="delete-modal-head">
           <span class="delete-modal-icon" aria-hidden="true">
             <v-icon size="30">mdi-alert-circle-outline</v-icon>
@@ -938,14 +922,14 @@
         </div>
 
         <div class="delete-modal-body">
-          <h3 class="delete-modal-title">{{ deleteTarget?.name || deleteTarget?.title }} verwijderen?</h3>
-          <p class="delete-modal-content">Weet je zeker dat je {{ deleteTarget?.name || deleteTarget?.title }} wilt verwijderen?</p>
+          <h3 class="delete-modal-title">{{ workspaceDeleteTarget.name || workspaceDeleteTarget.title }} verwijderen?</h3>
+          <p class="delete-modal-content">Weet je zeker dat je {{ workspaceDeleteTarget.name || workspaceDeleteTarget.title }} wilt verwijderen?</p>
           <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>
 
         <div class="delete-modal-footer">
-          <button class="delete-modal-btn delete-modal-btn--secondary" type="button" @click="deleteOpen = false">Annuleren</button>
-          <button class="delete-modal-btn delete-modal-btn--warning" type="button" @click="confirmDelete">Verwijderen</button>
+          <button class="delete-modal-btn delete-modal-btn--secondary" type="button" @click="workspaceDeleteOpen = false">Annuleren</button>
+          <button class="delete-modal-btn delete-modal-btn--warning" type="button" @click="confirmWorkspaceDelete">Verwijderen</button>
         </div>
       </v-card>
     </v-dialog>
@@ -1042,7 +1026,7 @@
 import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { deleteFeedback, getFeedbacks, markFeedbackAsRead } from '@/services/articleService'
-import { getAdminWorkspaces, postWorkspace, updateWorkspace } from '@/services/workspaceService'
+import { getAdminWorkspaces, postWorkspace, updateWorkspace, deleteWorkspace } from '@/services/workspaceService'
 import { deleteUser, getAdminUsers, postUser, updateUser } from '@/services/userService'
 
 
@@ -1067,6 +1051,7 @@ const expandedProjects = ref([])
 
 const editorOpen = ref(false)
 const deleteOpen = ref(false)
+const workspaceDeleteOpen = ref(false)
 const dialogMode = ref('create')
 const dialogType = ref('workspace')
 const deleteType = ref(null)
@@ -1080,6 +1065,7 @@ const selectedCustomerCrudId = ref(null)
 const customerDeleteId = ref(null)
 const reviewDeleteId = ref(null)
 const selectedReviewId = ref(null)
+const workspaceDeleteId = ref(null)
 
 const selectedEntityType = ref('workspace')
 const selectedWorkspaceId = ref(null)
@@ -1638,6 +1624,10 @@ const activeArticleReviewIndex = computed(() =>
 
 const activeArticleReview = computed(() =>
   articleReviewRecords.value[activeArticleReviewIndex.value] ?? selectedReviewRecord.value,
+)
+
+const workspaceDeleteTarget = computed(() =>
+  workspaceData.value.find((workspace) => workspace.id === workspaceDeleteId.value) ?? null
 )
 
 const customerDeleteTarget = computed(() =>
@@ -2236,35 +2226,28 @@ function updateEntity() {
 function openDeleteDialog(type, id) {
   deleteType.value = type
   deleteId.value = id
-  deleteOpen.value = true
+  workspaceDeleteId.value = id
+  workspaceDeleteOpen.value = true
 }
 
-function confirmDelete() {
-  if (deleteType.value === 'workspace') {
-    workspaceData.value = workspaceData.value.filter((workspace) => workspace.id !== deleteId.value)
-    if (selectedEntityType.value === 'workspace' && selectedWorkspaceId.value === deleteId.value) {
+
+async function confirmWorkspaceDelete() {
+  const target = workspaceDeleteTarget.value
+  if (!target) return
+  error.value = ''
+
+  try {
+    await deleteWorkspace(target.slug)
+    workspaceData.value = workspaceData.value.filter((w) => w.id !== target.id)
+    if (selectedWorkspaceId.value === target.id) {
       selectedWorkspaceId.value = workspaceData.value[0]?.id ?? null
     }
+    workspaceDeleteOpen.value = false        
+    workspaceDeleteId.value = null  
+    syncLocalCounters()
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon Workspace niet verwijderen.'
   }
-  if (deleteType.value === 'category') {
-    const result = findCategory(deleteId.value)
-    if (result) result.workspace.categories = result.workspace.categories.filter((category) => category.id !== deleteId.value)
-  }
-  if (deleteType.value === 'project') {
-    const result = findProject(deleteId.value)
-    if (result) result.category.projects = result.category.projects.filter((project) => project.id !== deleteId.value)
-  }
-  if (deleteType.value === 'article') {
-    const result = findArticle(deleteId.value)
-    if (result) result.project.articles = result.project.articles.filter((article) => article.id !== deleteId.value)
-  }
-  if (selectedEntityType.value === deleteType.value) {
-    selectedEntityType.value = 'workspace'
-    selectedCategoryId.value = null
-    selectedProjectId.value = null
-    selectedArticleId.value = null
-  }
-  deleteOpen.value = false
 }
 
 function resetCustomerDraft() {

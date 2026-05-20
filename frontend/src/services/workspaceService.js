@@ -26,8 +26,8 @@ export const updateWorkspace = async (slug, payload) => {
      return data;
 };
 
-export const deleteWorkspace = async (workspaceId) => {
-     const { data } = await api.delete(`workspaces/${workspaceId}`)
+export const deleteWorkspace = async (slug) => {
+     const { data } = await api.delete(`workspaces/${slug}`)
      return data;
 };
 
