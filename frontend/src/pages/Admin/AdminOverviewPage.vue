@@ -932,8 +932,25 @@
           <button class="delete-modal-btn delete-modal-btn--warning" type="button" @click="confirmWorkspaceDelete">Verwijderen</button>
         </div>
       </v-card>
+    </v-dialog>   
+    <v-dialog v-model="categoryDeleteOpen" max-width="396">
+      <v-card class="delete-modal" v-if="categoryDeleteTarget">
+        <div class="delete-modal-head">
+          <span class="delete-modal-icon" aria-hidden="true">
+            <v-icon size="30">mdi-alert-circle-outline</v-icon>
+          </span>
+        </div>
+        <div class="delete-modal-body">
+          <h3 class="delete-modal-title">{{  categoryDeleteTarget.name }} verwijderen?</h3>
+          <p class="delete-modal-content">Weet je zeker dat je  {{  categoryDeleteTarget.name }} wilt verwijderen?</p>
+          <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
+        </div>
+        <div class="delete-modal-footer">
+          <button class="delete-modal-btn delete-modal-btn--secondary" @click="categoryDeleteOpen = false">Annuleren</button>
+          <button class="delete-modal-btn delete-modal-btn--warning" @click="confirmCategoryDelete">Verwijderen</button>
+        </div>          
+      </v-card>
     </v-dialog>
-
     <v-dialog v-model="customerEditorOpen" max-width="680">
       <v-card class="dialog-card card card-rounded-xl" rounded="xl">
         <div class="dialog-head">
@@ -1025,7 +1042,7 @@
 <script setup>
 import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { storeCategory, UpdateCategory } from '@/services/categoryService'
+import { storeCategory, UpdateCategory, DeleteCategory } from '@/services/categoryService'
 import { deleteFeedback, getFeedbacks, markFeedbackAsRead } from '@/services/articleService'
 import { getAdminWorkspaces, postWorkspace, updateWorkspace, deleteWorkspace } from '@/services/workspaceService'
 import { deleteUser, getAdminUsers, postUser, updateUser } from '@/services/userService'
@@ -1059,6 +1076,8 @@ const deleteId = ref(null)
 
 const customerEditorOpen = ref(false)
 const customerDeleteOpen = ref(false)
+const categoryDeleteOpen = ref(false)
+const categoryDeleteId = ref(null)
 const reviewDeleteOpen = ref(false)
 const customerDialogMode = ref('create')
 const selectedCustomerCrudId = ref(null)
@@ -1164,7 +1183,7 @@ const customerDraft = reactive({
 })
 
 const customersData = ref([])
-
+const categoryData = ref([])
 const workspaceData = ref([])
 const reviewRecords = ref([])
 
@@ -1629,6 +1648,10 @@ const activeArticleReview = computed(() =>
 
 const workspaceDeleteTarget = computed(() =>
   workspaceData.value.find((workspace) => workspace.id === workspaceDeleteId.value) ?? null
+)
+
+const categoryDeleteTarget = computed(() =>
+workspaceData.value.flatMap(w => w.categories).find(c => c.id === categoryDeleteId.value) ?? null
 )
 
 const customerDeleteTarget = computed(() =>
@@ -2243,10 +2266,15 @@ function updateEntity() {
 function openDeleteDialog(type, id) {
   deleteType.value = type
   deleteId.value = id
-  workspaceDeleteId.value = id
-  workspaceDeleteOpen.value = true
-}
 
+  if (type === 'workspace') {
+    workspaceDeleteId.value = id
+    workspaceDeleteOpen.value = true
+  } else if (type === 'category') {
+    categoryDeleteId.value = id
+    categoryDeleteOpen.value = true
+  }
+}
 
 async function confirmWorkspaceDelete() {
   const target = workspaceDeleteTarget.value
@@ -2263,7 +2291,34 @@ async function confirmWorkspaceDelete() {
     workspaceDeleteId.value = null  
     syncLocalCounters()
   } catch (err) {
-    error.value = err.response?.data?.message ?? 'Kon Workspace niet verwijderen.'
+    error.value = err.response?.data?.message ?? 'Kon workspace niet verwijderen.'
+  }
+}
+
+
+async function confirmCategoryDelete() {
+  const target = categoryDeleteTarget.value
+  if (!target) return
+  error.value = ''
+
+  try {
+    await DeleteCategory(target.slug)
+
+    // Remove the category from its parent workspace
+    for (const workspace of workspaceData.value) {
+      workspace.categories = workspace.categories.filter(c => c.id !== target.id)
+    }
+
+    if (selectedCategoryId.value === target.id) {
+      selectedCategoryId.value = null
+      selectedEntityType.value = 'workspace'
+    }
+
+    categoryDeleteOpen.value = false
+    categoryDeleteId.value = null
+    syncLocalCounters()
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon categorie niet verwijderen.'
   }
 }
 
