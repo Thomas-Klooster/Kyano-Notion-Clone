@@ -35,7 +35,8 @@ class WorkspaceFactory extends Factory
         return [
             'name' => $name,
             'owner_id' => $admin->id,
-            'slug' => Str::slug($name),
+            'slug' => Str::slug($this->faker->unique()->company()),
+
         ];
     }
 

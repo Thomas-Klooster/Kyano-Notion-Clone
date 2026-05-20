@@ -33,7 +33,9 @@ class CategoryRequest extends FormRequest
     {
         return [
             'name' => 'required|string',
-            'slug' => 'unique:categories,slug'
+            'slug' => 'unique:categories,slug',
+            'workspace_id' => 'required|exists:workspaces,id',
+
         ];
     }
 

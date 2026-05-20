@@ -33,7 +33,8 @@ use AuthorizesRequests;
 
   public function update(CategoryUpdateRequest $request, Category $category) {
     $this->authorize('update', $category);
-    $category->update($request->validated());
+    $data = $request->validated();
+    $category->update(['name' => $data['name']]);
 
     return new CategoryResource($category);
     }

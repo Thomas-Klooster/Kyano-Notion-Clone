@@ -25,6 +25,7 @@ class CategoryUpdateRequest extends FormRequest
         return [
             'name' => 'sometimes|required|string',
             'slug' => ['sometimes', 'required', Rule::unique('categories', 'slug')->ignore($this->route('category'))],
+            'workspace_id' => 'sometimes|required|exists:workspaces,id'
         ];
     }
 }

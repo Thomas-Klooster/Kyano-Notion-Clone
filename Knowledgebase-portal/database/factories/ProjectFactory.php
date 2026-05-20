@@ -30,7 +30,7 @@ public function definition(): array
     return [
         'name' => $name,
         'description' => $this->faker->paragraph(4, true),
-        'slug' => Str::slug($name),
+        'slug' => Str::slug($this->faker->unique()->company()),
         'article_id' => Article::inRandomOrder()->first()->id ?? Article::factory(),
         'workspace_id' => Workspace::inRandomOrder()->first()->id ?? Workspace::factory(),
         'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory(),

@@ -12,16 +12,15 @@ export const getCategory = async (slug) => {
 };
 
 export const storeCategory = async (payload) => {
-     const { data } = await api.post('category', payload)
+     const { data } = await api.post('categories', payload)
      return data;
 };
 
-export const UpdateCategory = async (categoryId, payload) => {
-     const { data } = await api.put(`categories/${categoryId}`, payload)
-     return data;
+export const UpdateCategory = async (slug, payload) => {
+  const { data } = await api.put(`admin/categories/${slug}`, payload)
+  return data;
 };
-
-export const DeleteCategory = async (categoryId) => {
-     const { data } = await api.delete(`categories/${categoryId}`)
+export const DeleteCategory = async (slug) => {
+     const { data } = await api.delete(`categories/${slug}`)
      return data;
 }

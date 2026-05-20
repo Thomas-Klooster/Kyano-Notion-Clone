@@ -1025,6 +1025,7 @@
 <script setup>
 import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { storeCategory, UpdateCategory } from '@/services/categoryService'
 import { deleteFeedback, getFeedbacks, markFeedbackAsRead } from '@/services/articleService'
 import { getAdminWorkspaces, postWorkspace, updateWorkspace, deleteWorkspace } from '@/services/workspaceService'
 import { deleteUser, getAdminUsers, postUser, updateUser } from '@/services/userService'
@@ -1050,7 +1051,6 @@ const expandedCategories = ref([])
 const expandedProjects = ref([])
 
 const editorOpen = ref(false)
-const deleteOpen = ref(false)
 const workspaceDeleteOpen = ref(false)
 const dialogMode = ref('create')
 const dialogType = ref('workspace')
@@ -1471,6 +1471,7 @@ async function loadOverviewData() {
   try {
     const [workspacesResponse, usersResponse] = await Promise.all([
       getAdminWorkspaces(),
+      // getCategories(),
       getAdminUsers(),
     ])
 
@@ -2038,7 +2039,7 @@ function openEditDialog(type, id) {
 
   if (type === 'category') {
     const result = findCategory(id)
-    draft.id = entity.id
+    draft.slug = entity.slug
     draft.name = entity.name
     draft.summary = entity.description ?? ''
     draft.workspaceId = result?.workspace.id ?? null
@@ -2105,28 +2106,44 @@ function openCreateChildDialog() {
 }
 
   async function saveDraft() {
-    error.value = ''
-    try {
-      if (dialogType.value === 'workspace') {
-        const payload = {
-          name: draft.name,
-          customer_ids: draft.customerAccess ?? [],
-        }
-        if (dialogMode.value === 'create') {
-          const response = await postWorkspace(payload)
-          draft.id = response.id
-        } else {
-          await updateWorkspace(draft.slug, payload)
-          await reloadWorkspaces()
-        }
+  error.value = ''
+  try {
+    if (dialogType.value === 'workspace') {
+      const payload = {
+        name: draft.name,
+        customer_ids: draft.customerAccess ?? [],
       }
-      if (dialogMode.value === 'create') createEntity()
-      else updateEntity()
-      editorOpen.value = false
-    } catch (err) {
-      error.value = err.response?.data?.message ?? 'Kon de workspace niet aanmaken.'
+      if (dialogMode.value === 'create') {
+        const response = await postWorkspace(payload)
+        draft.id = response.id
+      } else {
+        await updateWorkspace(draft.slug, payload)
+        await reloadWorkspaces()
+      }
     }
+
+if (dialogType.value === 'category') {
+      const payload = {
+        name: draft.name,
+        workspace_id: draft.workspaceId,
   }
+        if (dialogMode.value === 'create') {
+        const response = await storeCategory(payload)
+        draft.id = response.id
+      } else {
+        await UpdateCategory(draft.slug, payload)
+        await reloadWorkspaces()
+      }
+    }
+
+    if (dialogMode.value === 'create') createEntity()
+    else updateEntity()
+    editorOpen.value = false
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon de workspace niet aanmaken.'
+  }
+}
+
 
 function createEntity() {
   if (dialogType.value === 'workspace') {

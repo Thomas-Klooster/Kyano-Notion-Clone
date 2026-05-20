@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class Category extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = ['name', 'slug', 'workspace_id'];
 
     
     public function projects() {

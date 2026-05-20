@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\Category;
+use app\Models\Workspace;
 use Illuminate\Support\Str;
 
 /**
@@ -23,7 +24,7 @@ class CategoryFactory extends Factory
         return [
         'name' => $name,
         'slug' => Str::slug($name), 
-        'workspace_id' => \App\Models\Workspace::factory(),
+            'workspace_id' => Workspace::inRandomOrder()->first()->id ?? Workspace::factory(),
 ];
     }
 }
