@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProjectsUpdateRequest extends FormRequest
 {
@@ -24,7 +25,7 @@ class ProjectsUpdateRequest extends FormRequest
         return [
             'name' => 'sometimes|required|string',
             'description' => 'sometimes|required|string',
-            'slug' => 'sometimes|required',
+            'slug' => ['sometimes', 'required', Rule::unique('projects', 'slug')->ignore($this->route('project'))],
             'category_id'  => 'sometimes|required|exists:categories,id',
         ];
     }

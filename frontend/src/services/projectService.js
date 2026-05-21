@@ -21,6 +21,6 @@ export const updateProject = async (slug, payload) => {
 };
 
 export const deleteProject = async (slug) => {
-     const { data } = await api.delete(`admin/projects/${slug}`)
+     const { data } = await api.delete(`projects/${slug}`)
      return data;
 };

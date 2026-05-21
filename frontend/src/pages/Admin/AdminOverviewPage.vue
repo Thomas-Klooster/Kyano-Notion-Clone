@@ -951,6 +951,28 @@
         </div>          
       </v-card>
     </v-dialog>
+    
+    <v-dialog v-model="projectDeleteOpen" max-width="396">
+      <v-card class="delete-modal" v-if="projectDeleteTarget">
+        <div class="delete-modal-head">
+          <span class="delete-modal-icon" aria-hidden="true">
+            <v-icon size="30">mdi-alert-circle-outline</v-icon>
+          </span>
+        </div>
+        <div class="delete-modal-body">
+          <h3 class="delete-modal-title">{{ projectDeleteTarget.name }} verwijderen?</h3>
+          <p class="delete-modal-content">Weet je zeker dat je {{ projectDeleteTarget.name }} wilt verwijderen?</p>
+          <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
+        </div>
+        <div class="delete-modal-footer">
+          <button class="delete-modal-btn delete-modal-btn--secundary" @click="projectDeleteOpen = false">Annuleren</button>
+          <button class="delete-modal-btn delete-modal-btn--warning" @click="confirmProjectDelete">Verwijderen</button>
+        </div>
+      </v-card>
+    </v-dialog>
+
+
+
     <v-dialog v-model="customerEditorOpen" max-width="680">
       <v-card class="dialog-card card card-rounded-xl" rounded="xl">
         <div class="dialog-head">
@@ -1045,7 +1067,7 @@ import { useRouter } from 'vue-router'
 import { storeCategory, UpdateCategory, DeleteCategory } from '@/services/categoryService'
 import { deleteFeedback, getFeedbacks, markFeedbackAsRead } from '@/services/articleService'
 import { getAdminWorkspaces, postWorkspace, updateWorkspace, deleteWorkspace } from '@/services/workspaceService'
-import { storeProject, updateProject } from '@/services/projectService'
+import { storeProject, updateProject, deleteProject } from '@/services/projectService'
 import { deleteUser, getAdminUsers, postUser, updateUser } from '@/services/userService'
 
 
@@ -1079,6 +1101,8 @@ const customerEditorOpen = ref(false)
 const customerDeleteOpen = ref(false)
 const categoryDeleteOpen = ref(false)
 const categoryDeleteId = ref(null)
+const projectDeleteId = ref(null)
+const projectDeleteOpen = ref(false)
 const reviewDeleteOpen = ref(false)
 const customerDialogMode = ref('create')
 const selectedCustomerCrudId = ref(null)
@@ -1184,7 +1208,6 @@ const customerDraft = reactive({
 })
 
 const customersData = ref([])
-const categoryData = ref([])
 const workspaceData = ref([])
 const reviewRecords = ref([])
 
@@ -1264,6 +1287,7 @@ function normalizeArticle(article) {
 function normalizeProject(project) {
   return {
     ...project,
+    slug: safeText(project.slug),
     description: safeText(project.description),
     status: safeText(project.status, 'Concept'),
     articles: extractCollection(project.articles).map(normalizeArticle),
@@ -1655,6 +1679,17 @@ const categoryDeleteTarget = computed(() =>
 workspaceData.value.flatMap(w => w.categories).find(c => c.id === categoryDeleteId.value) ?? null
 )
 
+const projectDeleteTarget = computed(() => {
+  for (const workspace of workspaceData.value) {
+    for (const category of workspace.categories) {
+      const project = category.projects.find(p => p.id === projectDeleteId.value)
+      if (project) return project
+    }
+  }
+  return null
+}
+)
+
 const customerDeleteTarget = computed(() =>
   customersData.value.find((customer) => customer.id === customerDeleteId.value) ?? null
 )
@@ -1798,10 +1833,10 @@ const childSectionTitle = computed(() => {
   return 'Dit artikel heeft geen onderliggende items'
 })
 
-const deleteTarget = computed(() => {
-  if (!deleteType.value || deleteId.value == null) return null
-  return getEntity(deleteType.value, deleteId.value)
-})
+// const deleteTarget = computed(() => {
+//   if (!deleteType.value || deleteId.value == null) return null
+//   return getEntity(deleteType.value, deleteId.value)
+// })
 
 function updateWorkspaceCustomerAccess(workspaceId, customers) {
   const workspace = workspaceData.value.find((item) => item.id === workspaceId)
@@ -2071,7 +2106,7 @@ function openEditDialog(type, id) {
 
   if (type === 'project') {
     const result = findProject(id)
-    draft.id = entity.id
+    draft.slug = entity.slug
     draft.name = entity.name
     draft.summary = entity.description ?? ''
     draft.categoryId = result?.category.id ?? null
@@ -2291,6 +2326,9 @@ function openDeleteDialog(type, id) {
   } else if (type === 'category') {
     categoryDeleteId.value = id
     categoryDeleteOpen.value = true
+  } else if (type === 'project') {
+    projectDeleteId.value = id
+    projectDeleteOpen.value = true
   }
 }
 
@@ -2322,7 +2360,6 @@ async function confirmCategoryDelete() {
   try {
     await DeleteCategory(target.slug)
 
-    // Remove the category from its parent workspace
     for (const workspace of workspaceData.value) {
       workspace.categories = workspace.categories.filter(c => c.id !== target.id)
     }
@@ -2338,6 +2375,35 @@ async function confirmCategoryDelete() {
   } catch (err) {
     error.value = err.response?.data?.message ?? 'Kon categorie niet verwijderen.'
   }
+}
+
+
+async function confirmProjectDelete() {
+  const target = projectDeleteTarget.value
+  if (!target) return
+  error.value = ''
+
+  try {
+    await deleteProject(target.slug) 
+
+      for (const workspace of workspaceData.value) {
+        for (const category of workspace.categories) {
+          category.projects = category.projects.filter(p => p.id !== target.id)
+        }
+      }
+
+      if (selectedProjectId.value === target.id) {
+        selectedProjectId.value = null
+        selectedEntityType = 'workspace'
+      }
+
+      syncLocalCounters()
+    } catch (err) {
+      error.value = err.response?.data?.message ?? 'Kon project niet verwijderen.'
+    } finally {
+      projectDeleteOpen.value = false
+      projectDeleteId.value = null
+    }
 }
 
 function resetCustomerDraft() {
