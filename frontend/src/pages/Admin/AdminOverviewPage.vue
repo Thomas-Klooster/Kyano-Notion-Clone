@@ -885,8 +885,9 @@
           </div>
         </div>
         <div class="dialog-body">
-          <v-text-field v-model="draft.name" :label="dialogType === 'article' ? 'Titel' : 'Naam'" variant="solo-filled"
-            flat hide-details class="notion-soft-input mb-4" />
+          <v-form ref="formRef" v-model="formValid" @submit.prevent="saveDraft">
+          <v-text-field v-model="draft.name" :rules="RequireNameRules" :label="dialogType === 'article' ? 'Titel' : 'Naam'" variant="solo-filled"
+            flat hide-details="auto" class="notion-soft-input mb-4" />
           <v-textarea v-if="dialogType === 'project' || dialogType === 'article'" v-model="draft.summary"
             :label="dialogType === 'article' ? 'Samenvatting' : 'Beschrijving'" variant="solo-filled" flat hide-details
             rows="4" class="notion-soft-input mb-4" />
@@ -905,6 +906,7 @@
             <v-select v-model="draft.status" :items="articleStatusOptions" label="Status" variant="solo-filled" flat
               hide-details class="notion-soft-input" />
           </template>
+          </v-form>
         </div>
         <div class="dialog-actions u-gap-12">
           <v-btn variant="text" @click="editorOpen = false">Annuleren</v-btn>
@@ -1073,6 +1075,8 @@ import { deleteUser, getAdminUsers, postUser, updateUser } from '@/services/user
 
 
 const activeTab = ref('content')
+const formRef = ref(null)
+const formValid = ref(false)
 
 const loading = ref(false)
 const error = ref('')
@@ -1144,6 +1148,11 @@ const getCustomerInitials = (name) => {
   if (parts.length === 1) return parts[0][0].toUpperCase()
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
 }
+
+const RequireNameRules = [
+  (v) => !!v || 'Invullen van dit veld is verplicht.',
+  (v) => (v?.trim()?.length ?? 0) >= 1 || 'De naam moet minstens 1 teken lang zijn',
+]
 
 
 const nameRules = [
@@ -2165,6 +2174,9 @@ function openCreateChildDialog() {
 }
 
   async function saveDraft() {
+  const { valid } = await formRef.value.validate();
+  if (!valid) return;
+
   error.value = ''
   try {
     if (dialogType.value === 'workspace') {
