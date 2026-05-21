@@ -35,7 +35,7 @@ class ProjectsRequest extends FormRequest
             'description' => 'nullable|string',
             'slug' => 'unique:projects,slug',
             'category_id' => 'required|exists:categories,id',
-            // 'article_id' => 'nullable|exists:articles,id',
+            'article_id' => 'nullable|exists:articles,id',
             'workspace_id' => 'required|exists:workspaces,id'
         ];
     }

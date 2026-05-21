@@ -1045,6 +1045,7 @@ import { useRouter } from 'vue-router'
 import { storeCategory, UpdateCategory, DeleteCategory } from '@/services/categoryService'
 import { deleteFeedback, getFeedbacks, markFeedbackAsRead } from '@/services/articleService'
 import { getAdminWorkspaces, postWorkspace, updateWorkspace, deleteWorkspace } from '@/services/workspaceService'
+import { storeProject, updateProject } from '@/services/projectService'
 import { deleteUser, getAdminUsers, postUser, updateUser } from '@/services/userService'
 
 
@@ -2157,8 +2158,25 @@ if (dialogType.value === 'category') {
         await UpdateCategory(draft.slug, payload)
         await reloadWorkspaces()
       }
+  }
+  
+    if (dialogType.value === 'project') {
+      const payload = {
+        name: draft.name,
+        description: draft.description,
+        article_id: draft.articleId,
+        category_id: draft.categoryId,
+        workspace_id: draft.workspaceId,
+        user_id: draft.userId,
+      }
+      if (dialogMode.value === 'create') {
+        const response = await storeProject(payload)
+        draft.id = response.id
+      } else {
+        await updateProject(draft.slug, payload)
+        await reloadWorkspaces()
+      }
     }
-
     if (dialogMode.value === 'create') createEntity()
     else updateEntity()
     editorOpen.value = false
