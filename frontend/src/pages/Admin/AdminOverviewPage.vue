@@ -886,11 +886,16 @@
         </div>
         <div class="dialog-body">
           <v-form ref="formRef" v-model="formValid" @submit.prevent="saveDraft">
-          <v-text-field v-model="draft.name" :rules="RequireNameRules" :label="dialogType === 'article' ? 'Titel' : 'Naam'" variant="solo-filled"
+          <v-text-field :model-value="dialogType === 'article' ? draft.title : draft.name"
+            @update:model-value="updateDraftPrimaryField"
+            :rules="RequireNameRules" :label="dialogType === 'article' ? 'Titel' : 'Naam'" variant="solo-filled"
             flat hide-details="auto" class="notion-soft-input mb-4" />
-          <v-textarea v-if="dialogType === 'project' || dialogType === 'article'" v-model="draft.summary"
-            :label="dialogType === 'article' ? 'Samenvatting' : 'Beschrijving'" variant="solo-filled" flat hide-details
+          <v-textarea v-if="dialogType === 'article'" v-model="draft.summary"
+            :label="dialogType === 'article' ? 'Samenvatting' : 'Korte Beschrijving'" variant="solo-filled" flat hide-details
             rows="4" class="notion-soft-input mb-4" />
+            <v-textarea :model-value="dialogType === 'article' ? draft.content : draft.description"
+            @update:model-value="updateDraftContentField"  
+            variant="solo-filled" :label="dialogType === 'article' ? 'Content' : 'Project beschrijving'" flat hide-details rows="4" class="notion-soft-input mb-4" />
           <v-select v-if="dialogType === 'workspace'" v-model="draft.customerAccess" :items="customerOnlyOptions"
             item-title="title" item-value="value" label="Klanten met toegang" multiple chips closable-chips
             variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
@@ -901,10 +906,30 @@
             item-title="label" item-value="value" label="Categorie" variant="solo-filled" flat hide-details
             class="notion-soft-input mb-4" />
           <template v-if="dialogType === 'article'">
+            <v-combobox v-model="draft.tags" :items="availableArticleTags" label="Tags" variant="solo-filled" flat
+              hide-details multiple chips closable-chips clearable class="notion-soft-input mb-4" />
             <v-select v-model="draft.projectId" :items="projectSelectOptions" item-title="label" item-value="value"
               label="Project" variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
-            <v-select v-model="draft.status" :items="articleStatusOptions" label="Status" variant="solo-filled" flat
-              hide-details class="notion-soft-input" />
+              <v-select v-model="draft.categoryId" :items="categorySelectOptions" item-title="label" item-value="value"
+              label="Categorie" variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
+            <div class="article-chip-picker mb-4">
+              <div class="article-chip-picker__label">Status</div>
+              <v-chip-group v-model="draft.status" selected-class="article-choice-chip--selected" mandatory>
+                <v-chip v-for="option in articleStatusOptions" :key="option.value" :value="option.value"
+                  class="article-choice-chip" filter variant="outlined">
+                  {{ option.label }}
+                </v-chip>
+              </v-chip-group>
+            </div>
+            <div class="article-chip-picker mb-4">
+              <div class="article-chip-picker__label">Visibility</div>
+              <v-chip-group v-model="draft.visibility" selected-class="article-choice-chip--selected" mandatory>
+                <v-chip v-for="option in articleVisibilityOptions" :key="option.value" :value="option.value"
+                  class="article-choice-chip" filter variant="outlined">
+                  {{ option.label }}
+                </v-chip>
+              </v-chip-group>
+            </div>
           </template>
           </v-form>
         </div>
@@ -1067,7 +1092,7 @@
 import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeCategory, UpdateCategory, DeleteCategory } from '@/services/categoryService'
-import { deleteFeedback, getFeedbacks, markFeedbackAsRead } from '@/services/articleService'
+import { postArticle, updateArticle, deleteFeedback, getFeedbacks, markFeedbackAsRead } from '@/services/articleService'
 import { getAdminWorkspaces, postWorkspace, updateWorkspace, deleteWorkspace } from '@/services/workspaceService'
 import { storeProject, updateProject, deleteProject } from '@/services/projectService'
 import { deleteUser, getAdminUsers, postUser, updateUser } from '@/services/userService'
@@ -1194,7 +1219,12 @@ const confirmRules = computed(() => [
 const draft = reactive({
   id: null,
   name: '',
+  title: '',
   summary: '',
+  content: '',
+  description: '',
+  visibility: 'public',
+  tags: [],
   customer: '',
   workspaceId: null,
   categoryId: null,
@@ -1245,8 +1275,14 @@ const customerOptions = computed(() => [
 ])
 const kindOptions = ['Alles', 'Workspaces', 'Categorieën', 'Projecten', 'Artikelen']
 const customerRoleOptions = ['admin', 'customer']
-const articleStatusOptions = ['Draft', 'Published', 'Archived']
-
+const articleStatusOptions = [
+  { label: 'Draft', value: 'draft' },
+  { label: 'Gepubliceerd', value: 'published' },
+]
+const articleVisibilityOptions = [
+  { label: 'Publiek', value: 'public' },
+  { label: 'Privé', value: 'private' },
+]
 const workspaceCustomerSearch = ref('')
 
 const customerOnlyRecords = computed(() =>
@@ -1287,8 +1323,11 @@ function normalizeArticle(article) {
   return {
     ...article,
     summary: safeText(article.summary),
+    content: safeText(article.content),
     slug: safeText(article.slug),
-    status: safeText(article.status, 'Draft'),
+    status: safeText(article.status, 'draft'),
+    visibility: safeText(article.visibility, 'public'),
+    tags: Array.isArray(article.tags) ? article.tags.filter((tag) => typeof tag === 'string') : [],
     updated_at: safeText(article.updated_at),
   }
 }
@@ -1384,7 +1423,7 @@ function normalizeReviewRecord(feedback, article) {
     id: feedback.id,
     articleId: article.id,
     articleTitle: safeText(article.title, 'Ongetiteld artikel'),
-    articleStatus: safeText(article.status, 'Draft'),
+    articleStatus: safeText(article.status, 'draft'),
     articleUpdated_at: safeText(article.updated_at),
     workspaceName: safeText(article.workspaceName),
     categoryName: safeText(article.categoryName),
@@ -1534,7 +1573,7 @@ async function loadOverviewData() {
 
     syncLocalCounters()
     initializeSelection()
-  } catch (err) {
+  } catch {
     error.value = 'Kon de overzicht inladen.'
   } finally {
     loading.value = false
@@ -1557,7 +1596,7 @@ async function loadReviewRecords(workspaces) {
         return normalizeReviewRecord(feedback, {
           id: feedback.article_id,
           title: safeText(apiArticle.title, 'Ongetiteld artikel'),
-          status: safeText(apiArticle.status, 'Draft'),
+          status: safeText(apiArticle.status, 'draft'),
           updated_at: safeText(apiArticle.updated_at),
           workspaceName: safeText(apiArticle.workspace?.name),
           projectName: safeText(apiArticle.project?.name),
@@ -1597,6 +1636,18 @@ const categorySelectOptions = computed(() =>
       value: category.id,
     })),
   ),
+)
+
+const availableArticleTags = computed(() =>
+  [...new Set(
+    workspaceData.value.flatMap((workspace) =>
+      workspace.categories.flatMap((category) =>
+        category.projects.flatMap((project) =>
+          project.articles.flatMap((article) => Array.isArray(article.tags) ? article.tags : []),
+        ),
+      ),
+    ),
+  )].sort((a, b) => a.localeCompare(b)),
 )
 
 const projectSelectOptions = computed(() =>
@@ -2061,7 +2112,11 @@ function iconForType(type) {
 function resetDraft() {
   draft.id = null
   draft.name = ''
+  draft.title = ''
   draft.summary = ''
+  draft.content = ''
+  draft.visibility = 'public'
+  draft.tags = []
   draft.customer = selectedCustomer.value !== 'Alle klanten' ? selectedCustomer.value : customerOnlyOptions.value[0] ?? ''
   draft.workspaceId = selectedWorkspaceId.value
   draft.categoryId = selectedCategoryId.value
@@ -2071,15 +2126,56 @@ function resetDraft() {
   draft.customerAccess = []
 }
 
+function updateDraftPrimaryField(value) {
+  if (dialogType.value === 'article') {
+    draft.title = value
+    return
+  }
+
+  draft.name = value
+}
+
+function updateDraftContentField(value) {
+  if(dialogType.value === 'project') {
+    draft.description = value
+    return
+  }
+
+  draft.content = value
+}
+
+function resolveArticleDraftContext() {
+  const projectResult = draft.projectId ? findProject(draft.projectId) : null
+  const categoryResult = draft.categoryId ? findCategory(draft.categoryId) : null
+
+  if (projectResult) {
+    draft.categoryId = projectResult.category.id
+    draft.workspaceId = projectResult.workspace.id
+    return projectResult
+  }
+
+  if (categoryResult) {
+    draft.workspaceId = categoryResult.workspace.id
+    return {
+      workspace: categoryResult.workspace,
+      category: categoryResult.category,
+      project: null,
+    }
+  }
+
+  return null
+}
+
 function openCreateDialog(type, defaults = null) {
   dialogMode.value = 'create'
   dialogType.value = type
   resetDraft()
   if (type === 'project') draft.status = 'Concept'
-  if (type === 'article') draft.status = 'Draft'
+  if (type === 'article') draft.status = 'draft'
   if (defaults?.workspaceId) draft.workspaceId = defaults.workspaceId
   if (defaults?.categoryId) draft.categoryId = defaults.categoryId
   if (defaults?.projectId) draft.projectId = defaults.projectId
+  if (type === 'article') resolveArticleDraftContext()
   editorOpen.value = true
 }
 
@@ -2125,11 +2221,16 @@ function openEditDialog(type, id) {
   if (type === 'article') {
     const result = findArticle(id)
     draft.id = entity.id
-    draft.name = entity.title
-    draft.summary = entity.summary ?? ''
-    draft.projectId = result?.project.id ?? null
     draft.slug = entity.slug
+    draft.title = entity.title
+    draft.summary = entity.summary ?? ''
+    draft.content = entity.content ?? ''
+    draft.tags = Array.isArray(entity.tags) ? [...entity.tags] : []
+    draft.projectId = result?.project.id ?? null
+    draft.categoryId = result?.category.id ?? null
+    draft.workspaceId = result?.workspace.id ?? null
     draft.status = entity.status
+    draft.visibility = entity.visibility ?? 'public'
   }
 
   editorOpen.value = true
@@ -2223,7 +2324,28 @@ if (dialogType.value === 'category') {
         await updateProject(draft.slug, payload)
         await reloadWorkspaces()
       }
+    } if (dialogType.value === 'article') {
+      resolveArticleDraftContext()
+      const payload = {
+        title: draft.title,
+        content: draft.content,
+        summary: draft.summary,
+        status: draft.status,
+        project_id: draft.projectId,
+        category_id: draft.categoryId,
+        workspace_id: draft.workspaceId,
+        visibility: draft.visibility,
+        tags: draft.tags,
+      }
+      if (dialogMode.value === 'create') {
+        const response = await postArticle(payload)
+        draft.id = response.id
+      } else {
+        await updateArticle(draft.slug, payload)
+        await reloadWorkspaces() 
+      }
     }
+    
     if (dialogMode.value === 'create') createEntity()
     else updateEntity()
     editorOpen.value = false
@@ -2262,7 +2384,18 @@ function createEntity() {
   if (dialogType.value === 'article') {
     const result = findProject(draft.projectId)
     if (!result) return
-    const newArticle = { id: articleId.value++, title: draft.name, summary: draft.summary, slug: draft.slug || slugify(draft.name), status: draft.status || 'Draft', updated_at: '2026-04-13' }
+    const articleTitle = draft.title.trim()
+    const newArticle = {
+      id: draft.id ?? articleId.value++,
+      title: articleTitle,
+      summary: draft.summary,
+      content: draft.content,
+      slug: draft.slug || slugify(articleTitle),
+      status: draft.status || 'draft',
+      visibility: draft.visibility || 'public',
+      tags: [...draft.tags],
+      updated_at: '2026-04-13',
+    }
     result.project.articles.unshift(newArticle)
     selectEntity('article', newArticle.id)
   }
@@ -2319,10 +2452,13 @@ function updateEntity() {
       if (!targetProject) return
       targetProject.project.articles.unshift(result.article)
     }
-    result.article.title = draft.name
+    result.article.title = draft.title
     result.article.summary = draft.summary
-    result.article.slug = draft.slug || slugify(draft.name)
+    result.article.content = draft.content
+    result.article.slug = draft.slug || slugify(draft.title)
     result.article.status = draft.status
+    result.article.visibility = draft.visibility
+    result.article.tags = [...draft.tags]
     result.article.updated_at = '2026-04-13'
     selectEntity('article', result.article.id)
   }
@@ -2406,7 +2542,7 @@ async function confirmProjectDelete() {
 
       if (selectedProjectId.value === target.id) {
         selectedProjectId.value = null
-        selectedEntityType = 'workspace'
+        selectedEntityType.value = 'workspace'
       }
 
       syncLocalCounters()
@@ -2442,7 +2578,7 @@ async function updateReviewReadState(id, isRead = true) {
 
   try {
     await markFeedbackAsRead(id, isRead)
-  } catch (err) {
+  } catch {
     review.isRead = previousReadState
   }
 }

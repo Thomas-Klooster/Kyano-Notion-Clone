@@ -17,7 +17,7 @@ class ArticleRequest extends FormRequest
         return [
 
             'title' => 'required|string',
-            'content' => 'required|string',
+            'content' => 'nullable|string',
             'summary' => 'nullable|string',
             'project_id' => 'nullable|exists:projects,id',
             'category_id' => 'required|exists:categories,id',
@@ -64,10 +64,11 @@ class ArticleRequest extends FormRequest
 
     return [
         'title.required' => 'Het invullen van een titel is verplicht.',
-        'content.required' => 'Het invullen van een titel is verplicht.',
         'project_id.nullable' => 'Voeg een project toe! (niet verplicht)',
         'category_id.required' => 'Voeg een categorie erbij.', 
         'workspace_id.required' => 'Een workspace is verplicht om een project aan te maken.',
+        'visibility.required' => 'Ongeldige zichtbaarheid keuze.',
+        'status.required' => 'Ongeldige Status keuze.',
         'attachments.*.file' => 'Voeg een geldig bestand in.',
         'attachments.*.mimes' => 'Alleen jpg, png, pdf, doc en docx zijn toegestaan.',
         'attachments.*.max' => 'Een bestand mag niet groter zijn dan 10MB.',

@@ -10,12 +10,8 @@ export const getArticle = async (slug) => {
     return data;
 }
 
-export const postArticle = async (formData) => {
-    const { data } = await api.post('articles', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    })
+export const postArticle = async (payload) => {
+    const { data } = await api.post('articles', payload)
     return data;
 };
 
@@ -46,8 +42,8 @@ export const deleteFeedback = async (feedbackId) => {
     return data
 }
 
-export const updateArticle = async (articleId, payload) => {
-    const { data } = await api.put(`admin/articles/${articleId}`, payload)
+export const updateArticle = async (slug, payload) => {
+    const { data } = await api.put(`admin/articles/${slug}`, payload)
     return data;
 };
 

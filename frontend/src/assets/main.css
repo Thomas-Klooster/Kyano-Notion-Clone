@@ -514,6 +514,36 @@ body {
   margin-bottom: 8.5px;
 }
 
+.article-chip-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.article-chip-picker__label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--color-text-muted);
+}
+
+.article-choice-chip {
+  border-radius: 9px !important;
+  width: 300px;
+  height: 40px !important;
+  border-color: var(--color-border-muted) !important;
+  background: #fbfaf8 !important;
+  color: var(--color-text-icon) !important;
+  font-weight: 600 !important;
+}
+
+.article-choice-chip--selected {
+  background: var(--color-brand-500) !important;
+  border-color: var(--color-border-muted) !important;
+  color: white !important;
+  font-weight: 600 !important; 
+}
+
 .empty-state {
   padding: 60px 24px;
   text-align: center;

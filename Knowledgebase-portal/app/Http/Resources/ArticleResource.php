@@ -19,6 +19,7 @@ class ArticleResource extends JsonResource
         'content' => $this->content, 
         'summary' => $this->summary,
         'status' => $this->status,
+        'visibility' => $this->visibility,
         'slug' => $this->slug,
         'created_at' => $this->created_at->locale("nl")->diffForHumans(),
         'updated_at' => $this->updated_at->locale("nl")->diffForHumans(),
