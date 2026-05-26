@@ -213,13 +213,8 @@ function autoResizeTextarea() {
 }
 
 const backToEditorRoute = computed(() => {
-    const articleId = route.params.id
-
-    if (articleId && articleId !== 'preview') {
-        return `/admin/articles/edit`
-    }
-
-    return '/admin/articles/${slug}/new'
+    if (!route.params.slug) return { name: 'admin-overview'}
+    return { name: 'article-new', query: { slug: route.params.slug }}
 })
 
 function formatAttachmentSize(size) {

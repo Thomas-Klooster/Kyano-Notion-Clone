@@ -10,7 +10,7 @@
         </div>
 
         <div class="article-topbar-right">
-          <v-btn variant="text" rounded="lg" prepend-icon="mdi-open-in-new" :to="previewRoute">
+          <v-btn variant="text" rounded="lg" prepend-icon="mdi-open-in-new" :disabled="loading || !previewRoute" :to="previewRoute || undefined">
             Preview
           </v-btn>
         </div>
@@ -26,41 +26,22 @@
 
             <div class="sidebar-meta-row u-flex-between u-gap-12">
               <span>Project</span>
-              <strong>Knowledgebase Portal</strong>
+              <strong>{{ projectName }}</strong>
             </div>
 
             <div class="sidebar-meta-row u-flex-between u-gap-12">
               <span>Status</span>
-              <strong>{{ status }}</strong>
+              <strong>{{ statusLabel }}</strong>
             </div>
 
             <div class="sidebar-meta-row u-flex-between u-gap-12">
               <span>Bijgewerkt</span>
-              <strong>Vandaag</strong>
+              <strong>{{ updatedLabel }}</strong>
             </div>
           </div>
         </div>
 
-        <div class="sidebar-card card card-soft card-rounded-lg">
-          <div class="sidebar-label">Reacties</div>
-
-          <div class="comment-row">
-            <div class="comment-avatar icon-box">K</div>
-            <div>
-              <div class="comment-meta">
-                Klooster Thomas <span>Zojuist</span>
-              </div>
-              <div class="comment-text">Opmerkingen komen hier</div>
-            </div>
-          </div>
-
-          <div class="comment-row muted add-comment-row">
-            <div class="comment-avatar icon-box">K</div>
-            <div class="comment-placeholder">Voeg een reactie toe...</div>
-          </div>
-        </div>
-      </aside>
-
+</aside>
       <main class="article-content">
         <div class="article-cover">
           <div class="cover-actions">
@@ -74,13 +55,13 @@
             <div class="article-meta-line u-flex-center u-wrap u-gap-8">
               <span class="article-pill u-inline-flex u-items-center">Handleiding</span>
               <span class="article-meta-separator">•</span>
-              <span>Concept artikel</span>
+              <span>{{ statusLabel }}</span>
             </div>
 
-            <input v-model="title" class="article-title-input" placeholder="Paginatitel" />
+            <input v-model="title" class="article-title-input" placeholder="Paginatitel" :disabled="loading" />
 
             <textarea v-model="summary" class="article-summary-input" placeholder="Voeg een korte samenvatting toe..."
-              rows="2" />
+              rows="2" :disabled="loading" />
 
             <div class="article-author-row u-flex-center u-gap-12">
               <div class="author-avatar icon-box">K</div>
@@ -94,7 +75,7 @@
 
           <div class="article-body">
             <div class="editor-block">
-              <TipTap />
+              <TipTap v-model="content" />
             </div>
 
             <div class="attachments-section">
@@ -133,6 +114,9 @@
                 <span>Voeg een web bookmark toe</span>
               </div>
             </div>
+            <v-alert v-if="error" type="error" variant="tonal" density="comfortable" class="mb-4 mt-4">
+              {{ error }}
+            </v-alert>
           </div>
         </section>
 
@@ -140,25 +124,25 @@
           <div class="editor-actions-left">
             <div class="save-indicator">
               <span class="save-indicator-dot"></span>
-              <span>Zojuist opgeslagen</span>
+              <span>{{ saveIndicatorLabel }}</span>
             </div>
           </div>
 
           <div class="editor-actions-right">
-            <div class="status-pill" :class="status === 'Published' ? 'is-published' : 'is-draft'">
+            <div class="status-pill" :class="status === 'published' ? 'is-published' : 'is-draft'">
               <span class="status-pill-dot"></span>
-              {{ status }}
+              {{ statusLabel }}
             </div>
 
-            <v-btn variant="tonal" rounded="lg" class="action-btn action-btn-secondary">
+            <v-btn variant="tonal" rounded="lg" class="action-btn action-btn-secondary" :loading="saving" :disabled="loading" @click="saveArticle()">
               Opslaan
             </v-btn>
 
-            <v-btn v-if="status !== 'Published'" color="primary" rounded="lg" class="action-btn action-btn-primary">
+            <v-btn v-if="status !== 'published'" color="primary" rounded="lg" class="action-btn action-btn-primary" :loading="saving" :disabled="loading" @click="saveArticle('published')">
               Publiceren
             </v-btn>
 
-            <v-btn v-else rounded="lg" class="action-btn action-btn-danger">
+            <v-btn v-else rounded="lg" class="action-btn action-btn-danger" :loading="saving" :disabled="loading" @click="saveArticle('draft')">
               Depubliceren
             </v-btn>
           </div>
@@ -169,24 +153,103 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { VFileUpload } from 'vuetify/labs/VFileUpload'
 import TipTap from '@/components/TipTap.vue'
+import { getArticle, updateArticle } from '@/services/articleService'
 
 const route = useRoute()
 
-const title = ref('PAGINATITEL')
-const summary = ref('Dit is de editor van een artikel. Hier kan de admin content schrijven en aanpassen voordat deze gepubliceerd wordt.')
-const status = ref('Draft')
+const articleSlug = ref('')
+const title = ref('')
+const summary = ref('')
+const content = ref('<p></p>')
+const status = ref('draft')
+const visibility = ref('public')
+const projectName = ref('Knowledgebase Portal')
+const updatedLabel = ref('Nog niet opgeslagen')
+const loading = ref(false)
+const saving = ref(false)
+const error = ref('')
+const saveMessage = ref('Klaar om te schrijven')
 
 const model = ref([])
 const uploads = ref(new Map())
 
-const previewRoute = computed(() => ({
-  name: 'article-preview',
-  params: {
-    id: route.params.id || 'preview',
+const previewRoute = computed(() => (
+  articleSlug.value
+    ? {
+      name: 'article',
+      params: { slug: articleSlug.value },
+    }
+    : null
+))
+
+const statusLabel = computed(() => status.value === 'published' ? 'Published' : 'Draft')
+const saveIndicatorLabel = computed(() => saving.value ? 'Opslaan...' : saveMessage.value)
+
+watch(
+  () => route.query.slug,
+  (slug) => {
+    const nextSlug = typeof slug === 'string' ? slug : ''
+    if (!nextSlug) {
+      error.value = 'Geen artikel geselecteerd om te bewerken.'
+      return
+    }
+
+    loadArticle(nextSlug)
   },
-}))
+  { immediate: true },
+)
+
+function hydrateArticle(article) {
+  articleSlug.value = article.slug ?? articleSlug.value
+  title.value = article.title ?? ''
+  summary.value = article.summary ?? ''
+  content.value = typeof article.content === 'string' && article.content.length ? article.content : '<p></p>'
+  status.value = article.status ?? 'draft'
+  visibility.value = article.visibility ?? 'public'
+  projectName.value = article.project?.name ?? 'Knowledgebase Portal'
+  updatedLabel.value = article.updated_at ?? 'Zojuist bijgewerkt'
+}
+
+async function loadArticle(slug) {
+  loading.value = true
+  error.value = ''
+
+  try {
+    const article = await getArticle(slug)
+    hydrateArticle(article)
+    saveMessage.value = 'Klaar om te schrijven'
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon het artikel niet laden.'
+  } finally {
+    loading.value = false
+  }
+}
+
+async function saveArticle(nextStatus = status.value) {
+  if (!articleSlug.value) return
+
+  saving.value = true
+  error.value = ''
+
+  try {
+    const article = await updateArticle(articleSlug.value, {
+      title: title.value.trim() || 'Onbekende artikelnaam',
+      summary: summary.value.trim(),
+      content: content.value,
+      status: nextStatus,
+      visibility: visibility.value,
+    })
+
+    hydrateArticle(article)
+    saveMessage.value = nextStatus === 'published' ? 'Artikel gepubliceerd' : 'Zojuist opgeslagen'
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon het artikel niet opslaan.'
+  } finally {
+    saving.value = false
+  }
+}
 </script>

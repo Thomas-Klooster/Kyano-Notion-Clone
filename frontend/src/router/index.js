@@ -41,6 +41,12 @@ const router = createRouter({
       meta: { requiresAuth: true, breadcrumb: 'Project' },
     },
     {
+      path: '/article/new',
+      name: 'article-new',
+      component: () => import('@/pages/Admin/Articles/ArticleEditorPage.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Article editor page' },
+    },
+    {
       path: '/article/:slug',
       name: 'article',
       component: () => import('@/pages/Portal/ArticlePreviewPage.vue'),
@@ -168,17 +174,17 @@ const router = createRouter({
       //     meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Project detail page' },
       //   },
         {
-          path: 'articles/:slug/new',
+          path: 'articles/:slug',
           name: 'admin-articles-new',
           component: () => import('@/pages/Admin/Articles/ArticleEditorPage.vue'),
           meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Article editor page' },
         },
-        {
-          path: 'articles/:id/edit',
-          name: 'admin-articles-edit',
-          component: () => import('@/pages/Admin/Articles/ArticleEditorPage.vue'),
-          meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Article editor page' },
-        },
+        // {
+        //   path: 'articles/:id/edit',
+        //   name: 'admin-articles-edit',
+        //   component: () => import('@/pages/Admin/Articles/ArticleEditorPage.vue'),
+        //   meta: { requiresAuth: true, requiresAdmin: true, breadcrumb: 'Article editor page' },
+        // },
         {
           path: 'articles/:slug',
           name: 'article-preview',

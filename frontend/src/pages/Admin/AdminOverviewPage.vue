@@ -144,9 +144,9 @@
               <p>Artikelen zijn aan het laden...</p>
             </div>
 
-            <div v-else-if="error" class="empty-state">
+            <div v-else-if="OverviewError" class="empty-state">
               <v-icon size="30">mdi-alert-circle-outline</v-icon>
-              <p>{{ error }}</p>
+              <p>{{ OverviewError }}</p>
             </div>
 
             <div v-else-if="filteredWorkspaces.length" class="tree-list">
@@ -305,9 +305,9 @@
               <p>{{ error }}</p>
             </div>
 
-            <div v-else-if="error" class="empty-state">
+            <div v-else-if="OverviewError" class="empty-state">
               <v-icon size="30">mdi-alert-circle-outline</v-icon>
-              <p>{{ error }}</p>
+              <p>{{ OverviewError }}</p>
             </div>
 
                   <template v-else-if="selectedEntityType === 'workspace'">
@@ -324,8 +324,8 @@
                             <v-icon size="18">mdi-magnify</v-icon>
                             <input v-model="workspaceCustomerSearch" type="text" placeholder="Zoek klant" />
                           </div>
-                        <v-btn size="small" variant="text" @click="saveWorkspaceMembers(selectedEntityType, selectedEntity.id)">
-                        Opslaan
+                        <v-btn size="small" class="save-btn" variant="text" @click="saveWorkspaceMembers(selectedEntityType, selectedEntity.id)">
+                        OPSLAAN
                         </v-btn>
                         <v-snackbar v-model="snackbar" timer="bottom" :timer-color="timerColor" :color="snackbarColor" :timeout="3000" location="top end">
                         {{ snackbarMessage }}
@@ -453,7 +453,7 @@
               <p>Workspaces zijn aan het inladen...</p>
             </div>
 
-            <div v-else-if="error" class="empty-detail-state">
+            <div v-else-if="OverviewError" class="empty-detail-state">
               <div class="empty-state-icon icon-box">
                 <v-icon size="24">mdi-cursor-default-click-outline</v-icon>
               </div>
@@ -602,9 +602,9 @@
               <p>Relaties zijn aan het laden...</p>
             </div>
 
-            <div v-else-if="error" class="empty-state">
+            <div v-else-if="OverviewError" class="empty-state">
               <v-icon size="30">mdi-alert-circle-outline</v-icon>
-              <p>{{ error }}</p>
+              <p>{{ OverviewError }}</p>
             </div>
 
                 <div v-else-if="customerWorkspaces.length" class="child-rows">
@@ -893,25 +893,27 @@
           <v-textarea v-if="dialogType === 'article'" v-model="draft.summary"
             :label="dialogType === 'article' ? 'Samenvatting' : 'Korte Beschrijving'" variant="solo-filled" flat hide-details
             rows="4" class="notion-soft-input mb-4" />
-            <v-textarea :model-value="dialogType === 'article' ? draft.content : draft.description"
+            <v-textarea v-if="dialogType === 'project'" :model-value="draft.description"
             @update:model-value="updateDraftContentField"  
-            variant="solo-filled" :label="dialogType === 'article' ? 'Content' : 'Project beschrijving'" flat hide-details rows="4" class="notion-soft-input mb-4" />
+            variant="solo-filled" label="Project beschrijving" flat hide-details rows="4" class="notion-soft-input mb-4" />
           <v-select v-if="dialogType === 'workspace'" v-model="draft.customerAccess" :items="customerOnlyOptions"
             item-title="title" item-value="value" label="Klanten met toegang" multiple chips closable-chips
             variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
+            <v-select v-if="dialogType === 'article'" :model-value="draft.workspaceId" :items="workspaceSelectOptions"
+            item-title="label" item-value="value" label="Workspace" variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
           <v-select v-if="dialogType === 'category'" v-model="draft.workspaceId" :items="workspaceSelectOptions"
             item-title="label" item-value="value" label="Workspace" variant="solo-filled" flat hide-details
             class="notion-soft-input mb-4" />
-          <v-select v-if="dialogType === 'project'" v-model="draft.categoryId" :items="categorySelectOptions"
-            item-title="label" item-value="value" label="Categorie" variant="solo-filled" flat hide-details
+          <v-select v-if="dialogType === 'project'" :rules="CategoryRules" v-model="draft.categoryId" :items="categorySelectOptions"
+            item-title="label" item-value="value" label="Categorie" variant="solo-filled" flat hide-details="auto"
             class="notion-soft-input mb-4" />
           <template v-if="dialogType === 'article'">
             <v-combobox v-model="draft.tags" :items="availableArticleTags" label="Tags" variant="solo-filled" flat
               hide-details multiple chips closable-chips clearable class="notion-soft-input mb-4" />
-            <v-select v-model="draft.projectId" :items="projectSelectOptions" item-title="label" item-value="value"
-              label="Project" variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
-              <v-select v-model="draft.categoryId" :items="categorySelectOptions" item-title="label" item-value="value"
-              label="Categorie" variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
+            <v-select v-model="draft.projectId" :rules="ProjectRules" :items="projectSelectOptions" item-title="label" item-value="value"
+              label="Project" variant="solo-filled" flat hide-details="auto" class="notion-soft-input mb-4" />
+              <v-select v-model="draft.categoryId" :rules="CategoryRules" :items="categorySelectOptions" item-title="label" item-value="value"
+              label="Categorie" variant="solo-filled" flat hide-details="auto" class="notion-soft-input mb-4" />
             <div class="article-chip-picker mb-4">
               <div class="article-chip-picker__label">Status</div>
               <v-chip-group v-model="draft.status" selected-class="article-choice-chip--selected" mandatory>
@@ -932,6 +934,12 @@
             </div>
           </template>
           </v-form>
+        <!-- <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable
+        class="my-3" @click:close="error = ''">
+          {{ error }}
+          </v-alert> -->
+
+
         </div>
         <div class="dialog-actions u-gap-12">
           <v-btn variant="text" @click="editorOpen = false">Annuleren</v-btn>
@@ -1009,6 +1017,7 @@
           </div>
         </div>
         <div class="dialog-body">
+          <v-form ref="formRef" v-model="formValid" @submit.prevent="saveCustomerDraft">
           <v-text-field v-model="customerDraft.name" label="Contactpersoon" :rules="nameRules" variant="solo-filled" flat hide-details="auto"
             class="notion-soft-input mb-4" />
           <v-text-field v-model="customerDraft.companyName" label="Bedrijfsnaam" variant="solo-filled" flat hide-details="auto"
@@ -1030,12 +1039,13 @@
           prepend-inner-icon="mdi-lock-check-outline" :append-inner-icon="showConfirm ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
           hide-details="auto" class="mt-4" @click:append-inner="showConfirm = !showConfirm"
           label="Bevestig Wachtwoord" :rules="confirmRules" variant="solo-filled" flat />
+        </v-form>
         </div>
-            <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable
+            <!-- <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable
               class="auth-alert mx-6"
               @click:close="error = ''">
               {{ error }}
-            </v-alert>
+            </v-alert> -->
 
         <div class="dialog-actions u-gap-12 mt-5">
           <v-btn variant="text" @click="customerEditorOpen = false">Annuleren</v-btn>
@@ -1105,6 +1115,7 @@ const formValid = ref(false)
 
 const loading = ref(false)
 const error = ref('')
+const OverviewError = ref('')
 const showPassword = ref(false)
 const showConfirm = ref(false)
 
@@ -1177,6 +1188,15 @@ const getCustomerInitials = (name) => {
 const RequireNameRules = [
   (v) => !!v || 'Invullen van dit veld is verplicht.',
   (v) => (v?.trim()?.length ?? 0) >= 1 || 'De naam moet minstens 1 teken lang zijn',
+]
+
+
+const ProjectRules = [
+  (v) => !!v || 'Het toevoegen van een project is verplicht.'
+]
+
+const CategoryRules = [
+  (v) => !!v || 'Het toevoegen van een categorie is verplicht.'
 ]
 
 
@@ -1558,7 +1578,7 @@ function initializeSelection() {
 
 async function loadOverviewData() {
   loading.value = true
-  error.value = ''
+  OverviewError.value = ''
 
   try {
     const [workspacesResponse, usersResponse] = await Promise.all([
@@ -1574,7 +1594,7 @@ async function loadOverviewData() {
     syncLocalCounters()
     initializeSelection()
   } catch {
-    error.value = 'Kon de overzicht inladen.'
+    OverviewError.value = 'Kon de overzicht inladen.'
   } finally {
     loading.value = false
   }
@@ -2181,7 +2201,9 @@ function openCreateDialog(type, defaults = null) {
 
 function openEditDialog(type, id) {
   if (type === 'article') {
-    router.push(`/admin/articles/${id}/edit`)
+    const result = findArticle(id)
+    if (!result?.article?.slug) return
+    router.push({ name: 'article-new', query: { slug: result.article.slug } })
     return
   }
 
@@ -2328,7 +2350,6 @@ if (dialogType.value === 'category') {
       resolveArticleDraftContext()
       const payload = {
         title: draft.title,
-        content: draft.content,
         summary: draft.summary,
         status: draft.status,
         project_id: draft.projectId,
@@ -2339,7 +2360,9 @@ if (dialogType.value === 'category') {
       }
       if (dialogMode.value === 'create') {
         const response = await postArticle(payload)
-        draft.id = response.id
+        editorOpen.value = false
+        await router.push({ name: 'article-new', query: { slug: response.slug } })
+        return
       } else {
         await updateArticle(draft.slug, payload)
         await reloadWorkspaces() 
@@ -2687,6 +2710,7 @@ function openCustomerEditDialog(id) {
 }
 
 async function saveCustomerDraft() {
+  const { valid } = await formRef.value.validate();
   error.value = ''
 
   try {

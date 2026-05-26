@@ -1,5 +1,7 @@
 import api from "@/api/api";
 
+const unwrapResource = (payload) => payload?.data ?? payload
+
 export const getArticles = async () => {
      const { data } = await api.get('articles')
      return data;
@@ -7,12 +9,12 @@ export const getArticles = async () => {
 
 export const getArticle = async (slug) => {
     const { data } = await api.get(`articles/${slug}`)
-    return data;
+    return unwrapResource(data);
 }
 
 export const postArticle = async (payload) => {
     const { data } = await api.post('articles', payload)
-    return data;
+    return unwrapResource(data);
 };
 
 export const postFeedback = async (articleSlug, payload) => {
@@ -44,7 +46,7 @@ export const deleteFeedback = async (feedbackId) => {
 
 export const updateArticle = async (slug, payload) => {
     const { data } = await api.put(`admin/articles/${slug}`, payload)
-    return data;
+    return unwrapResource(data);
 };
 
 export const deleteArticle = async (articleId) => {

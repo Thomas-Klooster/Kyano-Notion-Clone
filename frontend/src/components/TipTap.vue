@@ -156,6 +156,15 @@ import {
 } from 'lucide-vue-next'
 
 export default {
+    props: {
+        modelValue: {
+            type: String,
+            default: '',
+        },
+    },
+
+    emits: ['update:modelValue'],
+
     components: {
         EditorContent,
         BubbleMenu,
@@ -271,7 +280,23 @@ export default {
         },
     },
 
+    watch: {
+        modelValue(value) {
+            if (!this.editor) return
+
+            const nextValue = typeof value === 'string' && value.length ? value : '<p></p>'
+
+            if (nextValue === this.editor.getHTML()) return
+
+            this.editor.commands.setContent(nextValue, false)
+        },
+    },
+
     mounted() {
+        const initialContent = typeof this.modelValue === 'string' && this.modelValue.length
+            ? this.modelValue
+            : '<p></p>'
+
         this.editor = new Editor({
             extensions: [
                 StarterKit,
@@ -282,11 +307,7 @@ export default {
                     defaultProtocol: 'https',
                 }),
             ],
-            content: `
-        <h1> Untitled</h1>
-        <p> Select text to open the menu.</p>
-        <p> Type / to open the slash commands menu.</p>
-      `,
+            content: initialContent,
             editorProps: {
                 attributes: {
                     class: 'tiptap',
@@ -323,7 +344,8 @@ export default {
                     return false
                 },
             },
-            onUpdate: () => {
+            onUpdate: ({ editor }) => {
+                this.$emit('update:modelValue', editor.getHTML())
                 this.updateSlashMenu()
             },
             onSelectionUpdate: () => {
@@ -331,6 +353,7 @@ export default {
             },
         })
 
+        this.$emit('update:modelValue', this.editor.getHTML())
         document.addEventListener('click', this.handleClickOutside)
     },
 
@@ -500,4 +523,3 @@ export default {
     },
 }
 </script>
-

@@ -46,6 +46,13 @@ class Article extends Model
         public function workspace() {
             return $this->belongsTo(Workspace::class);
     }
+        public function categories() {
+            return $this->belongsTo(Category::class);
+    }
+
+        public function category() {
+            return $this->belongsTo(Category::class);
+    }
 
     public function project() {
             return $this->belongsTo(Project::class);
@@ -73,9 +80,6 @@ public function syncTags(array $tags): void
     });
 
     $this->tags()->sync($tagIds);
-}
-        public function categories() {
-            return $this->belongsTo(Category::class);
 }
 
 public function scopeVisibleTo($query, $user) {
