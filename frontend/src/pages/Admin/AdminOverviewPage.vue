@@ -1658,13 +1658,16 @@ function toggleWorkspaceCustomerAccess(workspaceId, customerId, enabled) {
     : current.filter((id) => id !== customerId)
 }
 function toggleWorkspaceCustomerAccessFromRow(event, row) {
-  const item = row.item
+  const customer = row?.item?.raw ?? row?.item
+  const workspace = selectedEntity.value
 
-  const currentlySelected = (selectedEntity.customerAccess || []).includes(item.id)
+  if (!workspace || !customer) return
+
+  const currentlySelected = (workspace.customerAccess || []).includes(customer.id)
 
   toggleWorkspaceCustomerAccess(
-    selectedEntity.id,
-    item.id,
+    workspace.id,
+    customer.id,
     !currentlySelected
   )
 }
