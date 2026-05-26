@@ -26,7 +26,7 @@
             </div>
             <div class="admin-stat-card__text">
               <div class="admin-stat-card__value">{{ counts.workspaces }}</div>
-              <div class="admin-stat-card__label">{{filteredWorkspaces.length === 1 ? 'Workspace' : 'Workspaces'}}</div>
+              <div class="admin-stat-card__label">{{ filteredWorkspaces.length === 1 ? 'Workspace' : 'Workspaces' }}</div>
             </div>
           </div>
           <div class="admin-stat-card__bg-shape" aria-hidden="true" />
@@ -83,12 +83,12 @@
           <span class="admin-tab-count">{{ customersData.length }}</span>
         </button>
 
-        <button class="admin-tab" :class="{ 'admin-tab--active': activeTab === 'Reviews'}"
-        @click="activeTab = 'Reviews'">
-        <v-icon size="16" class="admin-tab-icon">mdi-comment-outline</v-icon>
-        Feedback
-        <span class="admin-tab-count">{{ reviewRecords.length }}</span>
-      </button> 
+        <button class="admin-tab" :class="{ 'admin-tab--active': activeTab === 'Reviews' }"
+          @click="activeTab = 'Reviews'">
+          <v-icon size="16" class="admin-tab-icon">mdi-comment-outline</v-icon>
+          Feedback
+          <span class="admin-tab-count">{{ reviewRecords.length }}</span>
+        </button>
       </div>
 
       <section v-if="activeTab === 'content'" style="border-radius: 0 0 26px 26px !important;"
@@ -174,7 +174,7 @@
                       @click.stop="toggleWorkspace(workspace.id)">
                       <v-icon size="18">{{ isExpanded(expandedWorkspaces, workspace.id) ? 'mdi-chevron-up' :
                         'mdi-chevron-down'
-                      }}</v-icon>
+                        }}</v-icon>
                     </v-btn>
                   </div>
                 </div>
@@ -278,10 +278,6 @@
                   <p class="detail-subtitle">{{ selectedEntityDescription }}</p>
                 </div>
                 <div class="entity-actions u-flex u-items-center u-wrap u-gap-10 detail-actions">
-                  <v-btn v-if="selectedEntityType !== 'article'" size="small" variant="tonal"
-                    @click="openCreateChildDialog" class="entity-create-btn">
-                    {{ createChildButtonLabel }}
-                  </v-btn>
                   <v-btn size="small" variant="text" @click="openEditDialog(selectedEntityType, selectedEntity.id)">
                     Bewerken
                   </v-btn>
@@ -300,15 +296,15 @@
                     </h4>
                   </div>
 
-              <div v-if="loading" class="empty-state">
-              <v-icon size="30">mdi-alert-outline</v-icon>
-              <p>{{ error }}</p>
-            </div>
+                  <div v-if="loading" class="empty-state">
+                    <v-icon size="30">mdi-alert-outline</v-icon>
+                    <p>{{ error }}</p>
+                  </div>
 
-            <div v-else-if="OverviewError" class="empty-state">
-              <v-icon size="30">mdi-alert-circle-outline</v-icon>
-              <p>{{ OverviewError }}</p>
-            </div>
+                  <div v-else-if="OverviewError" class="empty-state">
+                    <v-icon size="30">mdi-alert-circle-outline</v-icon>
+                    <p>{{ OverviewError }}</p>
+                  </div>
 
                   <template v-else-if="selectedEntityType === 'workspace'">
                     <div class="workspace-access-card">
@@ -324,13 +320,15 @@
                             <v-icon size="18">mdi-magnify</v-icon>
                             <input v-model="workspaceCustomerSearch" type="text" placeholder="Zoek klant" />
                           </div>
-                        <v-btn size="small" class="save-btn" variant="text" @click="saveWorkspaceMembers(selectedEntityType, selectedEntity.id)">
-                        OPSLAAN
-                        </v-btn>
-                        <v-snackbar v-model="snackbar" timer="bottom" :timer-color="timerColor" :color="snackbarColor" :timeout="3000" location="top end">
-                        {{ snackbarMessage }}
-                      </v-snackbar>
-                           <v-btn variant="text" size="small"
+                          <v-btn size="small" variant="text"
+                            @click="saveWorkspaceMembers(selectedEntityType, selectedEntity.id)">
+                            Opslaan
+                          </v-btn>
+                          <v-snackbar v-model="snackbar" timer="bottom" :timer-color="timerColor" :color="snackbarColor"
+                            :timeout="3000" location="top end">
+                            {{ snackbarMessage }}
+                          </v-snackbar>
+                          <v-btn variant="text" size="small"
                             @click="updateWorkspaceCustomerAccess(selectedEntity.id, customerOnlyRecords.map(c => c.id))">
                             Alles selecteren
                           </v-btn>
@@ -343,35 +341,42 @@
                       <div class="workspace-access-table-shell">
                         <v-data-table :headers="workspaceCustomerHeaders" :items="customerOnlyRecords"
                           :search="workspaceCustomerSearch" items-per-page="-1" fixed-header height="360" hover
-                          class="workspace-access-table">
+                          class="workspace-access-table" @click:row="toggleWorkspaceCustomerAccessFromRow">
                           <template #item.access="{ item }">
-                            <div class="workspace-access-check">
-                              <v-checkbox-btn
-                              :model-value="(selectedEntity.customerAccess || []).includes(item.id)"
-                              @update:model-value="toggleWorkspaceCustomerAccess(selectedEntity.id, item.id, $event)" />
+                            <div class="workspace-access-check" @click.stop>
+                              <v-checkbox-btn :model-value="(selectedEntity.customerAccess || []).includes(item.id)"
+                                @update:model-value="
+                                  toggleWorkspaceCustomerAccess(selectedEntity.id, item.id, $event)
+                                  " />
                             </div>
                           </template>
+
                           <template #item.name="{ item }">
                             <div class="workspace-access-name-cell">
                               <div class="workspace-access-name">{{ item.name }}</div>
                               <div class="workspace-access-email">{{ item.email }}</div>
                             </div>
                           </template>
+
                           <template #item.companyName="{ item }">
                             <span>{{ item.companyName }}</span>
                           </template>
+
                           <template #item.address="{ item }">
                             <span class="workspace-access-address">{{ item.address }}</span>
                           </template>
+
                           <template #item.tel="{ item }">
                             <span class="workspace-access-tel">{{ item.tel }}</span>
                           </template>
+
                           <template #item.role="{ item }">
-                          <v-chip size="small" variant="tonal" class="entity-chip"
+                            <v-chip size="small" variant="tonal" class="entity-chip"
                               :class="item.role === 'admin' ? 'entity-chip-admin' : 'entity-chip-customer'">
                               {{ item.role }}
                             </v-chip>
                           </template>
+
                           <template #bottom></template>
                         </v-data-table>
                       </div>
@@ -387,7 +392,7 @@
                       <span class="meta-label">Bovenliggend item</span>
                       <span class="meta-value">{{ selectedParentLabel }}</span>
                     </div>
-                    
+
                     <div class="meta-item" v-if="selectedEntityType === 'article'">
                       <span class="meta-label">Laatst gewijzigd</span>
                       <span class="meta-value">{{ selectedEntity.updated_at }}</span>
@@ -534,13 +539,13 @@
                   <p class="detail-subtitle">Beheer klantgegevens en contactinformatie.</p>
                 </div>
                 <div class="entity-actions u-flex u-items-center u-wrap u-gap-10 detail-actions">
-                  <v-btn size="small" variant="text"
-                    @click="openCustomerEditDialog(selectedCustomerRecord.id)">
-                  <v-icon size="30">mdi-account-edit</v-icon>
+                  <v-btn size="small" variant="text" @click="openCustomerEditDialog(selectedCustomerRecord.id)">
+                    BEWERKEN
                   </v-btn>
                   <v-btn size="small" variant="text" class="delete-btn"
                     @click="openCustomerDeleteDialog(selectedCustomerRecord.id)">
-                  <v-icon size="30">mdi-delete</v-icon></v-btn>
+                    VERWIJDEREN  
+                  </v-btn>
                 </div>
               </div>
 
@@ -573,7 +578,7 @@
                     </div>
                     <div class="meta-item">
                       <span class="meta-label">Workspaces</span>
-                    <span class="meta-value">{{ customerWorkspaceCount(selectedCustomerRecord.id) }}</span>
+                      <span class="meta-value">{{ customerWorkspaceCount(selectedCustomerRecord.id) }}</span>
                     </div>
                   </div>
                 </article>
@@ -598,14 +603,14 @@
                 </div>
 
                 <div v-if="loading" class="empty-state">
-              <v-icon size="30">mdi-alert-outline</v-icon>
-              <p>Relaties zijn aan het laden...</p>
-            </div>
+                  <v-icon size="30">mdi-alert-outline</v-icon>
+                  <p>Relaties zijn aan het laden...</p>
+                </div>
 
-            <div v-else-if="OverviewError" class="empty-state">
-              <v-icon size="30">mdi-alert-circle-outline</v-icon>
-              <p>{{ OverviewError }}</p>
-            </div>
+                <div v-else-if="OverviewError" class="empty-state">
+                  <v-icon size="30">mdi-alert-circle-outline</v-icon>
+                  <p>{{ OverviewError }}</p>
+                </div>
 
                 <div v-else-if="customerWorkspaces.length" class="child-rows">
                   <div v-for="workspace in customerWorkspaces" :key="workspace.id" class="child-row">
@@ -635,7 +640,7 @@
                   <h3>Geen gekoppelde workspaces</h3>
                   <p>Deze klant heeft nog geen workspace in de structuur.</p>
                 </div>
-              </article> 
+              </article>
             </template>
 
             <div v-else class="empty-detail-state">
@@ -650,50 +655,47 @@
       </section>
 
       <section v-if="activeTab === 'Reviews'" style="border-radius: 0 0 26px 26px !important"
-      class="entity-card card card-elevated card-rounded-2xl studio-card">
-      <div class="studio-toolbox">
+        class="entity-card card card-elevated card-rounded-2xl studio-card">
+        <div class="studio-toolbox">
 
-    <div class="studio-toolbar">
-    <v-menu v-model="filterMenu" :close-on-content-click="true" location="bottom start">
-    <template #activator="{ props }">
-    <button v-bind="props" icon variant="outlined" size="small">
-      <v-badge :model-value="activeFilter !== 'All'" dot color="primary">
-        <v-icon>mdi-filter</v-icon>
-      </v-badge>
-    </button>
-  </template>
+          <div class="studio-toolbar">
+            <v-menu v-model="filterMenu" :close-on-content-click="true" location="bottom start">
+              <template #activator="{ props }">
+                <button v-bind="props" icon variant="outlined" size="small">
+                  <v-badge :model-value="activeFilter !== 'All'" dot color="primary">
+                    <v-icon>mdi-filter</v-icon>
+                  </v-badge>
+                </button>
+              </template>
 
-  <v-list density="compact" :selected="[activeFilter]"
-  @update:selected="activeFilter = $event[0]">
-  <v-list-item v-for="opt in filterOptions"
-  :key="opt.value" :value="opt.value" :prepend-icon="opt.icon" :title="opt.label" />
-  </v-list>
-</v-menu>
+              <v-list density="compact" :selected="[activeFilter]" @update:selected="activeFilter = $event[0]">
+                <v-list-item v-for="opt in filterOptions" :key="opt.value" :value="opt.value" :prepend-icon="opt.icon"
+                  :title="opt.label" />
+              </v-list>
+            </v-menu>
 
-        <div class="search-field studio-search-field studio-toolbar-search">
-            <v-icon size="18">mdi-magnify</v-icon>
-            <input v-model="reviewSearch" type="text"
-            placeholder="Zoek op artikel, klant of feedback..." />
+            <div class="search-field studio-search-field studio-toolbar-search">
+              <v-icon size="18">mdi-magnify</v-icon>
+              <input v-model="reviewSearch" type="text" placeholder="Zoek op artikel, klant of feedback..." />
+            </div>
+            <div class="studio-toolbar-spacer" />
           </div>
-          <div class="studio-toolbar-spacer" />
         </div>
-    </div>
-            <div class="studio-layout">                
-            <aside class="studio-tree-panel" style="max-height: 120vh; overflow-y: auto;">
-              <div class="panel-section-head">
+        <div class="studio-layout">
+          <aside class="studio-tree-panel" style="max-height: 120vh; overflow-y: auto;">
+            <div class="panel-section-head">
               <div class="panel-kicker">Lijst</div>
               <h3 class="review-title">Beoordelingen</h3>
-              </div> 
+            </div>
 
             <div v-if="filteredReviewRecords.length" class="tree-list">
               <article v-for="review in filteredReviewRecords" :key="review.id"
                 class="tree-card card card-elevated card-rounded-xl">
-                <div class="tree-row tree-row-root"
-                  :class="{ 'tree-row--selected': selectedReviewId === review.id }">
+                <div class="tree-row tree-row-root" :class="{ 'tree-row--selected': selectedReviewId === review.id }">
                   <button class="tree-row-trigger" @click="selectReview(review.id)">
                     <div class="tree-row-main u-min-w-0">
-              <div class="review-avatar">{{ review.reviewerInitials }}</div>
-                  <div class="tree-row-info">
+                      <div class="review-avatar">{{ review.reviewerInitials }}</div>
+                      <div class="tree-row-info">
                         <div class="tree-row-title">{{ review.articleTitle }}</div>
                         <div class="tree-row-meta">
                           <span>{{ review.reviewerName }}</span>
@@ -706,11 +708,7 @@
                       <v-icon size="20" :class="reviewHelpfulClass(review)">
                         {{ reviewHelpfulIcon(review) }}
                       </v-icon>
-                      <v-chip
-                        size="small"
-                        variant="tonal"
-                        class="review-read-chip"
-                        :class="reviewReadClass(review)">
+                      <v-chip size="small" variant="tonal" class="review-read-chip" :class="reviewReadClass(review)">
                         {{ reviewReadLabel(review) }}
                       </v-chip>
                       <v-chip size="small" class="entity-chip">
@@ -736,17 +734,18 @@
               <div class="detail-head">
                 <div>
                   <div class="section-kicker">Feedback</div>
-                  
+
                   <h3 class="detail-title">{{ selectedReviewRecord.articleTitle }}</h3>
                   <p class="detail-subtitle">
-                    {{ articleReviewRecords.length }} feedback{{ articleReviewRecords.length === 1 ? '' : 's' }} voor dit artikel.
+                    {{ articleReviewRecords.length }} feedback{{ articleReviewRecords.length === 1 ? '' : 's' }} voor
+                    dit artikel.
                   </p>
                 </div>
                 <div class="entity-actions u-flex u-items-center u-wrap u-gap-10 detail-actions">
                   <v-btn size="small" variant="text" class="delete-btn"
                     @click="openReviewDeleteDialog(activeArticleReview.id)">
-                  Verwijder Feedback
-                </v-btn>
+                    Verwijder Feedback
+                  </v-btn>
                 </div>
               </div>
 
@@ -779,7 +778,7 @@
                     </div>
                     <div class="meta-item">
                       <span class="meta-label">Laatst gewijzigd</span>
-                    <span class="meta-value">{{ selectedReviewRecord.articleUpdated_at || '-' }}</span>
+                      <span class="meta-value">{{ selectedReviewRecord.articleUpdated_at || '-' }}</span>
                     </div>
                   </div>
                 </article>
@@ -833,32 +832,30 @@
                   </div>
                 </div>
                 <div class="review-feedback-box">
-                <div class="review-header">
-                  <div class="entity-meta review-feedback-meta">
-                  <div class="feedback-view-feed">
-                    <span>{{ reviewReadLabel(activeArticleReview) }}</span>
-                  </div>  
-                    <span class="dot">•</span>
-                    <span>{{ activeArticleReview.reviewerName }}</span>
-                    <span class="dot">•</span>
-                    <span>{{ activeArticleReview.submittedAt || '-' }}</span>
+                  <div class="review-header">
+                    <div class="entity-meta review-feedback-meta">
+                      <div class="feedback-view-feed">
+                        <span>{{ reviewReadLabel(activeArticleReview) }}</span>
+                      </div>
+                      <span class="dot">•</span>
+                      <span>{{ activeArticleReview.reviewerName }}</span>
+                      <span class="dot">•</span>
+                      <span>{{ activeArticleReview.submittedAt || '-' }}</span>
+                    </div>
+                    <div class="review-rating-chip-row">
+                      <span class="review-rating-chip" :class="reviewHelpfulClass(activeArticleReview)">
+                        <v-icon size="22">
+                          {{ reviewHelpfulIcon(activeArticleReview) }}
+                        </v-icon>
+                      </span>
+                    </div>
                   </div>
-                  <div class="review-rating-chip-row">
-                    <span
-                      class="review-rating-chip"
-                      :class="reviewHelpfulClass(activeArticleReview)">
-                      <v-icon size="22">
-                        {{ reviewHelpfulIcon(activeArticleReview) }}
-                      </v-icon>
-                    </span>
-                  </div>
-                </div>
 
-                    <p class="detail-description review-feedback-text mb-0">
+                  <p class="detail-description review-feedback-text mb-0">
                     {{ activeArticleReview.hasFeedbackText ? activeArticleReview.feedbackText : 'Geen extra feedback ingevuld.' }}
                   </p>
                 </div>
-              </article> 
+              </article>
             </template>
 
             <div v-else class="empty-detail-state">
@@ -886,55 +883,58 @@
         </div>
         <div class="dialog-body">
           <v-form ref="formRef" v-model="formValid" @submit.prevent="saveDraft">
-          <v-text-field :model-value="dialogType === 'article' ? draft.title : draft.name"
-            @update:model-value="updateDraftPrimaryField"
-            :rules="RequireNameRules" :label="dialogType === 'article' ? 'Titel' : 'Naam'" variant="solo-filled"
-            flat hide-details="auto" class="notion-soft-input mb-4" />
-          <v-textarea v-if="dialogType === 'article'" v-model="draft.summary"
-            :label="dialogType === 'article' ? 'Samenvatting' : 'Korte Beschrijving'" variant="solo-filled" flat hide-details
-            rows="4" class="notion-soft-input mb-4" />
+            <v-text-field :model-value="dialogType === 'article' ? draft.title : draft.name"
+              @update:model-value="updateDraftPrimaryField" :rules="RequireNameRules"
+              :label="dialogType === 'article' ? 'Titel' : 'Naam'" variant="solo-filled" flat hide-details="auto"
+              class="notion-soft-input mb-4" />
+            <v-textarea v-if="dialogType === 'article'" v-model="draft.summary"
+              :label="dialogType === 'article' ? 'Samenvatting' : 'Korte Beschrijving'" variant="solo-filled" flat
+              hide-details rows="4" class="notion-soft-input mb-4" />
             <v-textarea v-if="dialogType === 'project'" :model-value="draft.description"
-            @update:model-value="updateDraftContentField"  
-            variant="solo-filled" label="Project beschrijving" flat hide-details rows="4" class="notion-soft-input mb-4" />
-          <v-select v-if="dialogType === 'workspace'" v-model="draft.customerAccess" :items="customerOnlyOptions"
-            item-title="title" item-value="value" label="Klanten met toegang" multiple chips closable-chips
-            variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
+              @update:model-value="updateDraftContentField" variant="solo-filled" label="Project beschrijving" flat
+              hide-details rows="4" class="notion-soft-input mb-4" />
+            <v-select v-if="dialogType === 'workspace'" v-model="draft.customerAccess" :items="customerOnlyOptions"
+              item-title="title" item-value="value" label="Klanten met toegang" multiple chips closable-chips
+              variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
             <v-select v-if="dialogType === 'article'" :model-value="draft.workspaceId" :items="workspaceSelectOptions"
-            item-title="label" item-value="value" label="Workspace" variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
-          <v-select v-if="dialogType === 'category'" v-model="draft.workspaceId" :items="workspaceSelectOptions"
-            item-title="label" item-value="value" label="Workspace" variant="solo-filled" flat hide-details
-            class="notion-soft-input mb-4" />
-          <v-select v-if="dialogType === 'project'" :rules="CategoryRules" v-model="draft.categoryId" :items="categorySelectOptions"
-            item-title="label" item-value="value" label="Categorie" variant="solo-filled" flat hide-details="auto"
-            class="notion-soft-input mb-4" />
-          <template v-if="dialogType === 'article'">
-            <v-combobox v-model="draft.tags" :items="availableArticleTags" label="Tags" variant="solo-filled" flat
-              hide-details multiple chips closable-chips clearable class="notion-soft-input mb-4" />
-            <v-select v-model="draft.projectId" :rules="ProjectRules" :items="projectSelectOptions" item-title="label" item-value="value"
-              label="Project" variant="solo-filled" flat hide-details="auto" class="notion-soft-input mb-4" />
-              <v-select v-model="draft.categoryId" :rules="CategoryRules" :items="categorySelectOptions" item-title="label" item-value="value"
-              label="Categorie" variant="solo-filled" flat hide-details="auto" class="notion-soft-input mb-4" />
-            <div class="article-chip-picker mb-4">
-              <div class="article-chip-picker__label">Status</div>
-              <v-chip-group v-model="draft.status" selected-class="article-choice-chip--selected" mandatory>
-                <v-chip v-for="option in articleStatusOptions" :key="option.value" :value="option.value"
-                  class="article-choice-chip" filter variant="outlined">
-                  {{ option.label }}
-                </v-chip>
-              </v-chip-group>
-            </div>
-            <div class="article-chip-picker mb-4">
-              <div class="article-chip-picker__label">Visibility</div>
-              <v-chip-group v-model="draft.visibility" selected-class="article-choice-chip--selected" mandatory>
-                <v-chip v-for="option in articleVisibilityOptions" :key="option.value" :value="option.value"
-                  class="article-choice-chip" filter variant="outlined">
-                  {{ option.label }}
-                </v-chip>
-              </v-chip-group>
-            </div>
-          </template>
+              item-title="label" item-value="value" label="Workspace" variant="solo-filled" flat hide-details
+              class="notion-soft-input mb-4" />
+            <v-select v-if="dialogType === 'category'" v-model="draft.workspaceId" :items="workspaceSelectOptions"
+              item-title="label" item-value="value" label="Workspace" variant="solo-filled" flat hide-details
+              class="notion-soft-input mb-4" />
+            <v-select v-if="dialogType === 'project'" :rules="CategoryRules" v-model="draft.categoryId"
+              :items="categorySelectOptions" item-title="label" item-value="value" label="Categorie"
+              variant="solo-filled" flat hide-details="auto" class="notion-soft-input mb-4" />
+            <template v-if="dialogType === 'article'">
+              <v-combobox v-model="draft.tags" :items="availableArticleTags" label="Tags" variant="solo-filled" flat
+                hide-details multiple chips closable-chips clearable class="notion-soft-input mb-4" />
+              <v-select v-model="draft.projectId" :rules="ProjectRules" :items="projectSelectOptions" item-title="label"
+                item-value="value" label="Project" variant="solo-filled" flat hide-details="auto"
+                class="notion-soft-input mb-4" />
+              <v-select v-model="draft.categoryId" :rules="CategoryRules" :items="categorySelectOptions"
+                item-title="label" item-value="value" label="Categorie" variant="solo-filled" flat hide-details="auto"
+                class="notion-soft-input mb-4" />
+              <div class="article-chip-picker mb-4">
+                <div class="article-chip-picker__label">Status</div>
+                <v-chip-group v-model="draft.status" selected-class="article-choice-chip--selected" mandatory>
+                  <v-chip v-for="option in articleStatusOptions" :key="option.value" :value="option.value"
+                    class="article-choice-chip" filter variant="outlined">
+                    {{ option.label }}
+                  </v-chip>
+                </v-chip-group>
+              </div>
+              <div class="article-chip-picker mb-4">
+                <div class="article-chip-picker__label">Visibility</div>
+                <v-chip-group v-model="draft.visibility" selected-class="article-choice-chip--selected" mandatory>
+                  <v-chip v-for="option in articleVisibilityOptions" :key="option.value" :value="option.value"
+                    class="article-choice-chip" filter variant="outlined">
+                    {{ option.label }}
+                  </v-chip>
+                </v-chip-group>
+              </div>
+            </template>
           </v-form>
-        <!-- <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable
+          <!-- <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable
         class="my-3" @click:close="error = ''">
           {{ error }}
           </v-alert> -->
@@ -957,17 +957,22 @@
         </div>
 
         <div class="delete-modal-body">
-          <h3 class="delete-modal-title">{{ workspaceDeleteTarget.name || workspaceDeleteTarget.title }} verwijderen?</h3>
-          <p class="delete-modal-content">Weet je zeker dat je {{ workspaceDeleteTarget.name || workspaceDeleteTarget.title }} wilt verwijderen?</p>
+          <h3 class="delete-modal-title">{{ workspaceDeleteTarget.name || workspaceDeleteTarget.title }} verwijderen?
+          </h3>
+          <p class="delete-modal-content">Weet je zeker dat je {{ workspaceDeleteTarget.name ||
+            workspaceDeleteTarget.title
+            }} wilt verwijderen?</p>
           <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>
 
         <div class="delete-modal-footer">
-          <button class="delete-modal-btn delete-modal-btn--secondary" type="button" @click="workspaceDeleteOpen = false">Annuleren</button>
-          <button class="delete-modal-btn delete-modal-btn--warning" type="button" @click="confirmWorkspaceDelete">Verwijderen</button>
+          <button class="delete-modal-btn delete-modal-btn--secondary" type="button"
+            @click="workspaceDeleteOpen = false">Annuleren</button>
+          <button class="delete-modal-btn delete-modal-btn--warning" type="button"
+            @click="confirmWorkspaceDelete">Verwijderen</button>
         </div>
       </v-card>
-    </v-dialog>   
+    </v-dialog>
     <v-dialog v-model="categoryDeleteOpen" max-width="396">
       <v-card class="delete-modal" v-if="categoryDeleteTarget">
         <div class="delete-modal-head">
@@ -976,17 +981,18 @@
           </span>
         </div>
         <div class="delete-modal-body">
-          <h3 class="delete-modal-title">{{  categoryDeleteTarget.name }} verwijderen?</h3>
-          <p class="delete-modal-content">Weet je zeker dat je  {{  categoryDeleteTarget.name }} wilt verwijderen?</p>
+          <h3 class="delete-modal-title">{{ categoryDeleteTarget.name }} verwijderen?</h3>
+          <p class="delete-modal-content">Weet je zeker dat je {{ categoryDeleteTarget.name }} wilt verwijderen?</p>
           <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>
         <div class="delete-modal-footer">
-          <button class="delete-modal-btn delete-modal-btn--secondary" @click="categoryDeleteOpen = false">Annuleren</button>
+          <button class="delete-modal-btn delete-modal-btn--secondary"
+            @click="categoryDeleteOpen = false">Annuleren</button>
           <button class="delete-modal-btn delete-modal-btn--warning" @click="confirmCategoryDelete">Verwijderen</button>
-        </div>          
+        </div>
       </v-card>
     </v-dialog>
-    
+
     <v-dialog v-model="projectDeleteOpen" max-width="396">
       <v-card class="delete-modal" v-if="projectDeleteTarget">
         <div class="delete-modal-head">
@@ -1000,7 +1006,8 @@
           <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>
         <div class="delete-modal-footer">
-          <button class="delete-modal-btn delete-modal-btn--secundary" @click="projectDeleteOpen = false">Annuleren</button>
+          <button class="delete-modal-btn delete-modal-btn--secundary"
+            @click="projectDeleteOpen = false">Annuleren</button>
           <button class="delete-modal-btn delete-modal-btn--warning" @click="confirmProjectDelete">Verwijderen</button>
         </div>
       </v-card>
@@ -1018,30 +1025,32 @@
         </div>
         <div class="dialog-body">
           <v-form ref="formRef" v-model="formValid" @submit.prevent="saveCustomerDraft">
-          <v-text-field v-model="customerDraft.name" label="Contactpersoon" :rules="nameRules" variant="solo-filled" flat hide-details="auto"
-            class="notion-soft-input mb-4" />
-          <v-text-field v-model="customerDraft.companyName" label="Bedrijfsnaam" variant="solo-filled" flat hide-details="auto"
-            class="notion-soft-input mb-4" />
-          <v-text-field v-model="customerDraft.email" label="E-mail" :rules="emailRules" variant="solo-filled" flat hide-details="auto"
-            class="notion-soft-input mb-4" />
-          <v-text-field v-model="customerDraft.tel" label="Telefoon" :rules="phoneRules" variant="solo-filled" flat hide-details="auto"
-            class="notion-soft-input mb-4" />
-          <v-text-field v-model="customerDraft.address" label="Adres" variant="solo-filled" flat hide-details="auto"
-            class="notion-soft-input mb-4" />
-          <v-select v-model="customerDraft.role" :items="customerRoleOptions" label="Rol" variant="solo-filled" flat
-            hide-details class="notion-soft-input mb-4" />
-          <v-text-field v-model="customerDraft.password" label="Wachtwoord" autocomplete="password" :rules="passwordRules"
-          prepend-inner-icon="mdi-lock-outline" :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-          :type="showPassword ? 'text' : 'password'"
-          @click:append-inner="showPassword = !showPassword"
-          variant="solo-filled" flat hide-details="auto" />
-          <v-text-field ref="confirmFieldRef" v-model="customerDraft.password_confirmation" autocomplete="new-password" :type="showConfirm ? 'text' : 'password'"
-          prepend-inner-icon="mdi-lock-check-outline" :append-inner-icon="showConfirm ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-          hide-details="auto" class="mt-4" @click:append-inner="showConfirm = !showConfirm"
-          label="Bevestig Wachtwoord" :rules="confirmRules" variant="solo-filled" flat />
-        </v-form>
+            <v-text-field v-model="customerDraft.name" label="Contactpersoon" :rules="nameRules" variant="solo-filled"
+              flat hide-details="auto" class="notion-soft-input mb-4" />
+            <v-text-field v-model="customerDraft.companyName" label="Bedrijfsnaam" variant="solo-filled" flat
+              hide-details="auto" class="notion-soft-input mb-4" />
+            <v-text-field v-model="customerDraft.email" label="E-mail" :rules="emailRules" variant="solo-filled" flat
+              hide-details="auto" class="notion-soft-input mb-4" />
+            <v-text-field v-model="customerDraft.tel" label="Telefoon" :rules="phoneRules" variant="solo-filled" flat
+              hide-details="auto" class="notion-soft-input mb-4" />
+            <v-text-field v-model="customerDraft.address" label="Adres" variant="solo-filled" flat hide-details="auto"
+              class="notion-soft-input mb-4" />
+            <v-select v-model="customerDraft.role" :items="customerRoleOptions" label="Rol" variant="solo-filled" flat
+              hide-details class="notion-soft-input mb-4" />
+            <v-text-field v-model="customerDraft.password" label="Wachtwoord" autocomplete="password"
+              :rules="passwordRules" prepend-inner-icon="mdi-lock-outline"
+              :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+              :type="showPassword ? 'text' : 'password'" @click:append-inner="showPassword = !showPassword"
+              variant="solo-filled" flat hide-details="auto" />
+            <v-text-field ref="confirmFieldRef" v-model="customerDraft.password_confirmation"
+              autocomplete="new-password" :type="showConfirm ? 'text' : 'password'"
+              prepend-inner-icon="mdi-lock-check-outline"
+              :append-inner-icon="showConfirm ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" hide-details="auto"
+              class="mt-4" @click:append-inner="showConfirm = !showConfirm" label="Bevestig Wachtwoord"
+              :rules="confirmRules" variant="solo-filled" flat />
+          </v-form>
         </div>
-            <!-- <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable
+        <!-- <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable
               class="auth-alert mx-6"
               @click:close="error = ''">
               {{ error }}
@@ -1064,13 +1073,16 @@
 
         <div class="delete-modal-body">
           <h3 class="delete-modal-title">{{ customerDeleteTarget?.companyName }} verwijderen?</h3>
-          <p class="delete-modal-content">Weet je zeker dat je {{ customerDeleteTarget?.companyName }} wilt verwijderen?</p>
+          <p class="delete-modal-content">Weet je zeker dat je {{ customerDeleteTarget?.companyName }} wilt verwijderen?
+          </p>
           <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>
 
         <div class="delete-modal-footer">
-          <button class="delete-modal-btn delete-modal-btn--secondary" type="button" @click="customerDeleteOpen = false">Annuleren</button>
-          <button class="delete-modal-btn delete-modal-btn--warning" type="button" @click="confirmCustomerDelete">Verwijderen</button>
+          <button class="delete-modal-btn delete-modal-btn--secondary" type="button"
+            @click="customerDeleteOpen = false">Annuleren</button>
+          <button class="delete-modal-btn delete-modal-btn--warning" type="button"
+            @click="confirmCustomerDelete">Verwijderen</button>
         </div>
       </v-card>
     </v-dialog>
@@ -1085,17 +1097,21 @@
 
         <div class="delete-modal-body">
           <h3 class="delete-modal-title">Feedback verwijderen?</h3>
-          <p class="delete-modal-content">Weet je zeker dat je de feedback voor {{ reviewDeleteTarget?.articleTitle }} wilt verwijderen?</p>
+          <p class="delete-modal-content">Weet je zeker dat je de feedback voor {{ reviewDeleteTarget?.articleTitle }}
+            wilt
+            verwijderen?</p>
           <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>
 
         <div class="delete-modal-footer">
-          <button class="delete-modal-btn delete-modal-btn--secondary" type="button" @click="reviewDeleteOpen = false">Annuleren</button>
-          <button class="delete-modal-btn delete-modal-btn--warning" type="button" @click="confirmReviewDelete">Verwijderen</button>
+          <button class="delete-modal-btn delete-modal-btn--secondary" type="button"
+            @click="reviewDeleteOpen = false">Annuleren</button>
+          <button class="delete-modal-btn delete-modal-btn--warning" type="button"
+            @click="confirmReviewDelete">Verwijderen</button>
         </div>
       </v-card>
     </v-dialog>
-</div>
+  </div>
 </template>
 
 <script setup>
@@ -1171,9 +1187,9 @@ const filterMenu = ref(false)
 const activeFilter = ref('All')
 
 const filterOptions = [
-  { value: 'A-Z',      label: 'A-Z', icon: 'mdi-arrow-up' },
-  { value: 'Z-A',   label: 'Z-A',   icon: 'mdi-arrow-down' },
-  { value: 'Gelezen',  label: 'Gelezen',  icon: 'mdi-email-check' },
+  { value: 'A-Z', label: 'A-Z', icon: 'mdi-arrow-up' },
+  { value: 'Z-A', label: 'Z-A', icon: 'mdi-arrow-down' },
+  { value: 'Gelezen', label: 'Gelezen', icon: 'mdi-email-check' },
   { value: 'Ongelezen', label: 'Ongelezen', icon: 'mdi-email-alert' },
 
 ]
@@ -1274,7 +1290,7 @@ onMounted(async () => {
   await loadOverviewData()
 })
 
-  async function reloadWorkspaces() {
+async function reloadWorkspaces() {
   const workspacesResponse = await getAdminWorkspaces()
   workspaceData.value = extractCollection(workspacesResponse).map(normalizeWorkspace)
 
@@ -1641,6 +1657,17 @@ function toggleWorkspaceCustomerAccess(workspaceId, customerId, enabled) {
     ? current.includes(customerId) ? current : [...current, customerId]
     : current.filter((id) => id !== customerId)
 }
+function toggleWorkspaceCustomerAccessFromRow(event, row) {
+  const item = row.item
+
+  const currentlySelected = (selectedEntity.customerAccess || []).includes(item.id)
+
+  toggleWorkspaceCustomerAccess(
+    selectedEntity.id,
+    item.id,
+    !currentlySelected
+  )
+}
 
 const workspaceSelectOptions = computed(() =>
   workspaceData.value.map((workspace) => ({
@@ -1756,7 +1783,7 @@ const workspaceDeleteTarget = computed(() =>
 )
 
 const categoryDeleteTarget = computed(() =>
-workspaceData.value.flatMap(w => w.categories).find(c => c.id === categoryDeleteId.value) ?? null
+  workspaceData.value.flatMap(w => w.categories).find(c => c.id === categoryDeleteId.value) ?? null
 )
 
 const projectDeleteTarget = computed(() => {
@@ -1794,7 +1821,7 @@ const filteredWorkspaces = computed(() => {
   return workspaceData.value
     .filter((workspace) => {
       const customerMatch =
-      selectedCustomerId.value === null || workspace.customerAccess.includes(selectedCustomerId.value)
+        selectedCustomerId.value === null || workspace.customerAccess.includes(selectedCustomerId.value)
       if (!customerMatch) return false
       if (!normalizedSearch.value) return true
       return workspaceMatchesSearch(workspace)
@@ -1927,7 +1954,7 @@ function updateWorkspaceCustomerAccess(workspaceId, customers) {
 function formatWorkspaceCustomers(workspace) {
   if (!workspace?.customerAccess?.length) return 'Geen klanten'
   if (workspace.customerAccess.length === 1) {
-  return customersData.value.find(c => c.id === workspace.customerAccess[0])?.companyName ?? 'Onbekend'
+    return customersData.value.find(c => c.id === workspace.customerAccess[0])?.companyName ?? 'Onbekend'
   } return `${workspace.customerAccess.length} klanten`
 }
 
@@ -2156,7 +2183,7 @@ function updateDraftPrimaryField(value) {
 }
 
 function updateDraftContentField(value) {
-  if(dialogType.value === 'project') {
+  if (dialogType.value === 'project') {
     draft.description = value
     return
   }
@@ -2258,8 +2285,8 @@ function openEditDialog(type, id) {
   editorOpen.value = true
 }
 
-  async function saveWorkspaceMembers() {
-    error.value = ''
+async function saveWorkspaceMembers() {
+  error.value = ''
   try {
     const payload = {
       name: selectedEntity.value.name,
@@ -2296,7 +2323,7 @@ function openCreateChildDialog() {
   }
 }
 
-  async function saveDraft() {
+async function saveDraft() {
   const { valid } = await formRef.value.validate();
   if (!valid) return;
 
@@ -2316,20 +2343,20 @@ function openCreateChildDialog() {
       }
     }
 
-if (dialogType.value === 'category') {
+    if (dialogType.value === 'category') {
       const payload = {
         name: draft.name,
         workspace_id: draft.workspaceId,
-  }
-        if (dialogMode.value === 'create') {
+      }
+      if (dialogMode.value === 'create') {
         const response = await storeCategory(payload)
         draft.id = response.id
       } else {
         await UpdateCategory(draft.slug, payload)
         await reloadWorkspaces()
       }
-  }
-  
+    }
+
     if (dialogType.value === 'project') {
       const payload = {
         name: draft.name,
@@ -2365,10 +2392,10 @@ if (dialogType.value === 'category') {
         return
       } else {
         await updateArticle(draft.slug, payload)
-        await reloadWorkspaces() 
+        await reloadWorkspaces()
       }
     }
-    
+
     if (dialogMode.value === 'create') createEntity()
     else updateEntity()
     editorOpen.value = false
@@ -2514,8 +2541,8 @@ async function confirmWorkspaceDelete() {
     if (selectedWorkspaceId.value === target.id) {
       selectedWorkspaceId.value = workspaceData.value[0]?.id ?? null
     }
-    workspaceDeleteOpen.value = false        
-    workspaceDeleteId.value = null  
+    workspaceDeleteOpen.value = false
+    workspaceDeleteId.value = null
     syncLocalCounters()
   } catch (err) {
     error.value = err.response?.data?.message ?? 'Kon workspace niet verwijderen.'
@@ -2555,26 +2582,26 @@ async function confirmProjectDelete() {
   error.value = ''
 
   try {
-    await deleteProject(target.slug) 
+    await deleteProject(target.slug)
 
-      for (const workspace of workspaceData.value) {
-        for (const category of workspace.categories) {
-          category.projects = category.projects.filter(p => p.id !== target.id)
-        }
+    for (const workspace of workspaceData.value) {
+      for (const category of workspace.categories) {
+        category.projects = category.projects.filter(p => p.id !== target.id)
       }
-
-      if (selectedProjectId.value === target.id) {
-        selectedProjectId.value = null
-        selectedEntityType.value = 'workspace'
-      }
-
-      syncLocalCounters()
-    } catch (err) {
-      error.value = err.response?.data?.message ?? 'Kon project niet verwijderen.'
-    } finally {
-      projectDeleteOpen.value = false
-      projectDeleteId.value = null
     }
+
+    if (selectedProjectId.value === target.id) {
+      selectedProjectId.value = null
+      selectedEntityType.value = 'workspace'
+    }
+
+    syncLocalCounters()
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon project niet verwijderen.'
+  } finally {
+    projectDeleteOpen.value = false
+    projectDeleteId.value = null
+  }
 }
 
 function resetCustomerDraft() {
