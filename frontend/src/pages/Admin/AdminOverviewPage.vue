@@ -915,18 +915,18 @@
                 item-title="label" item-value="value" label="Categorie" variant="solo-filled" flat hide-details="auto"
                 class="notion-soft-input mb-4" />
               <div class="article-chip-picker mb-4">
-                <div class="article-chip-picker__label">Status</div>
-                <v-chip-group v-model="draft.status" selected-class="article-choice-chip--selected" mandatory>
-                  <v-chip v-for="option in articleStatusOptions" :key="option.value" :value="option.value"
+                <div class="article-chip-picker__label">Visibility</div>
+                <v-chip-group v-model="draft.visibility" selected-class="article-choice-chip--selected" mandatory>
+                  <v-chip v-for="option in articleVisibilityOptions" :key="option.value" :value="option.value"
                     class="article-choice-chip" filter variant="outlined">
                     {{ option.label }}
                   </v-chip>
                 </v-chip-group>
               </div>
-              <div class="article-chip-picker mb-4">
-                <div class="article-chip-picker__label">Visibility</div>
-                <v-chip-group v-model="draft.visibility" selected-class="article-choice-chip--selected" mandatory>
-                  <v-chip v-for="option in articleVisibilityOptions" :key="option.value" :value="option.value"
+                <div class="article-chip-picker mb-4">
+                <div class="article-chip-picker__label">Status</div>
+                <v-chip-group v-model="draft.status" selected-class="article-choice-chip--selected" mandatory>
+                  <v-chip v-for="option in articleStatusOptions" :key="option.value" :value="option.value"
                     class="article-choice-chip" filter variant="outlined">
                     {{ option.label }}
                   </v-chip>
@@ -1312,12 +1312,13 @@ const customerOptions = computed(() => [
 const kindOptions = ['Alles', 'Workspaces', 'Categorieën', 'Projecten', 'Artikelen']
 const customerRoleOptions = ['admin', 'customer']
 const articleStatusOptions = [
-  { label: 'Draft', value: 'draft' },
   { label: 'Gepubliceerd', value: 'published' },
+  { label: 'Draft', value: 'draft' },
 ]
 const articleVisibilityOptions = [
-  { label: 'Publiek', value: 'public' },
   { label: 'Privé', value: 'private' },
+  { label: 'Publiek', value: 'public' },
+
 ]
 const workspaceCustomerSearch = ref('')
 

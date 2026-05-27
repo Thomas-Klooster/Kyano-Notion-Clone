@@ -32,6 +32,26 @@ export const getFeedbacks = async () => {
     return data;
 }
 
+export const uploadArticleAttachments = async (articleSlug, files, options = {}) => {
+    const formData = new FormData();
+    files.forEach((file) => {
+        formData.append('attachments[]', file);
+    });
+
+    const { data } = await api.post(
+    `admin/articles/${articleSlug}/attachments`,
+    formData,
+    {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: options.onUploadProgress,
+    }
+  );
+
+  return unwrapResource(data);
+};
+
 export const markFeedbackAsRead = async (feedbackId, isRead = true) => {
     const { data } = await api.patch(`admin/feedbacks/${feedbackId}/read`, {
         is_read: isRead,

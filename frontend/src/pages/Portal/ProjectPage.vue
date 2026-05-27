@@ -1,39 +1,79 @@
 <template>
-    <div class="entity-page admin-studio-page">
-        <div class="entity-shell page-shell admin-studio-shell">
-            <section class="entity-hero hero admin-hero">
-                <div class="admin-hero-bg-shapes" aria-hidden="true">
-                    <div class="admin-hero-shape admin-hero-shape-1" />
-                    <div class="admin-hero-shape admin-hero-shape-2" />
-                </div>
-                <div class="hero-content u-min-w-0">
-                    <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
-                        <span class="hero-pill u-inline-flex u-items-center">Project</span>
-                        <span class="hero-meta-separator">•</span>
-                        <span>{{ project.workspace }}</span>
-                        <span class="hero-meta-separator">•</span>
-                        <span>{{ project.category }}</span>
-                        <span class="hero-meta-separator">•</span>
-                        <span>{{ filteredArticles.length === 1 ? '1 artikel' : `${filteredArticles.length}
-                            artikelen`}}</span>
+  <div class="entity-page admin-studio-page">
+    <div class="entity-shell page-shell admin-studio-shell">
+      <section class="entity-hero hero admin-hero">
+        <div class="admin-hero-bg-shapes" aria-hidden="true">
+          <div class="admin-hero-shape admin-hero-shape-1" />
+          <div class="admin-hero-shape admin-hero-shape-2" />
+        </div>
+
+        <div class="hero-content u-min-w-0">
+          <div class="hero-meta-line u-flex-center u-wrap u-gap-8">
+            <span class="hero-pill u-inline-flex u-items-center">Project</span>
+          </div>
+
+          <h1 class="hero-title">{{ project.name }}</h1>
+          <p class="hero-subtitle">Bekijk alle artikelen binnen dit project.</p>
+        </div>
+      </section>
+
+      <div class="project-hero-subtitle-section">
+        <div class="project-description-card card card-elevated card-rounded 2xl mb-3">
+          <div class="project-list-head card-head section-kicker">
+            <h4>Beschrijving</h4>
+          </div>
+          
+          <p class="hero-project-subtitle" style="background: rgb(255, 255, 255, 0.15); border-radius: 1rem">
+            {{ projectDescription }}
+          </p>
+        </div>
+
+        <div class="project-description-card card card-elevated card-rounded 2xl mb-3">
+          <div class="project-list-head card-head section-kicker">
+            <h4>Project info</h4>
+          </div>
+
+          <article>
+            <div v-if="loading" class="empty-state">
+              <v-icon size="30">mdi-loading mdi-spin</v-icon>
+              <p>Projectinformatie wordt geladen...</p>
+            </div>
+
+            <div v-else-if="error" class="empty-state">
+              <v-icon size="30">mdi-alert-outline</v-icon>
+              <p>{{ error }}</p>
+            </div>
+
+            <div v-else class="child-rows">
+              <button v-for="item in projectInfoItems" :key="item.label"
+                class="projects-child-row project-info-row-button" type="button"
+                :disabled="!item.action" @click="handleProjectInfoClick(item)">
+                <div class="child-row-main">
+                  <div class="entity-icon icon-box entity-icon-soft">
+                    <v-icon size="18">{{ item.icon }}</v-icon>
+                  </div>
+
+                  <div>
+                    <div class="entity-name">{{ item.value }}</div>
+                    <div class="entity-meta">
+                      <span>{{ item.label }}</span>
+                      <span v-if="item.helper" class="dot">•</span>
+                      <span v-if="item.helper">{{ item.helper }}</span>
                     </div>
-
-                    <h1 class="hero-title">{{ project.name }}</h1>
-
-                    <p class="hero-subtitle"
-                        style="background: rgb(255, 255, 255, 0.15); padding: .75rem 1.5rem; border-radius: 1rem;">
-                    <h3>Beschrijving</h3>
-                    {{ projectDescription }}
-                    </p>
+                  </div>
                 </div>
-            </section>
+              </button>
+            </div>
+          </article>
+        </div>
+      </div>
 
-            <section class="project-list-card card card-elevated card-rounded-2xl">
-                <div class="project-list-head card-head">
-                    <div>
-                        <div class="section-kicker">Overzicht</div>
-                        <h2 class="section-title">Artikelen</h2>
-                    </div>
+      <section ref="articlesSection" class="project-list-card card card-elevated card-rounded-2xl">
+        <div class="project-list-head card-head">
+          <div>
+            <div class="section-kicker">Overzicht</div>
+            <h2 class="section-title">Artikelen</h2>
+          </div>
 
                     <div class="project-list-controls u-flex u-items-center u-wrap u-gap-12">
                         <div class="search-field">
@@ -92,68 +132,113 @@
 <script setup>
 import { getProject } from '@/services/projectService'
 import { computed, ref, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
+const articlesSection = ref(null)
 const search = ref('')
 const loading = ref(false)
 const error = ref(false)
-const project = ref({ name: '', description: '', workspace: '', category: '', articles: [] })
+const project = ref({
+  name: '',
+  description: '',
+  workspace: '',
+  workspaceSlug: '',
+  category: '',
+  categorySlug: '',
+  articles: [],
+})
 
 function normalizeTagNames(tags) {
-    if (!Array.isArray(tags)) return []
+  if (!Array.isArray(tags)) return []
 
-    return tags
-        .map(tag => {
-            if (typeof tag === 'string') return tag
-            if (tag && typeof tag === 'object' && 'name' in tag) return tag.name
-            return ''
-        })
-        .filter(Boolean)
+  return tags
+    .map((tag) => {
+      if (typeof tag === 'string') return tag
+      if (tag && typeof tag === 'object' && 'name' in tag) return tag.name
+      return ''
+    })
+    .filter(Boolean)
 }
 
 function formatArticleTags(article) {
-    const tagNames = normalizeTagNames(article?.tags)
-    return tagNames.length ? tagNames.join(', ') : 'Geen tags'
+  const tagNames = normalizeTagNames(article?.tags)
+  return tagNames.length ? tagNames.join(', ') : 'Geen tags'
 }
 
 const projectDescription = computed(() => {
-    const description = project.value.description?.trim()
-    return description || 'Geen beschrijving beschikbaar voor dit project.'
+  const description = project.value.description?.trim()
+  return description || 'Geen beschrijving beschikbaar voor dit project.'
 })
 
+const articleCount = computed(() => project.value.articles?.length ?? 0)
+
+const articleCountLabel = computed(() =>
+  articleCount.value === 1 ? '1 artikel' : `${articleCount.value} artikelen`,
+)
+
+const projectInfoItems = computed(() => [
+  {
+    label: 'Workspace',
+    value: project.value.workspace || 'Geen workspace gekoppeld',
+    helper: 'Open workspace',
+    icon: 'mdi-view-dashboard-outline',
+    action: project.value.workspaceSlug ? () => goToWorkspace(project.value.workspaceSlug) : null,
+  },
+  {
+    label: 'Categorie',
+    value: project.value.category || 'Geen categorie gekoppeld',
+    helper: 'Open categorie',
+    icon: 'mdi-shape-outline',
+    action: project.value.categorySlug ? () => goToCategory(project.value.categorySlug) : null,
+  },
+  {
+    label: 'Artikelen',
+    value: articleCountLabel.value,
+    helper: 'Ga naar overzicht',
+    icon: 'mdi-file-document-multiple-outline',
+    action: scrollToArticles,
+  },
+])
+
 watch(
-    () => route.params.slug,
-    () => {
-        loadArticles()
-    },
-    { immediate: true }
+  () => route.params.slug,
+  () => {
+    loadArticles()
+  },
+  { immediate: true },
 )
 
 async function loadArticles() {
+  loading.value = true
+  error.value = false
+  search.value = ''
+  project.value = {
+    name: '',
+    description: '',
+    workspace: '',
+    workspaceSlug: '',
+    category: '',
+    categorySlug: '',
+    articles: [],
+  }
 
-    loading.value = true
-    error.value = false
-    search.value = ''
-    project.value = { name: '', description: '', workspace: '', category: '', articles: [] }
-
-    try {
-        const current = await getProject(route.params.slug)
-        project.value.name = current.name
-        project.value.description = current.description ?? ''
-        project.value.category = current.category
-        project.value.workspace = current.workspace
-        project.value.articles = current.articles ?? []
-    } catch (err) {
-        error.value = 'Dit project kon niet worden gevonden.'
-    } finally {
-        loading.value = false
-    }
-
+  try {
+    const current = await getProject(route.params.slug)
+    project.value.name = current.name
+    project.value.description = current.description ?? ''
+    project.value.category = current.category
+    project.value.categorySlug = current.category_slug ?? ''
+    project.value.workspace = current.workspace
+    project.value.workspaceSlug = current.workspace_slug ?? ''
+    project.value.articles = current.articles ?? []
+  } catch {
+    error.value = 'Dit project kon niet worden gevonden.'
+  } finally {
+    loading.value = false
+  }
 }
-
-
 
 const filteredArticles = computed(() => {
     const articles = project.value.articles ?? []
@@ -167,7 +252,24 @@ const filteredArticles = computed(() => {
         normalizeTagNames(article.tags).some(tag => tag.toLowerCase().includes(query))
     )
 })
+
 function goToArticle(slug) {
-    router.push(`/article/${slug}`)
+  router.push(`/article/${slug}`)
+}
+
+function goToCategory(slug) {
+  router.push(`/category/${slug}`)
+}
+
+function goToWorkspace(slug) {
+  router.push(`/workspace/${slug}`)
+}
+
+function scrollToArticles() {
+  articlesSection.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+function handleProjectInfoClick(item) {
+  item.action?.()
 }
 </script>

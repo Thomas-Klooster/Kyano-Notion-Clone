@@ -70,6 +70,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('projects', ProjectsController::class)->except(['AdminIndex']);
         Route::apiResource('categories', CategoryController::class)->except(['AdminIndex']);
         Route::apiResource('articles', ArticleController::class)->except(['AdminIndex']);
+        Route::post('/articles/{article}/attachments', [ArticleController::class, 'storeAttachments']);
         Route::get('/feedbacks', [ArticleController::class, 'adminAllFeedbacks']);
         Route::get('/articles/{article}/feedbacks', [ArticleController::class, 'adminFeedbacks']);
         Route::patch('/feedbacks/{feedback}/read', [ArticleController::class, 'markFeedbackAsRead']);

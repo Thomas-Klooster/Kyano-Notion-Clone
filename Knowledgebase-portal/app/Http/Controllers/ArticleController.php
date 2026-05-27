@@ -18,6 +18,22 @@ class ArticleController extends Controller
 {
 
     use AuthorizesRequests;
+
+    private function storeAttachmentsForArticle(Article $article, array $files): void
+    {
+        foreach ($files as $file) {
+            $path = Storage::put('attachments', $file);
+
+            Attachment::create([
+                'article_id' => $article->id,
+                'path' => $path,
+                'mime' => $file->getMimeType(),
+                'original_name' => $file->getClientOriginalName(),
+                'size' => $file->getSize(),
+            ]);
+        }
+    }
+
     public function index() {
      $this->authorize('viewAny', Article::class);        
      $articles = Article::visibleTo(auth('sanctum')->user())
@@ -34,17 +50,7 @@ class ArticleController extends Controller
     $article->syncTags($request->tags ?? []);
 
     if ($request->hasFile('attachments')) {
-        foreach ($request->file('attachments') as $file) {
-            $path = Storage::put('attachments', $file);
-
-            Attachment::create([
-                'article_id'    => $article->id,
-                'path'          => $path,
-                'mime'          => $file->getMimeType(),
-                'original_name' => $file->getClientOriginalName(),
-                'size'          => $file->getSize(),
-            ]);
-        }
+        $this->storeAttachmentsForArticle($article, $request->file('attachments'));
     }
 
     return (new ArticleResource($article->load(['attachments', 'tags'])))->response()->setStatusCode(201);
@@ -63,6 +69,17 @@ public function show(Article $article)
         $article->update($request->validated());
 
         return new ArticleResource($article->load(['tags', 'project', 'category', 'attachments']));
+    }
+
+    public function storeAttachments(Request $request, Article $article) {
+        $this->authorize('update', $article);
+        $data = $request->validate([
+            'attachments' => ['required', 'array', 'min:1'],
+            'attachments.*' => ['file', 'mimes:jpg,jpeg,png,pdf,doc,docx,webm', 'max:10240'],
+        ]);
+
+        $this->storeAttachmentsForArticle($article, $data['attachments']);
+        return new ArticleResource($article->load(['attachments', 'tags', 'project', 'category']));
     }
 
     public function destroy(Article $article) {

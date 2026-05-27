@@ -81,7 +81,7 @@
             <div class="attachments-section">
               <div class="section-label">Bijlagen & links</div>
 
-              <v-file-upload v-model="model" clearable multiple show-size>
+              <v-file-upload v-model="model" clearable multiple show-size :disabled="loading || uploadingAttachments">
                 <template v-slot:default>
                   <v-file-upload-dropzone density="comfortable" class="upload-dropzone" />
 
@@ -94,15 +94,20 @@
                             <v-icon size="18">mdi-file-outline</v-icon>
                           </VAvatar>
 
-                          <v-progress-linear v-if="uploads.has(file)" :buffer-value="uploads.get(file).buffer"
-                            :color="uploads.get(file).progress >= 100 ? 'success' : 'primary'"
-                            :model-value="uploads.get(file).progress" location="bottom" absolute />
+                          <v-progress-linear v-if="uploads[fileUploadKey(file)]" :buffer-value="uploads[fileUploadKey(file)].buffer"
+                            :color="uploads[fileUploadKey(file)].progress >= 100 ? 'success' : 'primary'"
+                            :model-value="uploads[fileUploadKey(file)].progress" location="bottom" absolute />
                         </template>
                       </v-file-upload-item>
                     </template>
                   </v-file-upload-list>
                 </template>
               </v-file-upload>
+
+              <div v-if="uploadingAttachments" class="save-indicator mt-4">
+                <span class="save-indicator-dot"></span>
+                <span>Bijlagen uploaden...</span>
+              </div>
 
               <div class="bookmark-link-row">
                 <v-icon size="18">mdi-link-variant</v-icon>
@@ -134,15 +139,15 @@
               {{ statusLabel }}
             </div>
 
-            <v-btn variant="tonal" rounded="lg" class="action-btn action-btn-secondary" :loading="saving" :disabled="loading" @click="saveArticle()">
+            <v-btn variant="tonal" rounded="lg" class="action-btn action-btn-secondary" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle()">
               Opslaan
             </v-btn>
 
-            <v-btn v-if="status !== 'published'" color="primary" rounded="lg" class="action-btn action-btn-primary" :loading="saving" :disabled="loading" @click="saveArticle('published')">
+            <v-btn v-if="status !== 'published'" color="primary" rounded="lg" class="action-btn action-btn-primary" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('published')">
               Publiceren
             </v-btn>
 
-            <v-btn v-else rounded="lg" class="action-btn action-btn-danger" :loading="saving" :disabled="loading" @click="saveArticle('draft')">
+            <v-btn v-else rounded="lg" class="action-btn action-btn-danger" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('draft')">
               Depubliceren
             </v-btn>
           </div>
@@ -157,7 +162,7 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { VFileUpload } from 'vuetify/labs/VFileUpload'
 import TipTap from '@/components/TipTap.vue'
-import { getArticle, updateArticle } from '@/services/articleService'
+import { getArticle, updateArticle, uploadArticleAttachments } from '@/services/articleService'
 
 const route = useRoute()
 
@@ -171,11 +176,12 @@ const projectName = ref('Knowledgebase Portal')
 const updatedLabel = ref('Nog niet opgeslagen')
 const loading = ref(false)
 const saving = ref(false)
+const uploadingAttachments = ref(false)
 const error = ref('')
 const saveMessage = ref('Klaar om te schrijven')
 
 const model = ref([])
-const uploads = ref(new Map())
+const uploads = ref({})
 
 const previewRoute = computed(() => (
   articleSlug.value
@@ -187,7 +193,11 @@ const previewRoute = computed(() => (
 ))
 
 const statusLabel = computed(() => status.value === 'published' ? 'Published' : 'Draft')
-const saveIndicatorLabel = computed(() => saving.value ? 'Opslaan...' : saveMessage.value)
+const saveIndicatorLabel = computed(() => {
+  if (uploadingAttachments.value) return 'Bijlagen uploaden...'
+  if (saving.value) return 'Opslaan...'
+  return saveMessage.value
+})
 
 watch(
   () => route.query.slug,
@@ -202,6 +212,42 @@ watch(
   },
   { immediate: true },
 )
+
+watch(
+  model,
+  (files) => {
+    if (!articleSlug.value || uploadingAttachments.value || !Array.isArray(files) || !files.length) return
+    uploadSelectedAttachments(files)
+  },
+  { deep: true },
+)
+
+function fileUploadKey(file) {
+  return `${file.name}-${file.size}-${file.lastModified}`
+}
+
+function updateUploadProgress(files, progress) {
+  const nextUploads = { ...uploads.value }
+
+  files.forEach((file) => {
+    nextUploads[fileUploadKey(file)] = {
+      progress,
+      buffer: 100,
+    }
+  })
+
+  uploads.value = nextUploads
+}
+
+function clearUploadProgress(files) {
+  const nextUploads = { ...uploads.value }
+
+  files.forEach((file) => {
+    delete nextUploads[fileUploadKey(file)]
+  })
+
+  uploads.value = nextUploads
+}
 
 function hydrateArticle(article) {
   articleSlug.value = article.slug ?? articleSlug.value
@@ -226,6 +272,39 @@ async function loadArticle(slug) {
     error.value = err.response?.data?.message ?? 'Kon het artikel niet laden.'
   } finally {
     loading.value = false
+  }
+}
+
+async function uploadSelectedAttachments(files) {
+  uploadingAttachments.value = true
+  error.value = ''
+
+  const selectedFiles = files.filter((file) => file instanceof File)
+
+  if (!selectedFiles.length) {
+    uploadingAttachments.value = false
+    return
+  }
+
+  updateUploadProgress(selectedFiles, 0)
+
+  try {
+    const article = await uploadArticleAttachments(articleSlug.value, selectedFiles, {
+      onUploadProgress: (event) => {
+        if (!event.total) return
+        const progress = Math.round((event.loaded / event.total) * 100)
+        updateUploadProgress(selectedFiles, progress)
+      },
+    })
+
+    hydrateArticle(article)
+    saveMessage.value = 'Bijlagen geupload'
+    model.value = []
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon de bijlagen niet uploaden.'
+  } finally {
+    clearUploadProgress(selectedFiles)
+    uploadingAttachments.value = false
   }
 }
 

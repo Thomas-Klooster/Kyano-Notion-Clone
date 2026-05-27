@@ -22,7 +22,9 @@ class ProjectResource extends JsonResource
             'updated_at' => $this->updated_at->locale("nl")->diffForHumans(),
             'articles' => ArticleResource::collection($this->whenLoaded('articles')),
             'category' => $this->category->name,
+            'category_slug' => $this->category->slug,
             'workspace' => $this->workspace->name,
+            'workspace_slug' => $this->workspace->slug,
         ];
     }
 }
