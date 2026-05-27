@@ -23,7 +23,17 @@
             <h4>Beschrijving</h4>
           </div>
           
-          <p class="hero-project-subtitle" style="background: rgb(255, 255, 255, 0.15); border-radius: 1rem">
+          <div v-if="loading" class="empty-state">
+            <v-icon size="30">mdi-loading mdi-spin</v-icon>
+            <p>Project beschrijving wordt geladen...</p>
+          </div>
+
+          <div v-else-if="error" class="empty-state">
+              <v-icon size="30">mdi-alert-outline</v-icon>
+              <p>{{ error }}</p>
+            </div>
+
+            <p  v-else class="hero-project-subtitle" style="background: rgb(255, 255, 255, 0.15); border-radius: 1rem">
             {{ projectDescription }}
           </p>
         </div>
