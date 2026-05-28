@@ -1056,6 +1056,12 @@
               {{ error }}
             </v-alert> -->
 
+            <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable
+            class="auth-alert mx-6"
+            @click:close="error = ''">
+            {{ error }}
+          </v-alert>
+
         <div class="dialog-actions u-gap-12 mt-5">
           <v-btn variant="text" @click="customerEditorOpen = false">Annuleren</v-btn>
           <v-btn class="entity-create-btn" @click="saveCustomerDraft">Opslaan</v-btn>
@@ -1244,7 +1250,6 @@ const passwordRules = [
   (v) => (v?.length ?? 0) >= 8 || 'Het wachtwoord moet minimaal 8 tekens lang zijn.',
   (v) => /[A-Z]/.test(v) || 'Moet een hoofdletter bevatten.',
   (v) => /[a-z]/.test(v) || 'Moet een kleine letter bevatten.',
-  (v) => /[\d\W]/.test(v) || 'Moet een getal of speciaal teken bevatten.',
 ]
 
 const confirmRules = computed(() => [
@@ -1943,11 +1948,6 @@ const childSectionTitle = computed(() => {
   if (selectedEntityType.value === 'project') return 'Artikelen binnen dit project'
   return 'Dit artikel heeft geen onderliggende items'
 })
-
-// const deleteTarget = computed(() => {
-//   if (!deleteType.value || deleteId.value == null) return null
-//   return getEntity(deleteType.value, deleteId.value)
-// })
 
 function updateWorkspaceCustomerAccess(workspaceId, customers) {
   const workspace = workspaceData.value.find((item) => item.id === workspaceId)
@@ -2742,8 +2742,8 @@ function openCustomerEditDialog(id) {
 
 async function saveCustomerDraft() {
   const { valid } = await formRef.value.validate();
+  if (!valid) return
   error.value = ''
-
   try {
     const payload = buildUserPayload()
     const user = customerDialogMode.value === 'create'

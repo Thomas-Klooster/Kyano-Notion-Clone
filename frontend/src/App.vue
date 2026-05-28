@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -7,19 +7,37 @@ const auth = useAuthStore()
 const router = useRouter()
 const route = useRoute()
 const drawer = ref(false)
+const ROOT_NAMES = ['Dashboard', 'admin-overview']
+const breadcrumbTrail = ref([])
+
+watch(route, (to) => {
+  if (!to.meta?.breadcrumb) {
+    breadcrumbTrail.value = []
+    return
+  }
+
+  if (ROOT_NAMES.includes(to.name)) {
+    breadcrumbTrail.value = [{ text: to.meta.breadcrumb, to: to.fullPath }]
+    return
+  }
+
+  const existingIndex = breadcrumbTrail.value.findIndex(b => b.to === to.fullPath)
+  if (existingIndex !== -1) {
+    breadcrumbTrail.value = breadcrumbTrail.value.slice(0, existingIndex + 1)
+    return
+  }
+
+  breadcrumbTrail.value = [
+    ...breadcrumbTrail.value,
+    { text: to.meta.breadcrumb, to: to.fullPath }
+  ]
+}, { immediate: true })
 
 const breadcrumbItems = computed(() => {
-  return route.matched
-    .filter(segment => segment.meta?.breadcrumb || segment.name)
-    .map(segment => {
-      const path = segment.path
-        .replace(/:\w+/g, param => route.params[param.replace(':', '')])
-      return {
-        text: segment.meta?.breadcrumb || segment.name,
-        to: { path },
-        disabled: route.path === segment.path
-      }
-    })
+  return breadcrumbTrail.value.map((item, index) => ({
+    ...item,
+    disabled: index === breadcrumbTrail.value.length - 1
+  }))
 })
 
 const userInitials = computed(() => {
@@ -90,8 +108,8 @@ async function handleLogout() {
             to="/profile"
             class="sidebar-account-link"
             active-class="sidebar-account-link--active"
-            @click="drawer = false"
-          >
+            @click="drawer = false">
+
             <v-icon size="14">mdi-account-circle-outline</v-icon>
             Profiel beheren
           </router-link>
@@ -136,7 +154,7 @@ async function handleLogout() {
             <v-app-bar-nav-icon @click="drawer = !drawer" />
             <v-breadcrumbs :items="breadcrumbItems">
               <template v-slot:item="{ item }">
-                <v-breadcrumbs-item :to="item.to" :disabled="item.disabled">
+                <v-breadcrumbs-item :to="item.to">
                   {{ item.text }}
                 </v-breadcrumbs-item>
               </template>
