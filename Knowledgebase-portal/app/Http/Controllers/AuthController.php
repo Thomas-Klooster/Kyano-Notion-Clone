@@ -45,7 +45,10 @@ class AuthController extends Controller
             'user'=> $user,
             'accessToken' => $tokens['accessToken'],
             'refreshToken' => $tokens['refreshToken'],
-        ], 201);
+        ], 201)
+
+        ->cookie('refreshToken', $tokens['refreshToken'], 60 * 24 * 30, '/', null, true, true, false, 'lax')
+        ->cookie('accessToken', $tokens['accessToken'], 90, '/', null, true, true, false, 'lax');
     }
 
     public function refresh(Request $request) {
@@ -63,7 +66,11 @@ class AuthController extends Controller
         return response()->json([
             'accessToken' => $tokens['accessToken'],
             'refreshToken' => $tokens['refreshToken'],
-        ]);
+        ])
+        
+        ->cookie('refreshToken', $tokens['refreshToken'], 60 * 24 * 30, '/', null, true, true, false, 'lax')
+        ->cookie('accessToken', $tokens['accessToken'], 90, '/', null, true, true, false, 'lax');
+
     }
 
    public function login(LoginRequest $request)
@@ -83,7 +90,11 @@ class AuthController extends Controller
         'user' => Auth::user(),
         'accessToken' => $tokens['accessToken'],
         'refreshToken' => $tokens['refreshToken'],
-        ]);
+        ])
+        
+        ->cookie('refreshToken', $tokens['refreshToken'], 60 * 24 * 30, '/', null, true, true, false, 'lax')
+        ->cookie('accessToken', $tokens['accessToken'], 90, '/', null, true, true, false, 'lax');
+
 
 }
 

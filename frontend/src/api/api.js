@@ -40,7 +40,8 @@ export const ensureCsrfCookie = () =>
      });
 
 api.interceptors.request.use((config) => {
-     const token = localStorage.getItem('accessToken');
+     const token = localStorage.getItem('accessToken') || document.cookie
+     .split('; ').find(row => row.startsWith('accessToken='))?.split('=')[1];
      if (token) {
      config.headers.Authorization = `Bearer ${token}`;
      }
@@ -71,7 +72,8 @@ api.interceptors.response.use(
                isRefreshing = true;
 
                try {
-                    const refreshToken = localStorage.getItem('refreshToken');
+                    const refreshToken = localStorage.getItem('refreshToken') || document.cookie
+                    .split('; ')?.split('=')[1];
 
                     if (!refreshToken) {
                          notifySessionExpired();
