@@ -78,35 +78,61 @@
 
                     <div v-if="feedbackSent" class="sidebar-card card card-soft card-rounded-lg feedback-card">
                         <div class="sidebar-label">Bedankt voor je feedback!</div>
-                        <v-icon size="32" color="success">mdi-check-circle-outline</v-icon>
+                        <v-icon size="32" color="light-blue">mdi-check-circle-outline</v-icon>
                     </div>
                     <form v-else class="sidebar-card card card-soft card-rounded-lg feedback-card"
                         @submit.prevent="submitFeedback">
                         <div class="sidebar-label">Was dit artikel nuttig?</div>
+                
+                <v-dialog v-model="feedbackDialog" max-width="596">
+                <v-card class="dialog-card card card-rounded-xl" rounded="xl">
+                <div class="feedback-modal">
+                    <div class="feedback-modal-head">
+                  <span class="feedback-modal-icon" aria-hidden="true">
+                <v-icon size="30">mdi-message-outline</v-icon>
+                  </span>
+                    </div>
+                    <div class="feedback-modal-title">
+                        Geef ons een beoordeling!
+                    </div>
                         <div class="useful-button-box">
                             <button class="useful-button thumbs-up" type="button" :class="{ active: helpful === true }"
-                                @click="setHelpful(true)">
-                                <v-icon>mdi-thumb-up</v-icon></button>
+                            @click="setHelpful(true)">
+                            <v-icon>mdi-thumb-up</v-icon></button>
                             <button class="useful-button thumbs-down" type="button"
-                                :class="{ active: helpful === false }" @click="setHelpful(false)">
-                                <v-icon>mdi-thumb-down</v-icon>
-                            </button>
-                        </div>
-
-                        <div class="sidebar-label" style="margin-top: 12px;">Extra feedback</div>
-                        <textarea ref="feedbackTextarea" v-model="feedbackTitle"
-                            class="feedback-input feedback-textarea" placeholder="Laat je feedback achter..." rows="1"
-                            @input="autoResizeTextarea" maxlength="500" />
-
+                            :class="{ active: helpful === false }" @click="setHelpful(false)">
+                            <v-icon>mdi-thumb-down</v-icon>
+                            </button> 
+                         </div> 
                         <v-alert v-if="feedbackError" type="error" variant="tonal" density="comfortable" closable
-                            class="my-3" @click:close="feedbackError = ''">
+                        class="mt-2" @click:close="feedbackError = ''">
                             {{ feedbackError }}
                         </v-alert>
 
-                        <button class="feedback-submit" type="submit"
-                            :disabled="helpful === null && !feedbackTitle.trim()">
+                    <div class="feedback-divider" />
+                    <div class="sidebar-label" style="margin-top: 12px;">Extra feedback</div> 
+                         
+                    <textarea ref="feedbackTextarea" v-model="feedbackTitle"
+                    
+                    class="feedback-input feedback-textarea" placeholder="Laat je feedback achter..." rows="1"
+                    @input="autoResizeTextarea" maxlength="500" /> 
+
+                <div class="feedback-modal-footer">
+                    <button class="feedback-cancel" type="button"
+                    @click="feedbackDialog = false">Annuleren</button>
+                    <button class="feedback-submit" type="button"
+                    @click="submitFeedback"
+                    :disabled="helpful === null && !feedbackTitle.trim()">
                             Versturen
-                        </button>
+                        </button> 
+                </div>
+
+                </div>
+
+                                        
+                </v-card>
+                </v-dialog>
+                    <button class="feedback-submit" type="button" @click="feedbackDialog = true" >Geef feedback!</button>
                     </form>
                 </aside>
                 <main class="article-content">
@@ -160,6 +186,7 @@ const feedbackTextarea = ref(null)
 const helpful = ref(null)
 const feedbackSent = ref(false)
 const feedbackError = ref(false)
+const feedbackDialog = ref(false)
 
 const route = useRoute()
 const article = ref(null)
@@ -190,6 +217,7 @@ function setHelpful(value) {
 }
 
 async function submitFeedback() {
+
     if (helpful.value === null && !feedbackTitle.value.trim()) return
     feedbackError.value = false
     try {
@@ -197,8 +225,10 @@ async function submitFeedback() {
             helpful: helpful.value,
             feedback: feedbackTitle.value.trim()
         })
+        feedbackDialog.value = false
         feedbackSent.value = true
         feedbackTitle.value = ''
+        helpful.value = null
     } catch (err) {
         feedbackError.value = 'Een beoordeling is nodig om te versturen!'
     }
