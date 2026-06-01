@@ -82,6 +82,12 @@ public function show(Article $article)
         return new ArticleResource($article->load(['attachments', 'tags', 'project', 'category']));
     }
 
+    public function deleteAttachment(Article $article, Attachment $attachment) {
+        $this->authorize('delete', $article);
+        $attachment->delete();
+        return response()->json(['delete' => true]);
+    }
+
     public function destroy(Article $article) {
         $this->authorize('delete', $article);
         $article->delete();

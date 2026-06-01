@@ -52,6 +52,11 @@ export const uploadArticleAttachments = async (articleSlug, files, options = {})
   return unwrapResource(data);
 };
 
+export const deleteAttachment = async (articleSlug, attachmentId) => {
+    const { data } = await api.delete(`admin/articles/${articleSlug}/attachments/${attachmentId}`)
+    return data;
+}
+
 export const markFeedbackAsRead = async (feedbackId, isRead = true) => {
     const { data } = await api.patch(`admin/feedbacks/${feedbackId}/read`, {
         is_read: isRead,

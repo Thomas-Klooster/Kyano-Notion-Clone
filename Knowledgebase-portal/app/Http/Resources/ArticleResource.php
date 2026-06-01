@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleResource extends JsonResource
 {
@@ -28,8 +29,10 @@ class ArticleResource extends JsonResource
         'attachments' => $this->whenLoaded('attachments', fn() => $this->attachments->map(fn($attachment) => [
             'id' => $attachment->id,
             'path' => $attachment->path,
+            'url' => Storage::url($attachment->path),
             'mime' => $attachment->mime,
             'original_name' => $attachment->original_name,
+            'name' => $attachment->original_name,
             'size' => $attachment->size,
         ])->values()),
 

@@ -81,40 +81,30 @@
             <div class="attachments-section">
               <div class="section-label">Bijlagen & links</div>
 
-              <v-file-upload v-model="model" clearable multiple show-size :disabled="loading || uploadingAttachments">
-                <template v-slot:default>
-                  <v-file-upload-dropzone density="comfortable" class="upload-dropzone" />
-
-                  <v-file-upload-list class="upload-list">
-                    <template v-slot:default="{ files, onClickRemove }">
-                      <v-file-upload-item v-for="(file, index) in files" :key="`${file.name}-${index}`" :file="file"
-                        clearable show-size @click:remove="onClickRemove(index)">
-                        <template v-slot:prepend>
-                          <VAvatar rounded="circle" size="36">
-                            <v-icon size="18">mdi-file-outline</v-icon>
-                          </VAvatar>
-
-                          <v-progress-linear v-if="uploads[fileUploadKey(file)]" :buffer-value="uploads[fileUploadKey(file)].buffer"
-                            :color="uploads[fileUploadKey(file)].progress >= 100 ? 'success' : 'primary'"
-                            :model-value="uploads[fileUploadKey(file)].progress" location="bottom" absolute />
-                        </template>
-                      </v-file-upload-item>
-                    </template>
-                  </v-file-upload-list>
-                </template>
-              </v-file-upload>
-
+          <v-file-upload v-model="model" clearable multiple show-size :disabled="loading || uploadingAttachments" />
               <div v-if="uploadingAttachments" class="save-indicator mt-4">
                 <span class="save-indicator-dot"></span>
                 <span>Bijlagen uploaden...</span>
               </div>
 
-              <div class="bookmark-link-row">
-                <v-icon size="18">mdi-link-variant</v-icon>
-                <span>TEST PAGINA</span>
+              <div v-if="attachments.length" class="saved-attachments">
+                <div v-for="attachment in attachments" :key="attachment.id" class="attachment-row">
+                  <div class="attachment-meta u-flex-center u-gap-8">
+                    <v-icon size="21">mdi-file-document-outline</v-icon>
+                    <a :href="attachment.url || attachment.path" target="_blank" class="attachment-name">
+                      {{ attachment.name || attachment.original_name || 'Bijlage' }}
+                    </a>
+                  </div>
+                  <div class="attachment-actions u-flex-center u-gap-8">
+                    <span class="attachment-size">{{ formatSize(attachment.size) }}</span>
+                    <v-btn icon size="18" variant="text" color="error" @click="removeAttachment(attachment.id)">
+                      <v-icon size="16">mdi-window-close</v-icon>
+                    </v-btn>
+                  </div>
+                </div>
               </div>
 
-              <div class="bookmark-input">
+                <div v-else class="bookmark-input">
                 <v-icon size="18">mdi-bookmark-outline</v-icon>
                 <span>Voeg een web bookmark toe</span>
               </div>
@@ -162,7 +152,7 @@ import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { VFileUpload } from 'vuetify/labs/VFileUpload'
 import TipTap from '@/components/TipTap.vue'
-import { getArticle, updateArticle, uploadArticleAttachments } from '@/services/articleService'
+import { getArticle, updateArticle, uploadArticleAttachments, deleteAttachment } from '@/services/articleService'
 
 const route = useRoute()
 
@@ -176,6 +166,7 @@ const projectName = ref('Knowledgebase Portal')
 const updatedLabel = ref('Nog niet opgeslagen')
 const loading = ref(false)
 const saving = ref(false)
+const attachments = ref([])
 const uploadingAttachments = ref(false)
 const error = ref('')
 const saveMessage = ref('Klaar om te schrijven')
@@ -258,6 +249,7 @@ function hydrateArticle(article) {
   visibility.value = article.visibility ?? 'public'
   projectName.value = article.project?.name ?? 'Knowledgebase Portal'
   updatedLabel.value = article.updated_at ?? 'Zojuist bijgewerkt'
+  attachments.value = article.attachments ?? []
 }
 
 async function loadArticle(slug) {
@@ -308,6 +300,24 @@ async function uploadSelectedAttachments(files) {
   }
 }
 
+    async function removeAttachment(attachmentId) {
+      try {
+        await deleteAttachment(articleSlug.value, attachmentId)
+        attachments.value = attachments.value.filter(a => a.id !== attachmentId)
+      } catch (err) {
+        error.value = err.response?.data?.message ?? 'Kon de bijlage niet verwijderen.'
+      }
+    }
+
+
+    function formatSize(bytes) {
+      if (!bytes) return ''
+      if (bytes < 1024) return `${bytes} B`
+      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+    }
+
+
 async function saveArticle(nextStatus = status.value) {
   if (!articleSlug.value) return
 
@@ -316,7 +326,7 @@ async function saveArticle(nextStatus = status.value) {
 
   try {
     const article = await updateArticle(articleSlug.value, {
-      title: title.value.trim() || 'Onbekende artikelnaam',
+      title: title.value.trim() || 'Onbekende titel',
       summary: summary.value.trim(),
       content: content.value,
       status: nextStatus,

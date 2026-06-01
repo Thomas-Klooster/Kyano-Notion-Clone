@@ -867,6 +867,17 @@ body {
   width: 100%;
 }
 
+.editor-shell {
+background: #eeeeee38;
+border-radius: var(--radius-xl);
+}
+
+.editor-shell:hover {
+background: #eeeeee8a;
+transition:
+ background 0.20s ease;
+}
+
 .article-grid {
   width: 100%;
   min-height: 220px;
@@ -1837,6 +1848,30 @@ body {
 .muted {
   opacity: 0.92;
 }
+
+.attachment-size {
+  color: var(--color-text-icon);
+  font-size: 0.88rem;
+}
+
+
+.attachment-name {
+  text-decoration: none;
+  font-size: 15px;
+  color: var(--color-border-default-soft);
+} 
+
+.attachment-row {
+  display: flex;
+  border: 1px solid var(--color-border-default);
+  padding: 10px;
+  margin-top: 7px;
+  border-radius: 5px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: var(--shadow-card);
+} 
 
 .bookmark-link-row {
   display: flex;
