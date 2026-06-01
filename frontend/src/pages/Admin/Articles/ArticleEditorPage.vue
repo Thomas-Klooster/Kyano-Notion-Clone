@@ -81,7 +81,18 @@
             <div class="attachments-section">
               <div class="section-label">Bijlagen & links</div>
 
-          <v-file-upload v-model="model" clearable multiple show-size :disabled="loading || uploadingAttachments" />
+              <v-file-upload v-model="model" clearable multiple show-size :disabled="loading || uploadingAttachments" />
+
+              <div v-if="imagePreviews.length" class="image-preview-grid">
+                <div v-for="preview in imagePreviews" :key="preview.key" class="image-preview-card">
+                  <img :src="preview.url" :alt="preview.name" class="image-preview-img" />
+                  <div class="image-preview-meta">
+                    <span class="image-preview-name">{{ preview.name }}</span>
+                    <span v-if="preview.size" class="image-preview-size">{{ formatSize(preview.size) }}</span>
+                  </div>
+                </div>
+              </div>
+
               <div v-if="uploadingAttachments" class="save-indicator mt-4">
                 <span class="save-indicator-dot"></span>
                 <span>Bijlagen uploaden...</span>
@@ -90,8 +101,11 @@
               <div v-if="attachments.length" class="saved-attachments">
                 <div v-for="attachment in attachments" :key="attachment.id" class="attachment-row">
                   <div class="attachment-meta u-flex-center u-gap-8">
-                    <v-icon size="21">mdi-file-document-outline</v-icon>
-                    <a :href="attachment.url || attachment.path" target="_blank" class="attachment-name">
+                    <template v-if="isImageAttachment(attachment)">
+                      <v-icon size="21">mdi-image-outline</v-icon>
+                    </template>
+                    <v-icon v-else size="21">mdi-file-document-outline</v-icon>
+                    <a :href="getAttachmentUrl(attachment)" target="_blank" class="attachment-name">
                       {{ attachment.name || attachment.original_name || 'Bijlage' }}
                     </a>
                   </div>
@@ -109,7 +123,7 @@
                 <span>Voeg een web bookmark toe</span>
               </div>
             </div>
-            <v-alert v-if="error" type="error" variant="tonal" density="comfortable" class="mb-4 mt-4">
+            <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable class="mb-4 mt-4">
               {{ error }}
             </v-alert>
           </div>
@@ -132,6 +146,10 @@
             <v-btn variant="tonal" rounded="lg" class="action-btn action-btn-secondary" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle()">
               Opslaan
             </v-btn>
+            <v-snackbar v-model="snackbar" timer="bottom" :timer-color="timerColor" :color="snackbarColor"
+            :timeout="3000" location="top start">
+            {{ snackbarMessage }}
+            </v-snackbar>
 
             <v-btn v-if="status !== 'published'" color="primary" rounded="lg" class="action-btn action-btn-primary" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('published')">
               Publiceren
@@ -148,10 +166,11 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { VFileUpload } from 'vuetify/labs/VFileUpload'
 import TipTap from '@/components/TipTap.vue'
+import api from '@/api/api'
 import { getArticle, updateArticle, uploadArticleAttachments, deleteAttachment } from '@/services/articleService'
 
 const route = useRoute()
@@ -170,9 +189,15 @@ const attachments = ref([])
 const uploadingAttachments = ref(false)
 const error = ref('')
 const saveMessage = ref('Klaar om te schrijven')
+const snackbar = ref(false)
+const snackbarMessage = ref('')
+const snackbarColor = ref('success')
+const timerColor = ref('success')
+
 
 const model = ref([])
 const uploads = ref({})
+const selectedImagePreviews = ref([])
 
 const previewRoute = computed(() => (
   articleSlug.value
@@ -189,6 +214,21 @@ const saveIndicatorLabel = computed(() => {
   if (saving.value) return 'Opslaan...'
   return saveMessage.value
 })
+const savedImagePreviews = computed(() => (
+  attachments.value
+    .filter(isImageAttachment)
+    .map((attachment) => ({
+      key: `attachment-${attachment.id}`,
+      name: attachment.name || attachment.original_name || 'Bijlage',
+      size: attachment.size,
+      url: getAttachmentUrl(attachment),
+    }))
+    .filter((preview) => preview.url)
+))
+const imagePreviews = computed(() => [
+  ...selectedImagePreviews.value,
+  ...savedImagePreviews.value,
+])
 
 watch(
   () => route.query.slug,
@@ -207,14 +247,78 @@ watch(
 watch(
   model,
   (files) => {
+    updateSelectedImagePreviews(files)
     if (!articleSlug.value || uploadingAttachments.value || !Array.isArray(files) || !files.length) return
     uploadSelectedAttachments(files)
   },
   { deep: true },
 )
 
+onBeforeUnmount(() => {
+  revokeSelectedImagePreviews()
+})
+
 function fileUploadKey(file) {
   return `${file.name}-${file.size}-${file.lastModified}`
+}
+
+function isImageFile(file) {
+  return file instanceof File && file.type.startsWith('image/')
+}
+
+function isImageAttachment(attachment) {
+  const name = `${attachment.name || attachment.original_name || attachment.path || attachment.url || ''}`.toLowerCase()
+  const mimeType = `${attachment.mime || attachment.mime_type || attachment.type || ''}`.toLowerCase()
+
+  return mimeType.startsWith('image/') || /\.(avif|gif|jpe?g|png|svg|webp)$/i.test(name)
+}
+
+function getApiOrigin() {
+  return new URL(api.defaults.baseURL, window.location.origin).origin
+}
+
+function getAttachmentUrl(attachment) {
+  const url = attachment.url || attachment.path || ''
+
+  if (!url) return ''
+
+  if (url.startsWith('/storage/')) {
+    return `${getApiOrigin()}${url}`
+  }
+
+  if (/^https?:\/\//i.test(url)) {
+    const parsedUrl = new URL(url)
+
+    if (parsedUrl.pathname.startsWith('/storage/')) {
+      return `${getApiOrigin()}${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`
+    }
+    return url
+  }
+
+  return `${getApiOrigin()}/storage/${url.replace(/^\/+/, '')}`
+}
+
+function revokeSelectedImagePreviews() {
+  selectedImagePreviews.value.forEach((preview) => {
+    URL.revokeObjectURL(preview.url)
+  })
+
+  selectedImagePreviews.value = []
+}
+
+function updateSelectedImagePreviews(files) {
+  revokeSelectedImagePreviews()
+
+  if (!Array.isArray(files) || !files.length) return
+
+  selectedImagePreviews.value = files
+    .filter(isImageFile)
+    .map((file) => ({
+      key: `selected-${fileUploadKey(file)}`,
+      name: file.name,
+      size: file.size,
+      url: URL.createObjectURL(file),
+    }))
 }
 
 function updateUploadProgress(files, progress) {
@@ -292,6 +396,7 @@ async function uploadSelectedAttachments(files) {
     hydrateArticle(article)
     saveMessage.value = 'Bijlagen geupload'
     model.value = []
+    revokeSelectedImagePreviews()
   } catch (err) {
     error.value = err.response?.data?.message ?? 'Kon de bijlagen niet uploaden.'
   } finally {
@@ -332,10 +437,17 @@ async function saveArticle(nextStatus = status.value) {
       status: nextStatus,
       visibility: visibility.value,
     })
+    snackbarMessage.value = 'Wijzigingen zijn opgeslagen!'
+    snackbarColor.value = '#24a1c7'
+    timerColor.value = '#24a1c7'
+    snackbar.value = true
 
     hydrateArticle(article)
     saveMessage.value = nextStatus === 'published' ? 'Artikel gepubliceerd' : 'Zojuist opgeslagen'
   } catch (err) {
+    snackbarMessage.value = error.value
+    snackbarColor.value = 'error'
+    snackbar.value = true
     error.value = err.response?.data?.message ?? 'Kon het artikel niet opslaan.'
   } finally {
     saving.value = false

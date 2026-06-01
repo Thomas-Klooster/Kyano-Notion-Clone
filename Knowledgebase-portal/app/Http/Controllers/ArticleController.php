@@ -22,7 +22,7 @@ class ArticleController extends Controller
     private function storeAttachmentsForArticle(Article $article, array $files): void
     {
         foreach ($files as $file) {
-            $path = Storage::put('attachments', $file);
+            $path = Storage::disk('public')->put('attachments', $file);
 
             Attachment::create([
                 'article_id' => $article->id,
