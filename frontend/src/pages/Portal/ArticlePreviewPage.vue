@@ -316,13 +316,11 @@ function positionLinkPreview(event, link) {
     const preferredY = pointerY + 18
     const fallbackY = sourceRect.top - tooltipHeight - 12
 
-    linkPreview.value.x = Math.min(
-        Math.max(preferredX, viewportPadding),
+    linkPreview.value.x = Math.min(Math.max(preferredX, viewportPadding),
         window.innerWidth - tooltipWidth - viewportPadding,
     )
     linkPreview.value.y = preferredY + tooltipHeight > window.innerHeight
-        ? Math.max(fallbackY, viewportPadding)
-        : preferredY
+        ? Math.max(fallbackY, viewportPadding) : preferredY
 }
 
 function createLinkPreview(href, label = '') {

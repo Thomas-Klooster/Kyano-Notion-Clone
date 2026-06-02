@@ -1847,6 +1847,20 @@ transition:
   background: var(--color-bg-surface-soft);
 }
 
+.delete-preview-box {
+  display: grid;
+  padding: 2px;
+  margin-right: 5px;
+  align-items: center;
+  justify-content: end;
+  gap: 12px;
+}
+
+.delete-preview-button {
+  display: grid;
+  justify-content: end;
+}
+
 .image-preview-meta {
   display: flex;
   flex-direction: column;

@@ -85,6 +85,11 @@
 
               <div v-if="imagePreviews.length" class="image-preview-grid">
                 <div v-for="preview in imagePreviews" :key="preview.key" class="image-preview-card">
+                  <div class="delete-preview-box">
+                  <v-btn icon size="18" variant="text" color="error" class="delete-preview-button" @click="removePreview(preview)">
+                  <v-icon size="16">mdi-window-close</v-icon>
+                  </v-btn>
+                  </div>
                   <img :src="preview.url" :alt="preview.name" class="image-preview-img" />
                   <div class="image-preview-meta">
                     <span class="image-preview-name">{{ preview.name }}</span>
@@ -414,6 +419,24 @@ async function uploadSelectedAttachments(files) {
       }
     }
 
+    async function removePreview(preview) {
+      if (preview.key.startsWith('attachment-')) {
+        const attachmentId = Number(
+          preview.key.replace('attachment-', '')
+        )
+        await removeAttachment(attachmentId)
+        return
+      }
+
+      const fileName = preview.name
+      model.value = model.value.filter(
+        file => file.name !== fileName
+      )
+      selectedImagePreviews.value = selectedImagePreviews.value.filter(
+        p => p.key !== preview.key
+      )
+      URL.revokeObjectURL(preview.url)
+    }
 
     function formatSize(bytes) {
       if (!bytes) return ''
