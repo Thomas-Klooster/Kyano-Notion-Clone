@@ -31,15 +31,13 @@
 
             <div class="entity-shell page-shell article-grid">
                 <aside class="article-sidebar">
-                    <div class="sidebar-card card card-soft card-rounded-lg">
+                    <div class="infoside-card card card-soft card-rounded-lg">
                         <div class="sidebar-label">In dit artikel</div>
 
                         <nav class="toc-nav">
-                            <a href="#" class="toc-link active">Introductie</a>
-                            <a href="#" class="toc-link">Meer Introductie</a>
-                            <a href="#" class="toc-link">Nog meer introductie</a>
-                            <a href="#" class="toc-link">Geen introductie meer</a>
-                            <a href="#" class="toc-link">Bijlagen</a>
+                            <a href="#summary" class="toc-link active">Introductie</a>
+                            <a href="#content" class="toc-link">Content</a>
+                            <a href="#attachments" class="toc-link">Bijlagen</a>
                         </nav>
                     </div>
 
@@ -68,9 +66,7 @@
                         <div class="sidebar-label">Tags</div>
                         <div v-if="articleTags.length" class="tag-grid flex-wrap">
                             <span v-for="tag in articleTags" :key="tag"
-                                class="article-pill u-inline-flex u-items-center">
-                                {{ tag }}
-                            </span>
+                                class="article-pill u-inline-flex u-items-center">{{ tag }}</span>
                         </div>
                         <span v-else class="article-pill u-inline-flex u-items-center">Geen tags</span>
                     </div>
@@ -91,9 +87,8 @@
                 <v-icon size="30">mdi-message-outline</v-icon>
                   </span>
                     </div>
-                    <div class="feedback-modal-title">
-                        Geef ons een beoordeling!
-                    </div>
+                    <div class="feedback-modal-title">Geef ons een beoordeling!</div>
+
                         <div class="useful-button-box">
                             <button class="useful-button thumbs-up" type="button" :class="{ active: helpful === true }"
                             @click="setHelpful(true)">
@@ -104,9 +99,7 @@
                             </button> 
                          </div> 
                         <v-alert v-if="feedbackError" type="error" variant="tonal" density="comfortable" closable
-                        class="mt-2" @click:close="feedbackError = ''">
-                            {{ feedbackError }}
-                        </v-alert>
+                        class="mt-2" @click:close="feedbackError = ''"> {{ feedbackError }} </v-alert>
 
                     <div class="feedback-divider" />
                     <div class="sidebar-label" style="margin-top: 12px;">Extra feedback</div> 
@@ -121,11 +114,8 @@
                     @click="feedbackDialog = false">Annuleren</button>
                     <button class="feedback-submit" type="button"
                     @click="submitFeedback"
-                    :disabled="helpful === null && !feedbackTitle.trim()">
-                            Versturen
-                        </button> 
+                    :disabled="helpful === null && !feedbackTitle.trim()">Versturen</button> 
                 </div>
-
                 </div>
 
                                         
@@ -139,16 +129,14 @@
                     <article class="article-card card card-elevated card-rounded-2xl">
                         <div class="article-head card-head">
                             <div class="article-meta-line u-flex-center u-wrap u-gap-8" />
-
                             <h1 class="article-title-input">{{ article.title }}</h1>
-
-                            <p class="article-subtitle">
+                            <p class="article-subtitle" id="summary" >
                                 {{ article.summary }}
                             </p>
                         </div>
 
 
-                        <div class="article-body" v-html="article.content" 
+                        <div class="article-body" id="content" v-html="article.content" 
                         @mouseover="showLinkPreview" @mousemove="moveLinkPreview"
                         @mouseout="hideLinkPreview" @focusin="showLinkPreview"
                         @focusout="hideLinkPreview" />
@@ -162,23 +150,47 @@
                             </div>
                         </div>
 
-                        <div v-if="articleAttachments.length" class="resource-grid">
-                            <div v-for="attachment in articleAttachments" :key="attachment.id" class="resource-card">
-                                <div class="resource-icon">
-                                    <v-icon size="18">mdi-file-document-outline</v-icon>
-                                </div>
-                                <button>
-                                    <div class="resource-title">
-                                        {{ attachment.original_name }}
-                                    </div>
-                                    <div class="resource-subtitle">
-                                        {{ formatAttachmentSize(attachment.size) }}</div>
-                                </button>
-                            </div>
+                        <div v-if="articleAttachments.length" id="attachments" class="resource-grid">
+                            <button
+                                v-for="attachment in imageAttachments"
+                                :key="attachment.id"
+                                type="button"
+                                class="resource-card resource-card-image"
+                                @click="openImagePreview(attachment)">
+                                <img :src="getAttachmentUrl(attachment)" :alt="getAttachmentName(attachment)" class="resource-image-preview">
+
+                                <span class="resource-copy">
+                                    <span class="resource-title">{{ getAttachmentName(attachment) }}</span>
+                                    <span class="resource-subtitle">{{ formatAttachmentSize(attachment.size) }}</span>
+                                </span>
+                            </button>
+
+                            <a v-for="attachment in downloadableAttachments" :key="attachment.id" class="resource-card resource-card-download"
+                            :href="getAttachmentUrl(attachment)" :download="getAttachmentName(attachment)">
+                                <span class="resource-icon">
+                                    <v-icon size="18">{{ isPdfAttachment(attachment) ? 'mdi-file-pdf-box' : 'mdi-download-outline' }}</v-icon>
+                                </span>
+                                <span class="resource-copy">
+                                    <span class="resource-title">{{ getAttachmentName(attachment) }}</span>
+                                    <span class="resource-subtitle">{{ isPdfAttachment(attachment) ? 'PDF downloaden' : 'Downloaden' }} · {{ formatAttachmentSize(attachment.size) }}</span>
+                                </span>
+                            </a>
                         </div>
                     </article>
                 </main>
             </div>
+            
+            <v-dialog v-model="imagePreviewDialog" max-width="1140" class="attachment-preview-dialog">
+                <!-- <v-card class="attachment-preview-card"> -->
+                    <!-- <div class="attachment-preview-head"> -->
+                        <!-- <div class="attachment-preview-title">{{  selectedImageName }} </div> -->
+                        <!-- <v-btn icon variant="text" aria-label="Sluiten" @click="imagePreviewDialog = false">
+                            <v-icon>mdi-close</v-icon> -->
+                        <!-- </v-btn>     -->
+                    <!-- </div> -->
+                    <img v-if="selectedImageUrl" :src="selectedImageUrl" :alt="selectedImageName" class="attachment-preview-image">
+                <!-- </v-card> -->
+            </v-dialog>
         </div>
 
         <div v-else class="empty-state">
@@ -193,16 +205,16 @@
 import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticle, postFeedback } from '@/services/articleService'
+import api from '@/api/api'
 const feedbackTitle = ref('')
 const feedbackTextarea = ref(null)
 const helpful = ref(null)
 const feedbackSent = ref(false)
 const feedbackError = ref(false)
 const feedbackDialog = ref(false)
-const linkPreview = ref({
-    visible: false,
-    x: 0,
-    y: 0,
+const imagePreviewDialog = ref(false)
+const selectedImage = ref(null)
+const linkPreview = ref({visible: false, x: 0, y: 0,
     title: '',
     displayUrl: '',
     type: '',
@@ -216,10 +228,11 @@ const loading = ref(false)
 const project = computed(() => article.value?.project ?? null)
 const articleTags = computed(() => Array.isArray(article.value?.tags) ? article.value.tags : [])
 const articleAttachments = computed(() => Array.isArray(article.value?.attachments) ? article.value.attachments : [])
-const linkPreviewStyle = computed(() => ({
-    left: `${linkPreview.value.x}px`,
-    top: `${linkPreview.value.y}px`,
-}))
+const imageAttachments = computed(() => articleAttachments.value.filter(isImageAttachment))
+const downloadableAttachments = computed(() => articleAttachments.value.filter((attachment) => !isImageAttachment(attachment)))
+const linkPreviewStyle = computed(() => ({ left: `${linkPreview.value.x}px`, top: `${linkPreview.value.y}px`, }))
+const selectedImageUrl = computed(() => selectedImage.value ? getAttachmentUrl(selectedImage.value) : '')
+const selectedImageName = computed(() => selectedImage.value ? getAttachmentName(selectedImage.value) : '')
 
 
 onMounted(loadArticles)
@@ -359,8 +372,48 @@ function getYouTubeVideoId(url) {
     return ''
 }
 
+function getAttachmentName(attachment) {
+    return attachment.name || attachment.original_name || 'Bijlage'
+}
 
+function getAttachmentUrl(attachment) {
+    const url = attachment.url || attachment.path || ''
+    if (!url) return ''
 
+    if (url.startsWith('/storage/')) {
+        return `${getApiOrigin()}${url}`
+    }
+
+    if (/^https?:\/\//i.test(url)) {
+        const parsedUrl = new URL(url)
+        if (parsedUrl.pathname.startsWith('/storage/')) {
+            return `${getApiOrigin()}${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`
+        }
+        return url
+    }
+    return `${getApiOrigin()}/storage/${url.replace(/^\/+/, '')}`
+}
+
+function getApiOrigin() {
+    return new URL(api.defaults.baseURL, window.location.origin).origin
+}
+
+function isImageAttachment(attachment) {
+    const name = `${getAttachmentName(attachment)} ${attachment.path || attachment.url || ''}`.toLocaleLowerCase()
+    const mimeType = `${attachment.mime || attachment.mime_type || attachment.type || ''}`.toLocaleLowerCase()
+    return mimeType.startsWith('image/') || /\.(avif|gif|jpe?g|webp|png|svg)$/i.test(name)
+}
+
+function isPdfAttachment(attachment) {
+    const name = `${getAttachmentName(attachment)} ${attachment.path || attachment.url || ''}`.toLocaleLowerCase()
+    const mimeType = `${attachment.mime || attachment.mime_type || attachment.type || ''}`.toLowerCase()
+    return mimeType === 'application/pdf' || /\.pdf$/i.test(name)
+}
+
+function openImagePreview(attachment) {
+     selectedImage.value = attachment
+     imagePreviewDialog.value = true
+}
 
 const backToEditorRoute = computed(() => {
     if (!route.params.slug) return { name: 'admin-overview'}
@@ -377,3 +430,11 @@ function formatAttachmentSize(size) {
     return `${(value / (1024 * 1024)).toFixed(1)} MB`
 }
 </script>
+
+<style scoped>
+#summary,
+#content,
+#attachments {
+    scroll-margin-top: 200px;
+}
+</style>

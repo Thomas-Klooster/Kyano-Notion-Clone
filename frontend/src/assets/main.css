@@ -62,7 +62,9 @@
   --focus-ring-brand-sm: 0 0 0 3px rgba(36, 161, 199, 0.12);
 }
 
-html,
+html {
+scroll-behavior: smooth;
+}
 body,
 #app {
   min-height: 100%;
@@ -377,6 +379,7 @@ body {
   font-weight: 600;
   color: var(--color-text-muted);
   margin-bottom: 6px;
+  margin-top: 6px;
 }
 
 .notion-form-actions {
@@ -1656,7 +1659,7 @@ transition:
 }
 
 .article-topbar-inner {
-  max-width: 1440px;
+  max-width: 16i40px;
   margin: 0 auto;
   padding: 14px 28px;
   display: flex;
@@ -1692,10 +1695,10 @@ transition:
 
 .article-grid {
   display: grid;
-  grid-template-columns: 260px minmax(0, 1fr);
-  gap: 15px;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 24px;
   &:has(.article-sidebar) {
-    max-width: 1440px;
+    max-width: 1520px;
   }
 }
 
@@ -1703,6 +1706,13 @@ transition:
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-width: 0;
+}
+
+.infoside-card {
+  position: sticky;
+  top: 65px;
+  padding: 18px;
 }
 
 .sidebar-card {
@@ -1712,11 +1722,15 @@ transition:
 .sidebar-meta-row {
   color: var(--color-text-icon);
   font-size: 0.92rem;
+  min-width: 0;
 }
 
 .sidebar-meta-row strong {
   color: var(--color-text-strong);
   font-weight: 600;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 
 .article-cover {
@@ -1836,7 +1850,6 @@ transition:
   border: 1px solid var(--color-border-default);
   border-radius: 8px;
   background: var(--color-white);
-  box-shadow: var(--shadow-card);
 }
 
 .image-preview-img {
@@ -2656,9 +2669,9 @@ transition:
 }
 
 .tree-list {
-  margin-top: 18px;
+  margin-top: 5px;
   display: grid;
-  gap: 14px;
+  gap: 5px;
 }
 
 .tree-card {
@@ -3829,10 +3842,37 @@ transition:
   display: flex;
   align-items: center;
   gap: 14px;
+  width: 100%;
   padding: 16px;
   border: 1px solid var(--color-border-default);
   border-radius: 18px;
   background: var(--color-bg-surface-soft);
+  color: inherit;
+  text-align: left;
+  text-decoration: none;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+button.resource-card {
+  font: inherit;
+  cursor: pointer;
+}
+
+.resource-card:hover {
+  border-color: var(--color-border-brand-default);
+  box-shadow: var(--shadow-card);
+}
+
+.resource-card-image {
+  align-items: stretch;
+  padding: 10px;
+}
+
+.resource-card-download {
+  min-height: 74px;
 }
 
 .resource-icon {
@@ -3848,20 +3888,69 @@ transition:
   flex-shrink: 0;
 }
 
-.resource-title {
+.resource-image-preview {
+  width: 92px;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  border: 1px solid var(--color-border-default);
+  background: var(--color-white);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.resource-copy {
   display: flex;
-  align-items: center;
-  justify-content: start;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.resource-title {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
   color: var(--color-text-strong);
   font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .resource-subtitle {
-  display: flex;
+  display: block;
   margin-top: 2px;
   color: var(--color-text-soft);
   font-size: 0.92rem;
-  padding-right: 70px;
+}
+
+.attachment-preview-card {
+overflow: hidden;
+border-radius: var(--radius-xl);
+background-color: var(--color-bg-surface)
+
+}
+
+/* .attachment-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 12px 10px 18px;
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.attachment-preview-title {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--color-text-strong);
+  font-weight: 700;
+} */
+
+.attachment-preview-image {
+  display: block;
+  width: 100%;
+  max-height: calc(100vh - 160px);
+  background: var(--color-bg-surface-subtle);
+  object-fit: contain;
 }
 
 .dashboard-page {
@@ -4400,6 +4489,13 @@ transition:
     max-width: none !important;
     width: 100% !important;
     align-self: flex-end !important;
+  }
+
+  .attachment-preview-dialog > .v-overlay__content {
+    margin: 0 !important;
+    max-width: none !important;
+    align-self: center !important;
+    width: 100% !important;
   }
 
   .dialog-card {

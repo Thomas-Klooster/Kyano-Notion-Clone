@@ -132,8 +132,18 @@
               {{ error }}
             </v-alert>
           </div>
-        </section>
-
+        </section>  
+        <!-- <v-dialog v-model="imagePreviewDialog" max-width="1000" class="attachment-preview-dialog">
+                <v-card class="attachment-preview-card">
+                    <div class="attachment-preview-head">
+                        <div class="attachment-preview-title">{{  selectedImageName }} </div>
+                        <v-btn icon variant="text" aria-label="Sluiten" @click="imagePreviewDialog = false">
+                            <v-icon>mdi-close</v-icon>
+                        </v-btn>    
+                    </div>
+                    <img v-if="selectedImageUrl" :src="selectedImageUrl" :alt="selectedImageName" class="attachment-preview-image">
+                </v-card>
+            </v-dialog> -->
         <div class="editor-actions">
           <div class="editor-actions-left">
             <div class="save-indicator">
