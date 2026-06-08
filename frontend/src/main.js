@@ -4,6 +4,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import '@/assets/main.css'
+import 'highlight.js/styles/github-dark.css'
 import '@/assets/fonts/fonts.css'
 import { AUTH_SESSION_EXPIRED_EVENT } from '@/api/api'
 

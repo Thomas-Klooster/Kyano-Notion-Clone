@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Workspace;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ArticleRequest extends FormRequest
@@ -29,7 +28,7 @@ class ArticleRequest extends FormRequest
             'tags.*' => ['string', 'max:50'],
             'article_id' => 'nullable|exists:articles,id',
             'attachments' => 'nullable|array',
-            'attachments.*' => 'file|mimes:jpg,xlsx,jpeg,png,pdf,doc,docx,webm|max:10240',
+            'attachments.*' => 'file|mimes:jpg,xlsx,jpeg,odt,png,pdf,doc,docx,webm|max:10240',
         ];
     }
 
@@ -70,7 +69,7 @@ class ArticleRequest extends FormRequest
         'visibility.required' => 'Ongeldige zichtbaarheid keuze.',
         'status.required' => 'Ongeldige Status keuze.',
         'attachments.*.file' => 'Voeg een geldig bestand in.',
-        'attachments.*.mimes' => 'Alleen jpg, png, pdf, xlsx, doc en docx zijn toegestaan.',
+        'attachments.*.mimes' => 'Alleen jpg, png, pdf, xlsx, odt, doc en docx zijn toegestaan.',
         'attachments.*.max' => 'Een bestand mag niet groter zijn dan 10MB.',
     ];
     }

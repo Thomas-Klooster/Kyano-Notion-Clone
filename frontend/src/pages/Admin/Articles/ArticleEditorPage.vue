@@ -89,8 +89,8 @@
                   <v-btn icon size="18" variant="text" color="error" class="delete-preview-button" @click="removePreview(preview)">
                   <v-icon size="16">mdi-window-close</v-icon>
                   </v-btn>
-                  </div>
-                  <img :src="preview.url" :alt="preview.name" class="image-preview-img" />
+                </div>
+                  <img :src="preview.url" @click="openImagePreview" :alt="preview.name" class="image-preview-img" />
                   <div class="image-preview-meta">
                     <span class="image-preview-name">{{ preview.name }}</span>
                     <span v-if="preview.size" class="image-preview-size">{{ formatSize(preview.size) }}</span>
@@ -104,15 +104,16 @@
               </div>
 
               <div v-if="attachments.length" class="saved-attachments">
-                <div v-for="attachment in attachments" :key="attachment.id" class="attachment-row">
+                <div v-for="attachment in attachments" :key="attachment.id" type="button"
+                 @click="openImagePreview(attachment)" class="attachment-row">
                   <div class="attachment-meta u-flex-center u-gap-8">
                     <template v-if="isImageAttachment(attachment)">
                       <v-icon size="21">mdi-image-outline</v-icon>
                     </template>
                     <v-icon v-else size="21">mdi-file-document-outline</v-icon>
-                    <a :href="getAttachmentUrl(attachment)" target="_blank" class="attachment-name">
+                    <button target="_blank" class="attachment-name">
                       {{ attachment.name || attachment.original_name || 'Bijlage' }}
-                    </a>
+                    </button>
                   </div>
                   <div class="attachment-actions u-flex-center u-gap-8">
                     <span class="attachment-size">{{ formatSize(attachment.size) }}</span>
@@ -133,17 +134,12 @@
             </v-alert>
           </div>
         </section>  
-        <!-- <v-dialog v-model="imagePreviewDialog" max-width="1000" class="attachment-preview-dialog">
-                <v-card class="attachment-preview-card">
-                    <div class="attachment-preview-head">
-                        <div class="attachment-preview-title">{{  selectedImageName }} </div>
-                        <v-btn icon variant="text" aria-label="Sluiten" @click="imagePreviewDialog = false">
-                            <v-icon>mdi-close</v-icon>
-                        </v-btn>    
-                    </div>
-                    <img v-if="selectedImageUrl" :src="selectedImageUrl" :alt="selectedImageName" class="attachment-preview-image">
-                </v-card>
-            </v-dialog> -->
+
+        <v-dialog v-model="imagePreviewDialog" max-width="1140" class="attacchment-preview-dialog">
+        <img v-if="selectedImageUrl" :src="selectedImageUrl" :alt="selectedImageName" class="attachment-preview-image">
+        </v-dialog>
+
+
         <div class="editor-actions">
           <div class="editor-actions-left">
             <div class="save-indicator">
@@ -158,13 +154,6 @@
               {{ statusLabel }}
             </div>
 
-            <v-btn variant="tonal" rounded="lg" class="action-btn action-btn-secondary" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle()">
-              Opslaan
-            </v-btn>
-            <v-snackbar v-model="snackbar" timer="bottom" :timer-color="timerColor" :color="snackbarColor"
-            :timeout="3000" location="top start">
-            {{ snackbarMessage }}
-            </v-snackbar>
 
             <v-btn v-if="status !== 'published'" color="primary" rounded="lg" class="action-btn action-btn-primary" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('published')">
               Publiceren
@@ -173,6 +162,15 @@
             <v-btn v-else rounded="lg" class="action-btn action-btn-danger" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('draft')">
               Depubliceren
             </v-btn>
+            
+            <v-btn variant="tonal" rounded="lg" class="action-btn action-btn-secondary" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle()">
+              Opslaan
+            </v-btn>
+            <v-snackbar v-model="snackbar" timer="bottom" :timer-color="timerColor" :color="snackbarColor"
+            :timeout="3000" location="top start">
+            {{ snackbarMessage }}
+            </v-snackbar>
+
           </div>
         </div>
       </main>
@@ -208,7 +206,9 @@ const snackbar = ref(false)
 const snackbarMessage = ref('')
 const snackbarColor = ref('success')
 const timerColor = ref('success')
-
+const imagePreviewDialog = ref(false)
+const selectedImage = ref(null)
+const selectedImageUrl = computed(() => selectedImage.value ? getAttachmentUrl(selectedImage.value) : '')
 
 const model = ref([])
 const uploads = ref({})
@@ -319,6 +319,12 @@ function revokeSelectedImagePreviews() {
   })
 
   selectedImagePreviews.value = []
+}
+
+
+function openImagePreview(attachment) {
+  selectedImage.value = attachment
+  imagePreviewDialog.value = true
 }
 
 function updateSelectedImagePreviews(files) {

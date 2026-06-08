@@ -75,7 +75,7 @@ public function show(Article $article)
         $this->authorize('update', $article);
         $data = $request->validate([
             'attachments' => ['required', 'array', 'min:1'],
-            'attachments.*' => ['file', 'mimes:jpg,xlsx,jpeg,png,pdf,doc,docx,webm', 'max:10240'],
+            'attachments.*' => ['file', 'mimes:jpg,xlsx,jpeg,png,pdf,doc,odt,docx,webm', 'max:10240'],
         ]);
 
         $this->storeAttachmentsForArticle($article, $data['attachments']);

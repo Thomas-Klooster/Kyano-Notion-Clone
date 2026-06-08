@@ -23,7 +23,6 @@ class ArticlePolicy
 
     public function view(User $user, Article $article): bool {
         $member = $this->workspaceMember($user, $article);
-
         if (!$member) {
             return false;
         }

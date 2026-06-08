@@ -959,9 +959,8 @@
         <div class="delete-modal-body">
           <h3 class="delete-modal-title">{{ workspaceDeleteTarget.name || workspaceDeleteTarget.title }} verwijderen?
           </h3>
-          <p class="delete-modal-content">Weet je zeker dat je {{ workspaceDeleteTarget.name ||
-            workspaceDeleteTarget.title
-            }} wilt verwijderen?</p>
+          <p class="delete-modal-content">Weet je zeker dat je {{ workspaceDeleteTarget.name || workspaceDeleteTarget.title }}
+          wilt verwijderen?</p>
           <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>
 
@@ -1128,8 +1127,6 @@ import { postArticle, updateArticle, deleteFeedback, getFeedbacks, markFeedbackA
 import { getAdminWorkspaces, postWorkspace, updateWorkspace, deleteWorkspace } from '@/services/workspaceService'
 import { storeProject, updateProject, deleteProject } from '@/services/projectService'
 import { deleteUser, getAdminUsers, postUser, updateUser } from '@/services/userService'
-
-
 
 const activeTab = ref('content')
 const formRef = ref(null)

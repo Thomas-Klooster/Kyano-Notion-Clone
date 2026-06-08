@@ -109,7 +109,7 @@
 
                     <div v-if="openPanel === 'more'" class="submenu">
                         <button class="submenu-item" @click="clearFormatting">
-                            <span>Clear formatting</span>
+                            <span>Verwijder opmaak</span>
                         </button>
                     </div>
                 </div>
@@ -144,16 +144,22 @@ import Link from '@tiptap/extension-link'
 import Underline from '@tiptap/extension-underline'
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import { BubbleMenu } from '@tiptap/vue-3/menus'
-import {
-    Type,
-    Heading1,
-    Heading2,
-    Heading3,
-    List,
+import { Type, Heading1, Heading2, Heading3, List,
     ListOrdered,
     Quote,
     Code
 } from 'lucide-vue-next'
+
+import { createLowlight } from 'lowlight'
+import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+
+import javascript from 'highlight.js/lib/languages/javascript'
+import html from 'highlight.js/lib/languages/xml'
+import css from 'highlight.js/lib/languages/css'
+
+const lowlight = createLowlight()
+
+lowlight.register({ css, html, javascript, js: javascript, })
 
 export default {
     props: {
@@ -274,8 +280,7 @@ export default {
             if (!query) return this.slashItems
 
             return this.slashItems.filter(item =>
-                item.title.toLowerCase().includes(query) ||
-                item.description.toLowerCase().includes(query)
+                item.title.toLowerCase().includes(query) 
             )
         },
     },
@@ -299,7 +304,13 @@ export default {
 
         this.editor = new Editor({
             extensions: [
-                StarterKit,
+                StarterKit.configure({
+                    codeBlock: false,
+                }),
+                CodeBlockLowlight.configure({
+                    lowlight,
+                    defaultLanguage: 'javascript',
+                }),
                 Underline,
                 Link.configure({
                     openOnClick: false,

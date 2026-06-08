@@ -965,9 +965,10 @@ transition:
 
 .tiptap pre code {
   display: block;
-  background: transparent;
-  padding: 0;
-  color: inherit;
+  background: #35322f;
+  padding: 5px;
+  border-radius: 0.7rem;
+  color: white;
   font-size: 0.9rem;
   line-height: 1.6;
   font-family: monospace;
@@ -1939,7 +1940,7 @@ transition:
 .attachment-name {
   text-decoration: none;
   font-size: 15px;
-  color: var(--color-border-default-soft);
+  color: var(--color-brand-500);
 } 
 
 .attachment-row {
@@ -2554,7 +2555,7 @@ transition:
 }
 
 .admin-studio-shell {
-  max-width: 1400px;
+  max-width: 1750px;
 }
 
 .stats-grid {
@@ -4001,7 +4002,7 @@ background-color: var(--color-bg-surface)
 }
 
 .project-row {
-  padding: 20px 28px;
+  padding: 8px 28px;
   border-bottom: 1px solid var(--color-border-soft);
 }
 
@@ -4025,6 +4026,7 @@ background-color: var(--color-bg-surface)
   align-items: start;
   gap: 14px;
   padding-top: 12px;
+  padding-bottom: 12px;
 }
 
 .tree-row-main {
@@ -4106,7 +4108,6 @@ background-color: var(--color-bg-surface)
 .tree-children {
   padding-left: 26px;
   border-left: 1px solid #f1efeb;
-  margin-left: 28px;
 }
 
 .tree-children-articles {
@@ -5224,7 +5225,7 @@ background-color: var(--color-bg-surface)
 .sidebar-role-badge {
   display: inline-flex;
   align-items: center;
-  padding: 1px 7px;
+  padding: 1px 8px;
   border-radius: var(--radius-pill);
   font-size: 0.63rem;
   font-weight: 700;
