@@ -62,7 +62,7 @@
                                 <div class="project-info">
                                     <div class="project-name">{{ project.name }}</div>
                                     <div class="project-meta">
-                                        <span>{{ project.articles.length }} artikelen</span>
+                                        <span>{{ project.articles.length === 1 ? '1 artikel' : `${project.articles.length} artikelen`}}</span>
                                         <span class="dot">•</span>
                                         <span>{{ project.updated_at }}</span>
                                     </div>

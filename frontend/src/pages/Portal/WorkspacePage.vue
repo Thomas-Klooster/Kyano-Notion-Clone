@@ -64,9 +64,9 @@
                                 <div class="project-info">
                                     <div class="project-name">{{ category.name }}</div>
                                     <div class="project-meta">
-                                        <span>{{ category.projects.length }} projecten</span>
+                                        <span>{{ category.projects.length === 1 ? '1 project' : `${category.projects.length} projecten`}}</span>
                                         <span class="dot">•</span>
-                                        <span>{{ countArticlesInCategory(category) }} artikelen</span>
+                                        <span>{{ countArticlesInCategory(category) === 1 ? '1 artikel' : `${countArticlesInCategory(category)} artikelen`}}</span>
                                     </div>
                                 </div>
                             </div>

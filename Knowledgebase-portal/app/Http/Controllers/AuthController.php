@@ -20,8 +20,8 @@ class AuthController extends Controller
     private function issueAuthTokens(User $user): array
     {
         return [
-            'accessToken' => $user->createToken('access-token', ['*'], now()->addMinutes(90))->plainTextToken,
-            'refreshToken' => $user->createToken('refresh-token', ['*'], now()->addDays(30))->plainTextToken,
+            'accessToken' => $user->createToken('access-token', ['access'], now()->addMinutes(60))->plainTextToken,
+            'refreshToken' => $user->createToken('refresh-token', ['refresh'], now()->addDays(30))->plainTextToken,
         ];
     }
 
@@ -43,8 +43,6 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Geregistreerd!',
             'user'=> $user,
-            'accessToken' => $tokens['accessToken'],
-            'refreshToken' => $tokens['refreshToken'],
         ], 201)
 
         ->cookie('refreshToken', $tokens['refreshToken'], 60 * 24 * 30, '/', null, true, true, false, 'lax')
@@ -52,22 +50,24 @@ class AuthController extends Controller
     }
 
     public function refresh(Request $request) {
-            $refreshToken = $request->input('refreshToken');
+        $refreshToken = $request->cookie('refreshToken');
         $token = $refreshToken ? PersonalAccessToken::findToken($refreshToken) : null;
 
-        if (!$token || $token->name !== 'refresh-token' || ($token->expires_at && $token->expires_at->isPast())) {
-            return response()->json(['message' => 'token verlopen'], 401);
-        }
+        if (!$token || !$token->can('refresh') || ($token->expires_at && $token->expires_at->isPast()))
+        { 
+        return response()->json([
+        'message' => 'Token verlopen'
+        ],401);
+        }  
 
         $user = $token->tokenable;
         $token->delete();
+        $user->tokens()->where('name', 'access-token')->delete();
         $tokens = $this->issueAuthTokens($user);
 
         return response()->json([
-            'accessToken' => $tokens['accessToken'],
-            'refreshToken' => $tokens['refreshToken'],
-        ])
-        
+            'message' => 'Token vernieuwd'
+        ])        
         ->cookie('refreshToken', $tokens['refreshToken'], 60 * 24 * 30, '/', null, true, true, false, 'lax')
         ->cookie('accessToken', $tokens['accessToken'], 90, '/', null, true, true, false, 'lax');
 
@@ -88,8 +88,6 @@ class AuthController extends Controller
     return response()->json([
         'message' => 'Ingelogd!',
         'user' => Auth::user(),
-        'accessToken' => $tokens['accessToken'],
-        'refreshToken' => $tokens['refreshToken'],
         ])
         
         ->cookie('refreshToken', $tokens['refreshToken'], 60 * 24 * 30, '/', null, true, true, false, 'lax')
@@ -111,8 +109,9 @@ public function logout(Request $request) {
         'success' => true,
         'message' => 'Succesvol uitgelogd!'
     ])->withoutCookie(Cookie::create('XSRF-TOKEN'))
-      ->withoutCookie(Cookie::create(config('session.cookie')));
-
+      ->withoutCookie(Cookie::create(config('session.cookie')))
+      ->withoutCookie(Cookie::create('accessToken'))
+      ->withoutCookie(Cookie::create('refreshToken'));
     }    
 
 
@@ -130,7 +129,6 @@ public function logout(Request $request) {
         $user = $request->user();
 
         $user->update(['password' => Hash::make($request->password)]);
-        // Email
         Mail::to($user->email)->send(new ForgotMail());
 
         return response()->json(['message' => 'Wachtwoord is gereset.']);
@@ -222,6 +220,7 @@ public function logout(Request $request) {
 
             $user->password = Hash::make($request->password);
             $user->save();
+            $user->tokens()->delete();
 
             DB::table('password_reset_tokens')
                 ->where('user_id', $user->id)

@@ -443,10 +443,6 @@ body {
 .dashboard-shell {
   max-width: 1400px;
 }
-.hero-content,
-.admin-hero-content {
-  max-width: 760px;
-}
 
 .hero-meta-line {
   margin-bottom: 14px;
@@ -494,7 +490,7 @@ body {
 }
 
 .hero-project-subtitle {
-  max-width: 720px;
+  max-width: 800px;
   margin: 16px 0 0;
   color: var(--color-black);
   font-size: 1.02rem;
@@ -509,7 +505,7 @@ body {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
-  max-width: 1440px;
+  max-width: 1700px;
 }
 
 .project-description-card {
@@ -955,7 +951,7 @@ transition:
 
 .tiptap pre {
   margin: 0.75rem 0;
-  padding: 1rem 1.1rem;
+  /* padding: 1rem 1.1rem; */
   border-radius: 10px;
   background: var(--color-bg-page);
   border: 1px solid #e6e6e3;

@@ -99,7 +99,7 @@
                 </div>
 
                 <div v-else-if="error" class="empty-state">
-                    <v-icon size="30">mdi-alert-circle-outline</v-icon>
+                    <v-icon size="30">mdi-alert-outline</v-icon>
                     <p>{{ error }}</p>
                 </div>
 
@@ -244,7 +244,7 @@ async function loadArticles() {
     project.value.workspaceSlug = current.workspace_slug ?? ''
     project.value.articles = current.articles ?? []
   } catch {
-    error.value = 'Dit project kon niet worden gevonden.'
+    error.value = 'U heeft geen toegang tot deze project.'
   } finally {
     loading.value = false
   }
