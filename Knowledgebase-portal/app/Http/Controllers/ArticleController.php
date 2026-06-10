@@ -37,7 +37,7 @@ class ArticleController extends Controller
     public function index() {
      $this->authorize('viewAny', Article::class);        
      $articles = Article::visibleTo(auth('sanctum')->user())
-     ->where('status', 'published')->latest()->get();
+     ->where('status', 'Gepubliceerd')->latest()->get();
      return ArticleResource::collection($articles);
      }
 
@@ -98,7 +98,7 @@ public function show(Article $article)
 
     public function showPublished(Project $project, Article $article) {
     abort_if($article->project_id !== $project->id, 404);
-    abort_if($article->status !== 'published', 403);
+    abort_if($article->status !== 'Gepubliceerd', 403);
     abort_if($article->visibility !== 'public', 403);
 
     return new ArticleResource($article->load(['project', 'tags', 'category', 'attachments']));
@@ -114,7 +114,7 @@ public function show(Article $article)
      $articles = Article::visibleTo(auth('sanctum')->user())
      ->with(['project', 'category', 'attachments'])
     ->where('project_id', $project->id)
-      ->where('status', 'published') 
+      ->where('status', 'Gepubliceerd') 
         ->where(function ($q) use ($keyword) {
             $q->where('title', 'like', "%{$keyword}%")
               ->orWhere('content', 'like', "%{$keyword}%")

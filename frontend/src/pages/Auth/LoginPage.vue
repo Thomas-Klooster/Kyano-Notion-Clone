@@ -122,7 +122,4 @@ function onGoToRegister() {
   router.push({ name: "register" }).catch(() => { });
 }
 
-function onSocial(provider) {
-  // social login logic
-}
 </script>

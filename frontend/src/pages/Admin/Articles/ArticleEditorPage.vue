@@ -149,17 +149,17 @@
           </div>
 
           <div class="editor-actions-right">
-            <div class="status-pill" :class="status === 'published' ? 'is-published' : 'is-draft'">
+            <div class="status-pill" :class="status === 'Gepubliceerd' ? 'is-published' : 'is-draft'">
               <span class="status-pill-dot"></span>
               {{ statusLabel }}
             </div>
 
 
-            <v-btn v-if="status !== 'published'" color="primary" rounded="lg" class="action-btn action-btn-primary" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('published')">
+            <v-btn v-if="status !== 'Gepubliceerd'" color="primary" rounded="lg" class="action-btn action-btn-primary" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('Gepubliceerd')">
               Publiceren
             </v-btn>
 
-            <v-btn v-else rounded="lg" class="action-btn action-btn-danger" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('draft')">
+            <v-btn v-else rounded="lg" class="action-btn action-btn-danger" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('Concept')">
               Depubliceren
             </v-btn>
             
@@ -192,8 +192,8 @@ const articleSlug = ref('')
 const title = ref('')
 const summary = ref('')
 const content = ref('<p></p>')
-const status = ref('draft')
-const visibility = ref('public')
+const status = ref('Concept')
+const visibility = ref('Openbaar')
 const projectName = ref('Knowledgebase Portal')
 const updatedLabel = ref('Nog niet opgeslagen')
 const loading = ref(false)
@@ -223,7 +223,7 @@ const previewRoute = computed(() => (
     : null
 ))
 
-const statusLabel = computed(() => status.value === 'published' ? 'Published' : 'Draft')
+const statusLabel = computed(() => status.value === 'Gepubliceerd' ? 'Gepubliceerd' : 'Concept')
 const saveIndicatorLabel = computed(() => {
   if (uploadingAttachments.value) return 'Bijlagen uploaden...'
   if (saving.value) return 'Opslaan...'
@@ -370,8 +370,8 @@ function hydrateArticle(article) {
   title.value = article.title ?? ''
   summary.value = article.summary ?? ''
   content.value = typeof article.content === 'string' && article.content.length ? article.content : '<p></p>'
-  status.value = article.status ?? 'draft'
-  visibility.value = article.visibility ?? 'public'
+  status.value = article.status ?? 'Concept'
+  visibility.value = article.visibility ?? 'Openbaar'
   projectName.value = article.project?.name ?? 'Knowledgebase Portal'
   updatedLabel.value = article.updated_at ?? 'Zojuist bijgewerkt'
   attachments.value = article.attachments ?? []
@@ -482,7 +482,7 @@ async function saveArticle(nextStatus = status.value) {
     snackbar.value = true
 
     hydrateArticle(article)
-    saveMessage.value = nextStatus === 'published' ? 'Artikel gepubliceerd' : 'Zojuist opgeslagen'
+    saveMessage.value = nextStatus === 'Gepubliceerd' ? 'Artikel gepubliceerd' : 'Zojuist opgeslagen'
   } catch (err) {
     snackbarMessage.value = error.value
     snackbarColor.value = 'error'

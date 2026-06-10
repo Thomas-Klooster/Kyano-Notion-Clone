@@ -148,7 +148,7 @@ const nameRules = [
 
 const emailRules = [
   (v) => !!v || 'Het invullen van een email is verplicht.',
-  (v) => /.+@.+\..+/.test(v) || 'Voer een geldig emailadres in',
+  (v) => /^[^@]+@\w+(\.\w+)+\w$/.test(v) || 'Voer een geldig emailadres in',
 ]
 
 const phoneRules = [
@@ -179,7 +179,7 @@ const confirmRules = computed(() => [
 
 const termsRules = [(v) => v === true || 'U moet de voorwaarden accepteren om verder te gaan.']
 
-function focusEmail() { emailField.value?.focus?.() }
+function focusEmail() { emailField.value?.focus?.() }alohah
 function focusAddress() { addressField.value?.focus?.() }
 function focusPhoneNumber() { phoneField.value?.focus?.() }
 function focusCompany() { companyField.value?.focus() }
@@ -203,10 +203,6 @@ const onSubmit = async () => {
     loading.value = false;
   }
 }
-
-// function onSocial(provider) {
-//   errorMessage.value = `Social signup (${provider}) is not connected yet.`
-// }
 
 function goToLogin() {
   router.push({ name: 'login' }).catch(() => { })

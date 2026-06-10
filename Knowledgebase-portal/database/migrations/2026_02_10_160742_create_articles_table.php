@@ -20,7 +20,7 @@ return new class extends Migration
             $table->longText('content')->nullable();
             $table->longText('summary')->nullable();
             $table->string('slug')->unique();
-            $table->enum('status', ['draft', 'published'])->default('published'); 
+            $table->enum('status', ['Concept', 'Gepubliceerd'])->default('Gepubliceerd'); 
             $table->enum('visibility', ['public', 'private'])->default('public');
             $table->foreignId('project_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();

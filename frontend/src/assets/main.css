@@ -2640,6 +2640,19 @@ transition:
   flex-wrap: wrap;
 }
 
+.saveCustomersButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  color: var(--color-white);
+  background-color: var(--color-brand-500);
+  padding: 5px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+
+}
+
 .panel-kicker {
   margin-bottom: 6px;
   color: var(--color-text-muted);

@@ -33,7 +33,7 @@ class ArticleFactory extends Factory
             'category_id' => Category::inRandomOrder()->first()->id ?? Category::factory(),
             'workspace_id' => Workspace::inRandomOrder()->first()->id ?? Workspace::factory(),
             'slug' => Str::slug($title),
-            'status' => $this->faker->randomElement(['draft', 'published']),
+            'status' => $this->faker->randomElement(['Concept', 'Gepubliceerd']),
             'visibility' => $this->faker->randomElement(['public', 'private']),
         ];
     }
