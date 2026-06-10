@@ -24,15 +24,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async refresh() {
       try {
-        const refreshToken = localStorage.getItem('refreshToken')
-
-        if (!refreshToken) {
-          return false
-        }
-
-        const { data } = await api.post('/auth/refresh', { refreshToken })
-        localStorage.setItem('accessToken', data.accessToken)
-        localStorage.setItem('refreshToken', data.refreshToken)
+        await api.post('/auth/refresh');
         return true
       } catch {
         return false
@@ -58,9 +50,11 @@ export const useAuthStore = defineStore('auth', {
     
     async logout() {
       try {
-        await api.post('/logout')
+        await api.post('/logout');
       } finally {
-        this.clearSession()
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        this.clearSession();
       }
     },
 

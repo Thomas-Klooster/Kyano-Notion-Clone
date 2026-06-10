@@ -9,20 +9,74 @@ use App\Models\User;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use Carbon\Carbon;
-use Symfony\Component\HttpFoundation\Cookie;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
-use Illuminate\Support\Facades\Auth;
 use App\Mail\OtpMail;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
-    private function issueAuthTokens(User $user): array
-    {
+    private const ACCESS_TOKEN_COOKIE = 'accessToken';
+    private const REFRESH_TOKEN_COOKIE = 'refreshToken';
+    private const ACCESS_TOKEN_MINUTES = 75;
+    private const REFRESH_TOKEN_MINUTES = 60 * 24 * 30;
+
+    private function issueAuthTokens(User $user) {
         return [
-            'accessToken' => $user->createToken('access-token', ['access'], now()->addMinutes(60))->plainTextToken,
+            'accessToken' => $user->createToken('access-token', ['access'], now()->addMinutes(self::ACCESS_TOKEN_MINUTES))->plainTextToken,
             'refreshToken' => $user->createToken('refresh-token', ['refresh'], now()->addDays(30))->plainTextToken,
         ];
+    }
+
+    private function tokenPayload(User $user, array $tokens, string $message) {
+        return [
+            'message' => $message,
+            'user' => $user,
+            'accessToken' => $tokens['accessToken'],
+            'refreshToken' => $tokens['refreshToken'],
+            'tokenType' => 'Bearer',
+            'expiresIn' => self::ACCESS_TOKEN_MINUTES * 60,
+        ];
+    }
+
+    private function cookieSecure(): bool {
+        return (bool) config('session.secure', app()->environment('production'));
+    }
+
+    private function accessTokenCookie(string $token) {
+        return cookie(
+            self::ACCESS_TOKEN_COOKIE,
+            $token,
+            self::ACCESS_TOKEN_MINUTES,
+            '/',
+            config('session.domain'),
+            $this->cookieSecure(),
+            true,
+            false,
+            config('session.same_site', 'lax')
+        );
+    }
+
+    private function refreshTokenCookie(string $token) {
+        return cookie(
+            self::REFRESH_TOKEN_COOKIE,
+            $token,
+            self::REFRESH_TOKEN_MINUTES,
+            '/',
+            config('session.domain'),
+            $this->cookieSecure(),
+            true,
+            false,
+            config('session.same_site', 'lax')
+        );
+    }
+
+    private function forgetAccessTokenCookie() {
+        return Cookie::forget(self::ACCESS_TOKEN_COOKIE, '/', config('session.domain'));
+    }
+
+    private function forgetRefreshTokenCookie() {
+        return Cookie::forget(self::REFRESH_TOKEN_COOKIE, '/', config('session.domain'));
     }
 
     public function register(RegisterRequest $request) {
@@ -36,84 +90,87 @@ class AuthController extends Controller
             'phone_number' => $data['phone_number'],
             'address' => $data['address']
             ]);
-        Auth::login($user);
-        $request->session()->regenerate();
         $tokens = $this->issueAuthTokens($user);
 
-        return response()->json([
-            'message' => 'Geregistreerd!',
-            'user'=> $user,
-        ], 201)
-
-        ->cookie('refreshToken', $tokens['refreshToken'], 60 * 24 * 30, '/', null, true, true, false, 'lax')
-        ->cookie('accessToken', $tokens['accessToken'], 90, '/', null, true, true, false, 'lax');
+        return response()->json($this->tokenPayload($user, $tokens, 'Geregistreerd'), 201)
+        ->cookie($this->accessTokenCookie($tokens['accessToken']))
+        ->cookie($this->refreshTokenCookie($tokens['refreshToken']));
     }
 
     public function refresh(Request $request) {
-        $refreshToken = $request->cookie('refreshToken');
+        $refreshToken = $request->input('refreshToken')
+            ?: $request->bearerToken()
+            ?: $request->cookie(self::REFRESH_TOKEN_COOKIE);
         $token = $refreshToken ? PersonalAccessToken::findToken($refreshToken) : null;
 
         if (!$token || !$token->can('refresh') || ($token->expires_at && $token->expires_at->isPast()))
         { 
         return response()->json([
         'message' => 'Token verlopen'
-        ],401);
-        }  
+        ], 401)
+        ->cookie($this->forgetAccessTokenCookie())
+        ->cookie($this->forgetRefreshTokenCookie());
+        }
 
         $user = $token->tokenable;
         $token->delete();
         $user->tokens()->where('name', 'access-token')->delete();
         $tokens = $this->issueAuthTokens($user);
 
-        return response()->json([
-            'message' => 'Token vernieuwd'
-        ])        
-        ->cookie('refreshToken', $tokens['refreshToken'], 60 * 24 * 30, '/', null, true, true, false, 'lax')
-        ->cookie('accessToken', $tokens['accessToken'], 90, '/', null, true, true, false, 'lax');
-
+        return response()->json($this->tokenPayload($user, $tokens, 'Tokens vernieuwd'))
+        ->cookie($this->refreshTokenCookie($tokens['refreshToken']))
+        ->cookie($this->accessTokenCookie($tokens['accessToken']));
     }
 
-   public function login(LoginRequest $request)
-{
-    $credentials = $request->only('email', 'password');
-    if (!Auth::attempt($credentials, $request->filled('remember'))) {
-        return response()->json(['message' => 'Ongeldige inloggegevens.'], 401);
-    }
+    public function login(LoginRequest $request) {
 
-        $user = Auth::user();
-        $request->session()->regenerate();
+        $user = User::where('email', $request->email)->first();
+
+        if (! $user || ! Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'message' => 'Ongeldige inloggegevens.',
+            ], 401);
+        }
+
         $tokens = $this->issueAuthTokens($user);
 
-    
-    return response()->json([
-        'message' => 'Ingelogd!',
-        'user' => Auth::user(),
-        ])
-        
-        ->cookie('refreshToken', $tokens['refreshToken'], 60 * 24 * 30, '/', null, true, true, false, 'lax')
-        ->cookie('accessToken', $tokens['accessToken'], 90, '/', null, true, true, false, 'lax');
-
-
-}
-
-public function logout(Request $request) {
-    if ($request->user()) {
-    $request->user()->tokens()->delete();
+        return response()->json($this->tokenPayload($user, $tokens, 'Tokens aangemaakt'))
+        ->cookie($this->refreshTokenCookie($tokens['refreshToken']))
+        ->cookie($this->accessTokenCookie($tokens['accessToken']));
     }
 
-    Auth::guard('web')->logout();
-    $request->session()->invalidate();
-    $request->session()->regenerateToken();
+    public function logout(Request $request)
+    {
+        $refreshToken = $request->input('refreshToken')
+            ?: $request->cookie(self::REFRESH_TOKEN_COOKIE);
+
+        $personalAccessToken = $request->user()?->currentAccessToken();
+
+        if ($request->user()) {
+            $request->user()->tokens()->delete();
+        }
+
+        if ($personalAccessToken) {
+            $personalAccessToken->delete();
+        }
+
+        if ($refreshToken && $token = PersonalAccessToken::findToken($refreshToken)) {
+            $token->delete();
+        }
+
+        if ($request->hasSession()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
 
     return response()->json([
         'success' => true,
         'message' => 'Succesvol uitgelogd!'
-    ])->withoutCookie(Cookie::create('XSRF-TOKEN'))
-      ->withoutCookie(Cookie::create(config('session.cookie')))
-      ->withoutCookie(Cookie::create('accessToken'))
-      ->withoutCookie(Cookie::create('refreshToken'));
-    }    
-
+        ])
+        ->cookie($this->forgetAccessTokenCookie())
+        ->cookie($this->forgetRefreshTokenCookie())
+        ->withoutCookie('XSRF-TOKEN');
+    }
 
 
     /* ---------------------------------------------------------------------------------------------------

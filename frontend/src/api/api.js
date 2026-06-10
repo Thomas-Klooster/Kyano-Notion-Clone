@@ -15,15 +15,13 @@ let isRefreshing = false;
 let failedQueue = [];
 let hasEmittedSessionExpired = false;
 
-const processQueue = (error, token = null) => {
+const processQueue = (error) => {
      failedQueue.forEach(({ resolve, reject }) =>
-     error ? reject(error) : resolve(token));
+     error ? reject(error) : resolve());
      failedQueue = [];
 };
 
 const notifySessionExpired = () => {
-     localStorage.clear();
-
      if (hasEmittedSessionExpired) return;
 
      hasEmittedSessionExpired = true;
@@ -39,14 +37,7 @@ export const ensureCsrfCookie = () =>
           },
      });
 
-api.interceptors.request.use((config) => {
-     const token = localStorage.getItem('accessToken') || document.cookie
-     .split('; ').find(row => row.startsWith('accessToken='))?.split('=')[1];
-     if (token) {
-     config.headers.Authorization = `Bearer ${token}`;
-     }
-     return config;
-});
+api.interceptors.request.use((config) => config);
 
 api.interceptors.response.use(
      (response) => response,
@@ -62,35 +53,21 @@ api.interceptors.response.use(
                if (isRefreshing) {
                     return new Promise((resolve, reject) => {
                          failedQueue.push({ resolve, reject });
-                    }).then((token) => {
-                         originalRequest.headers.Authorization = `Bearer ${token}`;
-                         return api(originalRequest);
-                    });
+                    }).then(() => api(originalRequest));
                }
 
                originalRequest._retry = true;
                isRefreshing = true;
 
                try {
-                    const refreshToken = localStorage.getItem('refreshToken') || document.cookie
-                    .split('; ')?.split('=')[1];
+                    await api.post('/auth/refresh');
 
-                    if (!refreshToken) {
-                         notifySessionExpired();
-                         return Promise.reject(error);
-                    }
-
-                    const { data } = await api.post('/auth/refresh', { refreshToken });
-
-                    localStorage.setItem('accessToken', data.accessToken);
-                    localStorage.setItem('refreshToken', data.refreshToken);
                     hasEmittedSessionExpired = false;
-                    processQueue(null, data.accessToken);
-                    originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+                    processQueue(null);
 
                     return api(originalRequest);
                } catch (refreshError) {
-                    processQueue(refreshError, null);
+                    processQueue(refreshError);
                     notifySessionExpired();
                     return Promise.reject(refreshError);
                } finally {
