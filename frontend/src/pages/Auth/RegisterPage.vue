@@ -179,7 +179,7 @@ const confirmRules = computed(() => [
 
 const termsRules = [(v) => v === true || 'U moet de voorwaarden accepteren om verder te gaan.']
 
-function focusEmail() { emailField.value?.focus?.() }alohah
+function focusEmail() { emailField.value?.focus?.() }
 function focusAddress() { addressField.value?.focus?.() }
 function focusPhoneNumber() { phoneField.value?.focus?.() }
 function focusCompany() { companyField.value?.focus() }

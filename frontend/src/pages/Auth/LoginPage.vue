@@ -63,6 +63,12 @@
         </div>
       </div>
     </div>
+    <div class="auth-hero">
+      <h1 class="auth-hero-text">
+        <span class="auth-hero-word">Kyano</span> Knowledgebase
+      </h1>
+    </div>
+
   </div>
 </template>
 
