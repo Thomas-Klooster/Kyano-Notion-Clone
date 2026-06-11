@@ -34,6 +34,11 @@
               <strong>{{ statusLabel }}</strong>
             </div>
 
+            <!-- <div class="sidebar-meta-row u-flex-between u-gap-12">
+              <span>Tags</span>
+              <string>{{ tagsLabel }}</string>
+            </div> -->
+
             <div class="sidebar-meta-row u-flex-between u-gap-12">
               <span>Bijgewerkt</span>
               <strong>{{ updatedLabel }}</strong>
@@ -52,9 +57,9 @@
         <section class="article-card card card-elevated card-rounded-2xl">
           <div class="article-head card-head">
 
-            <div class="article-meta-line u-flex-center u-wrap u-gap-8">
-              <span class="article-pill u-inline-flex u-items-center">Handleiding</span>
-              <span class="article-meta-separator">•</span>
+            <div class="article-pill article-meta-line u-flex-center u-wrap u-gap-8">
+              <!-- <span class="article-pill u-inline-flex u-items-center">{{ tags }}</span> -->
+              <!-- <span class="article-meta-separator">•</span> -->
               <span>{{ statusLabel }}</span>
             </div>
 
@@ -193,6 +198,7 @@ const title = ref('')
 const summary = ref('')
 const content = ref('<p></p>')
 const status = ref('Concept')
+// const tags = ref([])
 const visibility = ref('Openbaar')
 const projectName = ref('Knowledgebase Portal')
 const updatedLabel = ref('Nog niet opgeslagen')
@@ -222,6 +228,8 @@ const previewRoute = computed(() => (
     }
     : null
 ))
+
+// const tagsLabel = computed(() => tags.join(''))
 
 const statusLabel = computed(() => status.value === 'Gepubliceerd' ? 'Gepubliceerd' : 'Concept')
 const saveIndicatorLabel = computed(() => {
@@ -373,6 +381,7 @@ function hydrateArticle(article) {
   status.value = article.status ?? 'Concept'
   visibility.value = article.visibility ?? 'Openbaar'
   projectName.value = article.project?.name ?? 'Knowledgebase Portal'
+  // tags.value = article.tags ?? ''
   updatedLabel.value = article.updated_at ?? 'Zojuist bijgewerkt'
   attachments.value = article.attachments ?? []
 }

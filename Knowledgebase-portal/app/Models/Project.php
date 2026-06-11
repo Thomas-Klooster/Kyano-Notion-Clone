@@ -28,7 +28,16 @@ class Project extends Model
     public function user(): BelongsTo {
         return $this->belongsTo(User::class);
     }
-   
+    
+    public function users() {
+        return $this->belongsToMany(User::class);
+    }
+
+    public function members() {
+        return $this->belongsToMany(User::class, 'user_workspace')
+        ->withPivot('role')->withTimestamps();
+    }
+    
     public function category(): BelongsTo {
         return $this->belongsTo(Category::class);
     }
@@ -52,8 +61,26 @@ class Project extends Model
     {
         parent::boot();
 
-        static::saving(function ($project) {
-            $project->slug = Str::slug($project->name);
+        static::creating(function ($project) {
+        if (empty($project->slug)) {
+            $project->slug = Str::random(10);
+        }
         });
+
+        static::created(function ($project) {
+            $project->update([
+                'slug' => static::generateSlugWithId($project->name, $project->id),
+            ]);
+        });
+
+        static::updating(function ($project) {
+            if ($project->isDirty('name')) {
+                $project->slug = static::generateSlugWithId($project->name, $project->id);
+            }
+        });
+    }
+
+    protected static function generateSlugWithId(string $name, int $id): string {
+        return $id . '-' . Str::slug($name);
     }
 }

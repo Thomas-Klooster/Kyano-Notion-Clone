@@ -36,6 +36,7 @@ public function index()
 
         $workspace = Workspace::create([
             'name' => $request->name,
+            'slug' => '',
             'owner_id' => auth()->id(),
         ]);
  

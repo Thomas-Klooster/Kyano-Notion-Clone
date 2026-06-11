@@ -166,7 +166,7 @@
                   {{ passwordMessage.text }}
                 </v-alert>
 
-                <v-btn type="submit" class="entity-create-btn profile-full-action" :loading="passwordSaving"
+                <v-btn type="submit" class="entity-create-btn profile-full-action mt-3" :loading="passwordSaving"
                   :disabled="!passwordFormValid || passwordSaving">
                   Wachtwoord opslaan
                 </v-btn>

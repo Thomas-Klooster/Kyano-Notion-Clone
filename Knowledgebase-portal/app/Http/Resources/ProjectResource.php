@@ -24,6 +24,7 @@ class ProjectResource extends JsonResource
             'category' => $this->category->name,
             'category_slug' => $this->category->slug,
             'workspace' => $this->workspace->name,
+            'user_id' => $this->user->id,
             'workspace_slug' => $this->workspace->slug,
         ];
     }

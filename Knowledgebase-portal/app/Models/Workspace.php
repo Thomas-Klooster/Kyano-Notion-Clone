@@ -59,32 +59,21 @@ public function scopeVisibleTo($query, $user)
     {
         parent::boot();
 
-        static::saving(function ($workspace) {
-            if ($workspace->isDirty('name') || empty($workspace->slug)) {
-                $workspace->slug = static::generateUniqueSlug($workspace->name, $workspace->id);
+
+        static::created(function ($workspace) {
+            $workspace->update([
+                'slug' => static::generateSlugWithId($workspace->name, $workspace->id)
+            ]);
+        });
+
+        static::updating(function ($workspace) {
+            if ($workspace->isDirty('name')) {
+                $workspace->slug = static::generateSlugWithId($workspace->name, $workspace->id);
             }
         });
     }
 
-    protected static function generateUniqueSlug(string $name, ?int $ignoreId = null): string
-    {
-        $baseSlug = Str::slug($name);
-        $slug = $baseSlug;
-        $suffix = 1;
-
-        while (
-            static::query()
-                ->when($ignoreId, fn($query) => $query->whereKeyNot($ignoreId))
-                ->where('slug', $slug)
-                ->exists()
-        ) {
-            $slug = "{$baseSlug}-{$suffix}";
-            $suffix++;
-        }
-
-        return $slug;
+        protected static function generateSlugWithId(string $name, int $id): string {
+           return $id . '-' . Str::slug($name);
     }
-
-
-
 }

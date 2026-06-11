@@ -23,7 +23,7 @@ class ArticleRequest extends FormRequest
             'workspace_id' => 'required|exists:workspaces,id',
             'visibility' => 'required|in:public,private',
             'status' => 'required|in:Concept,Gepubliceerd,',
-            'slug' => 'unique:articles,slug',
+            'slug' => 'nullable|unique:articles,slug',
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:50'],
             'article_id' => 'nullable|exists:articles,id',

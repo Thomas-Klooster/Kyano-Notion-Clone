@@ -97,10 +97,29 @@ public function scopeVisibleTo($query, $user) {
         protected static function boot(): void
     {
         parent::boot();
+        
 
-        static::saving(function ($article) {
-            $article->slug = Str::slug($article->title);
+        static::creating(function ($article) {
+            if (empty($article->slug)) {
+                $article->slug = Str::random(10);
+            }
         });
+
+        static::created(function ($article) {
+            $article->update([
+                'slug' => static::generateSlugWithId($article->title, $article->id),
+            ]);
+        });
+
+        static::updating(function ($article) {
+            if ($article->isDirty('title')) {
+                $article->slug = static::generateSlugWithId($article->title, $article->id);
+            }
+        });
+
     }
 
+    protected static function generateSlugWithId(string $title, int $id): string {
+        return $id . '-' . Str::slug($title);
+    }
 }

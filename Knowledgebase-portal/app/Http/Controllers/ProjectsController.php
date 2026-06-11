@@ -8,6 +8,7 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Http\Requests\ProjectsRequest;
+use App\Http\Requests\AddCustomerRequest;
 class ProjectsController extends Controller
 {
     use AuthorizesRequests;
@@ -59,6 +60,10 @@ public function index()
          return ProjectResource::collection($query->get());
     }
      
+    public function AddCustomer(AddCustomerRequest $request, Project $project) {
+    
+
+    }
     
     public function myProjects()
 {

@@ -320,8 +320,8 @@
                             <v-icon size="18">mdi-magnify</v-icon>
                             <input v-model="workspaceCustomerSearch" type="text" placeholder="Zoek klant" />
                           </div>
-                          <v-btn size="small" variant="text"
-                            @click="saveWorkspaceMembers(selectedEntityType, selectedEntity.id)">
+                          <v-btn prepend-icon="mdi-content-save-outline" class="save-btn"
+                            @click="saveWorkspaceMembers(selectedEntityType, selectedEntity.id)">                          
                             Opslaan
                           </v-btn>
                           <v-snackbar v-model="snackbar" timer="bottom" :timer-color="timerColor" :color="snackbarColor"
@@ -902,6 +902,9 @@
             <v-select v-if="dialogType === 'category'" v-model="draft.workspaceId" :items="workspaceSelectOptions"
               item-title="label" item-value="value" label="Workspace" variant="solo-filled" flat hide-details
               class="notion-soft-input mb-4" />
+            <v-select v-if="dialogType === 'project'" v-model="draft.customerAccess" :items="customerOnlyOptions"
+            item-title="title" item-value="value" label="Klanten met toegang" multiple chips closable-chips
+            variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
             <v-select v-if="dialogType === 'project'" :rules="CategoryRules" v-model="draft.categoryId"
               :items="categorySelectOptions" item-title="label" item-value="value" label="Categorie"
               variant="solo-filled" flat hide-details="auto" class="notion-soft-input mb-4" />
@@ -915,7 +918,7 @@
                 item-title="label" item-value="value" label="Categorie" variant="solo-filled" flat hide-details="auto"
                 class="notion-soft-input mb-4" />
               <div class="article-chip-picker mb-4">
-                <div class="article-chip-picker__label">Visibility</div>
+                <div class="article-chip-picker__label">Zichtbaarheid</div>
                 <v-chip-group v-model="draft.visibility" selected-class="article-choice-chip--selected" mandatory>
                   <v-chip v-for="option in articleVisibilityOptions" :key="option.value" :value="option.value"
                     class="article-choice-chip" filter variant="outlined">
@@ -934,13 +937,8 @@
               </div>
             </template>
           </v-form>
-          <!-- <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable
-        class="my-3" @click:close="error = ''">
-          {{ error }}
-          </v-alert> -->
-
-
         </div>
+
         <div class="dialog-actions u-gap-12">
           <v-btn variant="text" @click="editorOpen = false">Annuleren</v-btn>
           <v-btn class="entity-create-btn" @click="saveDraft">Opslaan</v-btn>
@@ -1049,11 +1047,6 @@
               :rules="confirmRules" variant="solo-filled" flat />
           </v-form>
         </div>
-        <!-- <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable
-              class="auth-alert mx-6"
-              @click:close="error = ''">
-              {{ error }}
-            </v-alert> -->
 
             <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable
             class="auth-alert mx-6"
@@ -1102,9 +1095,7 @@
 
         <div class="delete-modal-body">
           <h3 class="delete-modal-title">Feedback verwijderen?</h3>
-          <p class="delete-modal-content">Weet je zeker dat je de feedback voor {{ reviewDeleteTarget?.articleTitle }}
-            wilt
-            verwijderen?</p>
+          <p class="delete-modal-content">Weet je zeker dat je de feedback voor {{ reviewDeleteTarget?.articleTitle }} wilt verwijderen?</p>
           <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>
 
@@ -1314,12 +1305,12 @@ const customerOptions = computed(() => [
 const kindOptions = ['Alles', 'Workspaces', 'Categorieën', 'Projecten', 'Artikelen']
 const customerRoleOptions = ['admin', 'customer']
 const articleStatusOptions = [
-  { label: 'Gepubliceerd', value: 'published' },
-  { label: 'Draft', value: 'draft' },
+  { label: 'Gepubliceerd', value: 'Gepubliceerd' },
+  { label: 'Concept', value: 'Concept' },
 ]
 const articleVisibilityOptions = [
   { label: 'Privé', value: 'private' },
-  { label: 'Publiek', value: 'public' },
+  { label: 'Openbaar', value: 'public' },
 
 ]
 const workspaceCustomerSearch = ref('')
@@ -1364,7 +1355,7 @@ function normalizeArticle(article) {
     summary: safeText(article.summary),
     content: safeText(article.content),
     slug: safeText(article.slug),
-    status: safeText(article.status, 'draft'),
+    status: safeText(article.status, 'Concept'),
     visibility: safeText(article.visibility, 'public'),
     tags: Array.isArray(article.tags) ? article.tags.filter((tag) => typeof tag === 'string') : [],
     updated_at: safeText(article.updated_at),
@@ -1462,7 +1453,7 @@ function normalizeReviewRecord(feedback, article) {
     id: feedback.id,
     articleId: article.id,
     articleTitle: safeText(article.title, 'Ongetiteld artikel'),
-    articleStatus: safeText(article.status, 'draft'),
+    articleStatus: safeText(article.status, 'Concept'),
     articleUpdated_at: safeText(article.updated_at),
     workspaceName: safeText(article.workspaceName),
     categoryName: safeText(article.categoryName),
@@ -1635,7 +1626,7 @@ async function loadReviewRecords(workspaces) {
         return normalizeReviewRecord(feedback, {
           id: feedback.article_id,
           title: safeText(apiArticle.title, 'Ongetiteld artikel'),
-          status: safeText(apiArticle.status, 'draft'),
+          status: safeText(apiArticle.status, 'Concept'),
           updated_at: safeText(apiArticle.updated_at),
           workspaceName: safeText(apiArticle.workspace?.name),
           projectName: safeText(apiArticle.project?.name),
@@ -2218,8 +2209,8 @@ function openCreateDialog(type, defaults = null) {
   dialogMode.value = 'create'
   dialogType.value = type
   resetDraft()
-  if (type === 'project') draft.status = 'Concept'
-  if (type === 'article') draft.status = 'draft'
+  if (type === 'project') draft.status = 'draft'
+  if (type === 'article') draft.status = 'Concept'
   if (defaults?.workspaceId) draft.workspaceId = defaults.workspaceId
   if (defaults?.categoryId) draft.categoryId = defaults.categoryId
   if (defaults?.projectId) draft.projectId = defaults.projectId
@@ -2442,7 +2433,7 @@ function createEntity() {
       summary: draft.summary,
       content: draft.content,
       slug: draft.slug || slugify(articleTitle),
-      status: draft.status || 'draft',
+      status: draft.status || 'Concept',
       visibility: draft.visibility || 'public',
       tags: [...draft.tags],
       updated_at: '2026-04-13',

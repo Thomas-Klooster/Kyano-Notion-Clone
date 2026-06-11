@@ -40,8 +40,27 @@ class Category extends Model
     {
         parent::boot();
 
-        static::saving(function ($category) {
-            $category->slug = Str::slug($category->name);
+        static::creating(function ($category) {
+            if (empty($category->slug)) {
+                $category->slug = Str::random(10);
+            }
         });
+
+        static::created(function ($category) {
+            $category->update([
+                'slug' => static::generateSlugWithId($category->name, $category->id),
+            ]);
+        });
+
+        static::updating(function ($category) {
+            if ($category->isDirty('name')) {
+                $category->slug = static::generateSlugWithId($category->name, $category->id);
+            }
+        });
+    }
+
+    protected static function generateSlugWithId(string $name, int $id): string
+    {
+        return $id . '-' . Str::slug($name);
     }
 }
