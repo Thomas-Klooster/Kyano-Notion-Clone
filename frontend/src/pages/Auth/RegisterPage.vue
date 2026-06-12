@@ -25,7 +25,7 @@
             <div class="auth-fields-grid">
             <div class="auth-field-group">
               <label class="auth-label">Volledige naam</label>
-              <v-text-field v-model="name" placeholder="Jouw naam..." autocomplete="name" variant="solo-filled" flat
+              <v-text-field v-model="name" placeholder="Jouw naam" autocomplete="name" variant="solo-filled" flat
                 density="comfortable" prepend-inner-icon="mdi-account-outline" :rules="nameRules" hide-details="auto"
                 class="notion-soft-input" @keydown.enter.prevent="focusEmail" />
             </div>
@@ -40,14 +40,14 @@
 
             <div class="auth-field-group">
               <label class="auth-label">Adres</label>
-              <v-text-field ref="addressField" v-model="address" placeholder="Optioneel*" autocomplete="street-address"
+              <v-text-field ref="addressField" v-model="address" placeholder="Straatadres" autocomplete="street-address"
                 type="text" variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-map-marker-outline"
                 hide-details="auto" class="notion-soft-input" @keydown.enter.prevent="focusPhoneNumber" />
             </div>
 
             <div class="auth-field-group">
               <label class="auth-label">Telefoonnummer</label>
-              <v-text-field ref="phoneField" v-model="phone_number" placeholder="Optioneel*" autocomplete="tel"
+              <v-text-field ref="phoneField" v-model="phone_number" placeholder="Telefoonnummer" autocomplete="tel"
                 type="tel" variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-phone-outline"
                 :rules="phoneRules" hide-details="auto" class="notion-soft-input"
                 @keydown.enter.prevent="focusCompany" />
@@ -55,7 +55,7 @@
 
             <div class="auth-field-group">
               <label class="auth-label">Bedrijfsnaam</label>
-              <v-text-field ref="companyField" v-model="company" placeholder="Optioneel*" autocomplete="organization"
+              <v-text-field ref="companyField" v-model="company" placeholder="Bedrijfsnaam BV" autocomplete="organization"
                 type="text" variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-briefcase-outline"
                 hide-details="auto" class="notion-soft-input" @keydown.enter.prevent="focusPassword" />
             </div>

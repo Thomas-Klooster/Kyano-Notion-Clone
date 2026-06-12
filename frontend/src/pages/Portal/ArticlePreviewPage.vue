@@ -21,7 +21,7 @@
                         </div>
                     </div>
 
-                    <div class="article-topbar-right">
+                    <div v-if="auth.isAdmin" class="article-topbar-right">
                         <v-btn variant="text" rounded="lg" prepend-icon="mdi-arrow-left" :to="backToEditorRoute">
                             Terug naar editor
                         </v-btn>
@@ -206,6 +206,8 @@ import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getArticle, postFeedback } from '@/services/articleService'
 import api from '@/api/api'
+import { useAuthStore } from '@/stores/auth'
+const auth = useAuthStore()
 const feedbackTitle = ref('')
 const feedbackTextarea = ref(null)
 const helpful = ref(null)
