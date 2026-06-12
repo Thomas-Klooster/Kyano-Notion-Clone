@@ -350,7 +350,6 @@
                                   " />
                             </div>
                           </template>
-
                           <template #item.name="{ item }">
                             <div class="workspace-access-name-cell">
                               <div class="workspace-access-name">{{ item.name }}</div>
@@ -471,7 +470,6 @@
 
       <section v-if="activeTab === 'customers'" style="border-radius: 0 0 26px 26px !important;"
         class="entity-card card card-elevated card-rounded-2xl studio-card">
-
         <div class="studio-toolbar">
           <div class="search-field studio-search-field studio-toolbar-search">
             <v-icon size="18">mdi-magnify</v-icon>
@@ -893,9 +891,9 @@
             <v-textarea v-if="dialogType === 'project'" :model-value="draft.description"
               @update:model-value="updateDraftContentField" variant="solo-filled" label="Project beschrijving" flat
               hide-details rows="4" class="notion-soft-input mb-4" />
-            <v-select v-if="dialogType === 'workspace'" v-model="draft.customerAccess" :items="customerOnlyOptions"
+            <!-- <v-select v-if="dialogType === 'workspace'" v-model="draft.customerAccess" :items="customerOnlyOptions"
               item-title="title" item-value="value" label="Klanten met toegang" multiple chips closable-chips
-              variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
+              variant="solo-filled" flat hide-details class="notion-soft-input mb-4" /> -->
             <v-select v-if="dialogType === 'article'" :model-value="draft.workspaceId" :items="workspaceSelectOptions"
               item-title="label" item-value="value" label="Workspace" variant="solo-filled" flat hide-details
               class="notion-soft-input mb-4" />
@@ -1593,7 +1591,6 @@ async function loadOverviewData() {
   try {
     const [workspacesResponse, usersResponse] = await Promise.all([
       getAdminWorkspaces(),
-      // getCategories(),
       getAdminUsers(),
     ])
 
@@ -2332,6 +2329,7 @@ async function saveDraft() {
       } else {
         await updateWorkspace(draft.slug, payload)
         await reloadWorkspaces()
+
       }
     }
 

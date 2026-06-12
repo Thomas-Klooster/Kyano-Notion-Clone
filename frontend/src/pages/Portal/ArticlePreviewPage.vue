@@ -35,7 +35,7 @@
                         <div class="sidebar-label">In dit artikel</div>
 
                         <nav class="toc-nav">
-                            <a href="#summary" class="toc-link active">Introductie</a>
+                            <a href="#summary" class="toc-link">Introductie</a>
                             <a href="#content" class="toc-link">Content</a>
                             <a href="#attachments" class="toc-link">Bijlagen</a>
                         </nav>

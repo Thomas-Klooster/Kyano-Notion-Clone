@@ -1359,17 +1359,17 @@ transition:
   border-radius: var(--radius-xl);
   border: 1px solid var(--color-border-default);
   background: var(--color-white);
-  transition:
+  /* transition:
     transform 0.18s ease,
-    box-shadow 0.18s ease;
-  border-left: 4px solid var(--color-brand-500);
+    box-shadow 0.18s ease; */
+  /* border-left: 4px solid var(--color-brand-500); */
   cursor: default;
 }
 
-.admin-stat-card:hover {
+/* .admin-stat-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(15, 15, 15, 0.08);
-}
+} */
 
 .admin-stat-card__accent {
   position: absolute;
@@ -1412,7 +1412,7 @@ transition:
 }
 
 .admin-stat-card:hover .admin-stat-icon-wrap {
-  transform: scale(1.06);
+  transform: scale(1.07);
 }
 
 .admin-stat-card__text {

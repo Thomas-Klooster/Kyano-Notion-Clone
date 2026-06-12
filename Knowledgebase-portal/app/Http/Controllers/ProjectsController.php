@@ -60,10 +60,10 @@ public function index()
          return ProjectResource::collection($query->get());
     }
      
-    public function AddCustomer(AddCustomerRequest $request, Project $project) {
+    // public function AddCustomer(AddCustomerRequest $request, Project $project) {
     
 
-    }
+    // }
     
     public function myProjects()
 {
