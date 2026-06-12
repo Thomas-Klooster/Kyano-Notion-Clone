@@ -1,7 +1,15 @@
 <template>
-  <div class="auth-page">
-    <div class="auth-container">
-      <div class="auth-card card card-elevated card-rounded-2xl">
+  <div class="register-page">
+    <div class="register-container">
+
+
+          <div class="register-hero">
+      <h1 class="auth-hero-text">
+        <span class="auth-hero-word">Kyano</span> Knowledgebase
+      </h1>
+    </div>
+
+      <div class="register-card card card-elevated card-rounded-2xl">
 
         <div class="auth-card-head">
           <div class="auth-card-head-bg" aria-hidden="true" />
@@ -14,7 +22,7 @@
 
         <div class="auth-card-body">
           <v-form ref="formRef" v-model="formValid" @submit.prevent="onSubmit">
-
+            <div class="auth-fields-grid">
             <div class="auth-field-group">
               <label class="auth-label">Volledige naam</label>
               <v-text-field v-model="name" placeholder="Jouw naam..." autocomplete="name" variant="solo-filled" flat
@@ -62,6 +70,7 @@
                 hide-details="auto" class="notion-soft-input" @click:append-inner="showPassword = !showPassword"
                 @keydown.enter.prevent="focusConfirm" />
             </div>
+          </div>
 
             <div class="auth-field-group">
               <label class="auth-label">Wachtwoord bevestigen</label>
@@ -102,7 +111,6 @@
               Al een account?
               <button type="button" class="auth-link-btn" @click="goToLogin">Inloggen</button>
             </p>
-
           </v-form>
         </div>
       </div>
