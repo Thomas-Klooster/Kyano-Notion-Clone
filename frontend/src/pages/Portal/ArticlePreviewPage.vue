@@ -12,24 +12,16 @@
         </div>
 
         <div v-else-if="article" class="article-page">
-            <div class="article-topbar">
-                <div class="article-topbar-inner">
-                    <div class="article-topbar-left">
-                        <div class="article-badge">
-                            <v-icon size="16">mdi-eye-outline</v-icon>
-                            <span>Preview</span>
-                        </div>
-                    </div>
 
-                    <div v-if="auth.isAdmin" class="article-topbar-right">
+            <div class="entity-shell page-shell article-grid">
+                <div class="article-cover">
+                                        <div v-if="auth.isAdmin" class="article-topbar">
                         <v-btn variant="text" rounded="lg" prepend-icon="mdi-arrow-left" :to="backToEditorRoute">
                             Terug naar editor
                         </v-btn>
                     </div>
-                </div>
-            </div>
 
-            <div class="entity-shell page-shell article-grid">
+                </div>
                 <aside class="article-sidebar">
                     <div class="infoside-card card card-soft card-rounded-lg">
                         <div class="sidebar-label">In dit artikel</div>
@@ -125,12 +117,12 @@
                     </form>
                 </aside>
                 <main class="article-content">
-                    <div class="article-cover"></div>
                     <article class="article-card card card-elevated card-rounded-2xl">
                         <div class="article-head card-head">
                             <div class="article-meta-line u-flex-center u-wrap u-gap-8" />
                             <h1 class="article-title-input">{{ article.title }}</h1>
                             <p class="article-subtitle" id="summary" >
+                            <v-icon size="26" color="#24a1c7">mdi-information-variant</v-icon>
                                 {{ article.summary }}
                             </p>
                         </div>

@@ -1,21 +1,13 @@
 <template>
   <div class="article-page">
     <div class="article-topbar">
-      <div class="article-topbar-inner">
-        <div class="article-topbar-left">
-          <div class="article-badge">
-            <v-icon size="16">mdi-file-document-edit-outline</v-icon>
-            <span>Artikel editor</span>
-          </div>
-        </div>
 
+    </div>
         <div class="article-topbar-right">
           <v-btn variant="text" rounded="lg" prepend-icon="mdi-open-in-new" :disabled="loading || !previewRoute" :to="previewRoute || undefined">
             Preview
           </v-btn>
         </div>
-      </div>
-    </div>
 
     <div class="article-grid entity-shell page-shell">
       <aside class="article-sidebar">
