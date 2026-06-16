@@ -1,13 +1,10 @@
 <template>
   <div class="article-page">
-    <div class="article-topbar">
-
-    </div>
-        <div class="article-topbar-right">
+    <div class="editor-article-topbar">
           <v-btn variant="text" rounded="lg" prepend-icon="mdi-open-in-new" :disabled="loading || !previewRoute" :to="previewRoute || undefined">
             Preview
           </v-btn>
-        </div>
+      </div>
 
     <div class="article-grid entity-shell page-shell">
       <aside class="article-sidebar">
@@ -25,12 +22,7 @@
               <span>Status</span>
               <strong>{{ statusLabel }}</strong>
             </div>
-
-            <!-- <div class="sidebar-meta-row u-flex-between u-gap-12">
-              <span>Tags</span>
-              <string>{{ tagsLabel }}</string>
-            </div> -->
-
+            
             <div class="sidebar-meta-row u-flex-between u-gap-12">
               <span>Bijgewerkt</span>
               <strong>{{ updatedLabel }}</strong>
@@ -40,7 +32,7 @@
 
 </aside>
       <main class="article-content">
-        <div class="article-cover">
+        <div class="editor-cover">
           <div class="cover-actions">
             <v-btn size="small">Change</v-btn>
           </div>
@@ -50,8 +42,6 @@
           <div class="article-head card-head">
 
             <div class="article-pill article-meta-line u-flex-center u-wrap u-gap-8">
-              <!-- <span class="article-pill u-inline-flex u-items-center">{{ tags }}</span> -->
-              <!-- <span class="article-meta-separator">•</span> -->
               <span>{{ statusLabel }}</span>
             </div>
 

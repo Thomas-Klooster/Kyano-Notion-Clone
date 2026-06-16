@@ -13,7 +13,7 @@
 
         <div v-else-if="article" class="article-page">
 
-            <div class="entity-shell page-shell article-grid">
+            <div class="entity-shell article-shell article-grid">
                 <div class="article-cover">
                                         <div v-if="auth.isAdmin" class="article-topbar">
                         <v-btn variant="text" rounded="lg" prepend-icon="mdi-arrow-left" :to="backToEditorRoute">
@@ -118,7 +118,7 @@
                 </aside>
                 <main class="article-content">
                     <article class="article-card card card-elevated card-rounded-2xl">
-                        <div class="article-head card-head">
+                        <div class="article-head article-card-head">
                             <div class="article-meta-line u-flex-center u-wrap u-gap-8" />
                             <h1 class="article-title-input">{{ article.title }}</h1>
                             <p class="article-subtitle" id="summary" >
