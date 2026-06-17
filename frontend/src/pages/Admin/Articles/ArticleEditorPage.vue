@@ -6,9 +6,10 @@
           </v-btn>
       </div>
 
-    <div class="article-grid entity-shell page-shell">
-      <aside class="article-sidebar">
-        <div class="sidebar-card card card-soft card-rounded-lg">
+    <div class="entity-shell page-shell">
+
+      <!-- <aside class="article-sidebar"> -->
+        <!-- <div class="sidebar-card card card-soft card-rounded-lg">
           <div class="sidebar-label">Pagina-instellingen</div>
 
           <div class="sidebar-meta-list u-flex-col u-gap-12">
@@ -28,9 +29,9 @@
               <strong>{{ updatedLabel }}</strong>
             </div>
           </div>
-        </div>
+        </div> -->
 
-</aside>
+<!-- </aside> -->
       <main class="article-content">
         <div class="editor-cover">
           <div class="cover-actions">
