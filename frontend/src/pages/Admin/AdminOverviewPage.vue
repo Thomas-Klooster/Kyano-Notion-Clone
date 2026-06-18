@@ -321,7 +321,7 @@
                             <input v-model="workspaceCustomerSearch" type="text" placeholder="Zoek klant" />
                           </div>
                           <v-btn prepend-icon="mdi-content-save-outline" class="save-btn"
-                            @click="saveWorkspaceMembers(selectedEntityType, selectedEntity.id)">                          
+                            @click="saveWorkspaceMembers(selectedEntityType, selectedEntity.id)">
                             Opslaan
                           </v-btn>
                           <v-snackbar v-model="snackbar" timer="bottom" :timer-color="timerColor" :color="snackbarColor"
@@ -542,7 +542,7 @@
                   </v-btn>
                   <v-btn size="small" variant="text" class="delete-btn"
                     @click="openCustomerDeleteDialog(selectedCustomerRecord.id)">
-                    VERWIJDEREN  
+                    VERWIJDEREN
                   </v-btn>
                 </div>
               </div>
@@ -671,7 +671,6 @@
                   :title="opt.label" />
               </v-list>
             </v-menu>
-
             <div class="search-field studio-search-field studio-toolbar-search">
               <v-icon size="18">mdi-magnify</v-icon>
               <input v-model="reviewSearch" type="text" placeholder="Zoek op artikel, klant of feedback..." />
@@ -2084,6 +2083,7 @@ function selectEntity(type, id) {
   if (type === 'workspace') {
     if (!isExpanded(expandedWorkspaces, id)) expandedWorkspaces.value = [...expandedWorkspaces.value, id]
     selectedWorkspaceId.value = id
+    draft.workspaceId = id
     selectedCategoryId.value = null
     selectedProjectId.value = null
     selectedArticleId.value = null
@@ -2096,6 +2096,7 @@ function selectEntity(type, id) {
     if (!isExpanded(expandedCategories, id)) expandedCategories.value = [...expandedCategories.value, id]
     selectedWorkspaceId.value = result.workspace.id
     selectedCategoryId.value = id
+    draft.categoryId = id
     selectedProjectId.value = null
     selectedArticleId.value = null
   }
@@ -2109,6 +2110,7 @@ function selectEntity(type, id) {
     selectedWorkspaceId.value = result.workspace.id
     selectedCategoryId.value = result.category.id
     selectedProjectId.value = id
+    draft.projectId = id
     selectedArticleId.value = null
   }
 
@@ -2122,6 +2124,7 @@ function selectEntity(type, id) {
     selectedCategoryId.value = result.category.id
     selectedProjectId.value = result.project.id
     selectedArticleId.value = id
+    draft.article = id
   }
 
   // Switch to content tab when navigating from customer workspaces link
@@ -2320,12 +2323,14 @@ async function saveDraft() {
   try {
     if (dialogType.value === 'workspace') {
       const payload = {
+        id: draft.id,
         name: draft.name,
         customer_ids: draft.customerAccess ?? [],
       }
       if (dialogMode.value === 'create') {
         const response = await postWorkspace(payload)
         draft.id = response.id
+        draft.customerAccess = response.customer_ids ?? []
       } else {
         await updateWorkspace(draft.slug, payload)
         await reloadWorkspaces()
@@ -2397,7 +2402,7 @@ async function saveDraft() {
 
 function createEntity() {
   if (dialogType.value === 'workspace') {
-    const newWorkspace = { name: draft.name, customer: draft.customer, description: draft.summary, categories: [] }
+    const newWorkspace = { id: draft.id, name: draft.name, customer: draft.customer, description: draft.summary, categories: [] }
     workspaceData.value.unshift(newWorkspace)
     selectEntity('workspace', newWorkspace.id)
     return
