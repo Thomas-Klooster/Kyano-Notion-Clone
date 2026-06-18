@@ -128,6 +128,12 @@ router.beforeEach(async (to) => {
   const auth = useAuthStore()
 
   if (!auth.initialized) {
+    try {
+      await auth.fetchUser()
+    } catch(error) {
+      auth.clearSession()
+    }
+
     return true
   }
 

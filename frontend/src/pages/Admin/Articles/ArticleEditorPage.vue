@@ -7,31 +7,6 @@
       </div>
 
     <div class="entity-shell page-shell">
-
-      <!-- <aside class="article-sidebar"> -->
-        <!-- <div class="sidebar-card card card-soft card-rounded-lg">
-          <div class="sidebar-label">Pagina-instellingen</div>
-
-          <div class="sidebar-meta-list u-flex-col u-gap-12">
-
-            <div class="sidebar-meta-row u-flex-between u-gap-12">
-              <span>Project</span>
-              <strong>{{ projectName }}</strong>
-            </div>
-
-            <div class="sidebar-meta-row u-flex-between u-gap-12">
-              <span>Status</span>
-              <strong>{{ statusLabel }}</strong>
-            </div>
-            
-            <div class="sidebar-meta-row u-flex-between u-gap-12">
-              <span>Bijgewerkt</span>
-              <strong>{{ updatedLabel }}</strong>
-            </div>
-          </div>
-        </div> -->
-
-<!-- </aside> -->
       <main class="article-content">
         <div class="editor-cover">
           <div class="cover-actions">
@@ -50,17 +25,7 @@
 
             <textarea v-model="summary" class="article-summary-input" placeholder="Voeg een korte samenvatting toe..."
               rows="2" :disabled="loading" />
-
-            <div class="article-author-row u-flex-center u-gap-12">
-              <div class="author-avatar icon-box">K</div>
-
-              <div>
-                <div class="author-name">Kyano Team</div>
-                <div class="author-role">Knowledgebase Portal</div>
-              </div>
-            </div>
           </div>
-
           <div class="article-body">
             <div class="editor-block">
               <TipTap v-model="content" />

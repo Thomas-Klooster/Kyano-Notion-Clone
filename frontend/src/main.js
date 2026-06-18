@@ -41,9 +41,22 @@ const vuetify = createVuetify({
 app.use(vuetify)
 import { useAuthStore } from '@/stores/auth'
 
+router.beforeEach(async (to, from, next,) => {
 const auth = useAuthStore()
+if (!auth.initialized) {
+  await auth.fetchUser()
+}
+if (to.meta.requiresAuth && !auth.isAuthenticated) {
+  next({name : 'login'})
+  return
+}
+next()
 
+
+})
+  
 window.addEventListener(AUTH_SESSION_EXPIRED_EVENT, async () => {
+  const auth = useAuthStore()
   auth.clearSession()
 
   if (router.currentRoute.value.name !== 'login') {
@@ -57,14 +70,9 @@ window.addEventListener(AUTH_SESSION_EXPIRED_EVENT, async () => {
 })
 
 async function bootstrap() {
-  try {
-    await auth.refresh()
-    await auth.fetchUser()
-  } catch (e) {
-    auth.clearSession()
-  } finally {
-    app.mount('#app')
-  }
+  /* initializeren van auth user verwijderd wegens in de index.js 
+     word dat al gedaan, dus voorkom ik 3 keer user ophalen */
+  app.mount('#app')
 }
 
 bootstrap()
