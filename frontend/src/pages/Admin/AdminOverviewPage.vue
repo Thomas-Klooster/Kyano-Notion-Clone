@@ -1664,7 +1664,7 @@ function toggleWorkspaceCustomerAccessFromRow(event, row) {
 
 const workspaceSelectOptions = computed(() =>
   workspaceData.value.map((workspace) => ({
-    label: `${workspace.name} · ${workspace.customer}`,
+    label: `${workspace.name}`,
     value: workspace.id,
   })),
 )
@@ -2083,9 +2083,9 @@ function selectEntity(type, id) {
   if (type === 'workspace') {
     if (!isExpanded(expandedWorkspaces, id)) expandedWorkspaces.value = [...expandedWorkspaces.value, id]
     selectedWorkspaceId.value = id
-    draft.workspaceId = id
     selectedCategoryId.value = null
     selectedProjectId.value = null
+    draft.workspaceId = id
     selectedArticleId.value = null
   }
 
@@ -2096,8 +2096,8 @@ function selectEntity(type, id) {
     if (!isExpanded(expandedCategories, id)) expandedCategories.value = [...expandedCategories.value, id]
     selectedWorkspaceId.value = result.workspace.id
     selectedCategoryId.value = id
-    draft.categoryId = id
     selectedProjectId.value = null
+    draft.categoryId = id
     selectedArticleId.value = null
   }
 
@@ -2123,8 +2123,8 @@ function selectEntity(type, id) {
     selectedWorkspaceId.value = result.workspace.id
     selectedCategoryId.value = result.category.id
     selectedProjectId.value = result.project.id
+    draft.articleId = id
     selectedArticleId.value = id
-    draft.article = id
   }
 
   // Switch to content tab when navigating from customer workspaces link
@@ -2329,6 +2329,7 @@ async function saveDraft() {
       }
       if (dialogMode.value === 'create') {
         const response = await postWorkspace(payload)
+        await reloadWorkspaces()
         draft.id = response.id
         draft.customerAccess = response.customer_ids ?? []
       } else {
@@ -2402,7 +2403,7 @@ async function saveDraft() {
 
 function createEntity() {
   if (dialogType.value === 'workspace') {
-    const newWorkspace = { id: draft.id, name: draft.name, customer: draft.customer, description: draft.summary, categories: [] }
+    const newWorkspace = { id: draft.id, name: draft.name, customerAccess: draft.customerAccess, description: draft.summary, categories: [] }
     workspaceData.value.unshift(newWorkspace)
     selectEntity('workspace', newWorkspace.id)
     return
