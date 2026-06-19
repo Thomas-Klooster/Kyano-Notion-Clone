@@ -43,7 +43,7 @@
                   <v-icon size="16">mdi-window-close</v-icon>
                   </v-btn>
                 </div>
-                  <img :src="preview.url" @click="openImagePreview" :alt="preview.name" class="image-preview-img" />
+                  <img :src="preview.url" :alt="preview.name" class="image-preview-img" />
                   <div class="image-preview-meta">
                     <span class="image-preview-name">{{ preview.name }}</span>
                     <span v-if="preview.size" class="image-preview-size">{{ formatSize(preview.size) }}</span>
@@ -57,8 +57,11 @@
               </div>
 
               <div v-if="attachments.length" class="saved-attachments">
-                <div v-for="attachment in attachments" :key="attachment.id" type="button"
-                 @click="openImagePreview(attachment)" class="attachment-row">
+                <div v-for="attachment in attachments" :key="attachment.id"
+                  :type="isImageAttachment(attachment) ? 'button' : undefined"
+                  :class="{ clickable: isImageAttachment(attachment) }"
+                  @click="isImageAttachment(attachment) ? openImagePreview(attachment) : null"
+                  class="attachment-row">
                   <div class="attachment-meta u-flex-center u-gap-8">
                     <template v-if="isImageAttachment(attachment)">
                       <v-icon size="21">mdi-image-outline</v-icon>
@@ -86,7 +89,7 @@
               {{ error }}
             </v-alert>
           </div>
-        </section>  
+        </section>
 
         <v-dialog v-model="imagePreviewDialog" max-width="1140" class="attacchment-preview-dialog">
         <img v-if="selectedImageUrl" :src="selectedImageUrl" :alt="selectedImageName" class="attachment-preview-image">
@@ -115,7 +118,7 @@
             <v-btn v-else rounded="lg" class="action-btn action-btn-danger" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('Concept')">
               Depubliceren
             </v-btn>
-            
+
             <v-btn variant="tonal" rounded="lg" class="action-btn action-btn-secondary" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle()">
               Opslaan
             </v-btn>
@@ -370,8 +373,7 @@ async function uploadSelectedAttachments(files) {
         updateUploadProgress(selectedFiles, progress)
       },
     })
-
-    hydrateArticle(article)
+    attachments.value = article.attachments ?? []
     saveMessage.value = 'Bijlagen geupload'
     model.value = []
     revokeSelectedImagePreviews()
