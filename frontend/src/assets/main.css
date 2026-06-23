@@ -1754,7 +1754,7 @@ transition:
   border-radius: 26px;
   margin-bottom: 20px;
   position: relative;
-  background: linear-gradient(135deg, rgba(220, 47, 255, 0.95), rgba(87, 121, 255, 0.9));
+ /* background: linear-gradient(135deg, rgba(220, 47, 255, 0.95), rgba(87, 121, 255, 0.9)); */
 }
 
 .article-cover {

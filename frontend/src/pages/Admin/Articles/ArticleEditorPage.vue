@@ -1,16 +1,21 @@
 <template>
   <div class="article-page">
     <div class="editor-article-topbar">
-          <v-btn variant="text" rounded="lg" prepend-icon="mdi-open-in-new" :disabled="loading || !previewRoute" :to="previewRoute || undefined">
-            Preview
-          </v-btn>
-      </div>
+      <v-btn variant="text" rounded="lg" prepend-icon="mdi-open-in-new" :disabled="loading || !previewRoute"
+        :to="previewRoute || undefined">
+        Preview
+      </v-btn>
+    </div>
 
     <div class="entity-shell page-shell">
       <main class="article-content">
-        <div class="editor-cover">
+        <div class="editor-cover" :style="{ backgroundColor: selectedColour }">
           <div class="cover-actions">
-            <v-btn size="small">Change</v-btn>
+
+            <v-dialog v-model="colorDialog">
+              <v-color-picker v-model="selectedColour" mode="hex" show-watches></v-color-picker>
+            </v-dialog>
+            <v-btn size="small" @click="openColorDialog">Bewerk</v-btn>
           </div>
         </div>
 
@@ -39,10 +44,11 @@
               <div v-if="imagePreviews.length" class="image-preview-grid">
                 <div v-for="preview in imagePreviews" :key="preview.key" class="image-preview-card">
                   <div class="delete-preview-box">
-                  <v-btn icon size="18" variant="text" color="error" class="delete-preview-button" @click="removePreview(preview)">
-                  <v-icon size="16">mdi-window-close</v-icon>
-                  </v-btn>
-                </div>
+                    <v-btn icon size="18" variant="text" color="error" class="delete-preview-button"
+                      @click="removePreview(preview)">
+                      <v-icon size="16">mdi-window-close</v-icon>
+                    </v-btn>
+                  </div>
                   <img :src="preview.url" :alt="preview.name" class="image-preview-img" />
                   <div class="image-preview-meta">
                     <span class="image-preview-name">{{ preview.name }}</span>
@@ -60,8 +66,7 @@
                 <div v-for="attachment in attachments" :key="attachment.id"
                   :type="isImageAttachment(attachment) ? 'button' : undefined"
                   :class="{ clickable: isImageAttachment(attachment) }"
-                  @click="isImageAttachment(attachment) ? openImagePreview(attachment) : null"
-                  class="attachment-row">
+                  @click="isImageAttachment(attachment) ? openImagePreview(attachment) : null" class="attachment-row">
                   <div class="attachment-meta u-flex-center u-gap-8">
                     <template v-if="isImageAttachment(attachment)">
                       <v-icon size="21">mdi-image-outline</v-icon>
@@ -80,7 +85,7 @@
                 </div>
               </div>
 
-                <div v-else class="bookmark-input">
+              <div v-else class="bookmark-input">
                 <v-icon size="18">mdi-bookmark-outline</v-icon>
                 <span>Voeg een web bookmark toe</span>
               </div>
@@ -92,7 +97,8 @@
         </section>
 
         <v-dialog v-model="imagePreviewDialog" max-width="1140" class="attacchment-preview-dialog">
-        <img v-if="selectedImageUrl" :src="selectedImageUrl" :alt="selectedImageName" class="attachment-preview-image">
+          <img v-if="selectedImageUrl" :src="selectedImageUrl" :alt="selectedImageName"
+            class="attachment-preview-image">
         </v-dialog>
 
 
@@ -111,20 +117,23 @@
             </div>
 
 
-            <v-btn v-if="status !== 'Gepubliceerd'" color="primary" rounded="lg" class="action-btn action-btn-primary" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('Gepubliceerd')">
+            <v-btn v-if="status !== 'Gepubliceerd'" color="primary" rounded="lg" class="action-btn action-btn-primary"
+              :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('Gepubliceerd')">
               Publiceren
             </v-btn>
 
-            <v-btn v-else rounded="lg" class="action-btn action-btn-danger" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('Concept')">
+            <v-btn v-else rounded="lg" class="action-btn action-btn-danger" :loading="saving"
+              :disabled="loading || uploadingAttachments" @click="saveArticle('Concept')">
               Depubliceren
             </v-btn>
 
-            <v-btn variant="tonal" rounded="lg" class="action-btn action-btn-secondary" :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle()">
+            <v-btn variant="tonal" rounded="lg" class="action-btn action-btn-secondary" :loading="saving"
+              :disabled="loading || uploadingAttachments" @click="saveArticle()">
               Opslaan
             </v-btn>
             <v-snackbar v-model="snackbar" timer="bottom" :timer-color="timerColor" :color="snackbarColor"
-            :timeout="3000" location="top start">
-            {{ snackbarMessage }}
+              :timeout="3000" location="top start">
+              {{ snackbarMessage }}
             </v-snackbar>
 
           </div>
@@ -138,6 +147,7 @@
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { VFileUpload } from 'vuetify/labs/VFileUpload'
+import { VColorPicker } from 'vuetify/components'
 import TipTap from '@/components/TipTap.vue'
 import api from '@/api/api'
 import { getArticle, updateArticle, uploadArticleAttachments, deleteAttachment } from '@/services/articleService'
@@ -149,7 +159,6 @@ const title = ref('')
 const summary = ref('')
 const content = ref('<p></p>')
 const status = ref('Concept')
-// const tags = ref([])
 const visibility = ref('Openbaar')
 const projectName = ref('Knowledgebase Portal')
 const updatedLabel = ref('Nog niet opgeslagen')
@@ -166,11 +175,11 @@ const timerColor = ref('success')
 const imagePreviewDialog = ref(false)
 const selectedImage = ref(null)
 const selectedImageUrl = computed(() => selectedImage.value ? getAttachmentUrl(selectedImage.value) : '')
-
+const selectedColour = ref('#24a1c7')
 const model = ref([])
+const colorDialog = ref(false)
 const uploads = ref({})
 const selectedImagePreviews = ref([])
-
 const previewRoute = computed(() => (
   articleSlug.value
     ? {
@@ -179,8 +188,6 @@ const previewRoute = computed(() => (
     }
     : null
 ))
-
-// const tagsLabel = computed(() => tags.join(''))
 
 const statusLabel = computed(() => status.value === 'Gepubliceerd' ? 'Gepubliceerd' : 'Concept')
 const saveIndicatorLabel = computed(() => {
@@ -324,6 +331,11 @@ function clearUploadProgress(files) {
   uploads.value = nextUploads
 }
 
+function openColorDialog() {
+
+  backgroundColor.value(selectedColour);
+}
+
 function hydrateArticle(article) {
   articleSlug.value = article.slug ?? articleSlug.value
   title.value = article.title ?? ''
@@ -332,7 +344,6 @@ function hydrateArticle(article) {
   status.value = article.status ?? 'Concept'
   visibility.value = article.visibility ?? 'Openbaar'
   projectName.value = article.project?.name ?? 'Knowledgebase Portal'
-  // tags.value = article.tags ?? ''
   updatedLabel.value = article.updated_at ?? 'Zojuist bijgewerkt'
   attachments.value = article.attachments ?? []
 }
@@ -385,40 +396,40 @@ async function uploadSelectedAttachments(files) {
   }
 }
 
-    async function removeAttachment(attachmentId) {
-      try {
-        await deleteAttachment(articleSlug.value, attachmentId)
-        attachments.value = attachments.value.filter(a => a.id !== attachmentId)
-      } catch (err) {
-        error.value = err.response?.data?.message ?? 'Kon de bijlage niet verwijderen.'
-      }
-    }
+async function removeAttachment(attachmentId) {
+  try {
+    await deleteAttachment(articleSlug.value, attachmentId)
+    attachments.value = attachments.value.filter(a => a.id !== attachmentId)
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon de bijlage niet verwijderen.'
+  }
+}
 
-    async function removePreview(preview) {
-      if (preview.key.startsWith('attachment-')) {
-        const attachmentId = Number(
-          preview.key.replace('attachment-', '')
-        )
-        await removeAttachment(attachmentId)
-        return
-      }
+async function removePreview(preview) {
+  if (preview.key.startsWith('attachment-')) {
+    const attachmentId = Number(
+      preview.key.replace('attachment-', '')
+    )
+    await removeAttachment(attachmentId)
+    return
+  }
 
-      const fileName = preview.name
-      model.value = model.value.filter(
-        file => file.name !== fileName
-      )
-      selectedImagePreviews.value = selectedImagePreviews.value.filter(
-        p => p.key !== preview.key
-      )
-      URL.revokeObjectURL(preview.url)
-    }
+  const fileName = preview.name
+  model.value = model.value.filter(
+    file => file.name !== fileName
+  )
+  selectedImagePreviews.value = selectedImagePreviews.value.filter(
+    p => p.key !== preview.key
+  )
+  URL.revokeObjectURL(preview.url)
+}
 
-    function formatSize(bytes) {
-      if (!bytes) return ''
-      if (bytes < 1024) return `${bytes} B`
-      if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-      return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-    }
+function formatSize(bytes) {
+  if (!bytes) return ''
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
 
 
 async function saveArticle(nextStatus = status.value) {
