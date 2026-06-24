@@ -17,9 +17,10 @@
 
             <div class="auth-field-group">
               <label class="auth-label">E-mailadres</label>
-              <v-text-field v-model="email" placeholder="naam@bedrijf.com"  autocomplete="email" type="email"
+              <v-text-field v-model="email" placeholder="naam@bedrijf.com" autocomplete="email" type="email"
                 variant="solo-filled" flat density="comfortable" prepend-inner-icon="mdi-email-outline"
-                :rules="emailRules" hide-details="auto" class="notion-soft-input" @keydown.enter.prevent="focusPassword" />
+                :rules="emailRules" hide-details="auto" class="notion-soft-input"
+                @keydown.enter.prevent="focusPassword" />
             </div>
 
             <div class="auth-field-group">
@@ -29,9 +30,9 @@
                   Wachtwoord vergeten?
                 </button>
               </div>
-              <v-text-field v-model="password" ref="passwordField" placeholder="••••••••" autocomplete="current-password"
-                :type="showPassword ? 'text' : 'password'" variant="solo-filled" flat density="comfortable"
-                prepend-inner-icon="mdi-lock-outline"
+              <v-text-field v-model="password" ref="passwordField" placeholder="••••••••"
+                autocomplete="current-password" :type="showPassword ? 'text' : 'password'" variant="solo-filled" flat
+                density="comfortable" prepend-inner-icon="mdi-lock-outline"
                 :append-inner-icon="showPassword ? 'mdi-eye-off-outline' : 'mdi-eye-outline'" hide-details="auto"
                 class="notion-soft-input" @click:append-inner="showPassword = !showPassword"
                 @keydown.enter="onSubmit" />
@@ -112,8 +113,8 @@ const onSubmit = async () => {
     auth.setUser(user);
     router.push({ name: 'Dashboard' });
   } catch (err) {
-    // errorMessage.value = err.response?.data?.message
-    errorMessage.value = 'Ongeldige inloggegevens.';
+    errorMessage.value = err.response?.data?.message
+    // errorMessage.value = 'Ongeldige inloggegevens.';
   } finally {
     loading.value = false;
   }

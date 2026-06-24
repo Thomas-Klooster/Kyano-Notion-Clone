@@ -1,81 +1,85 @@
 import axios from 'axios';
 
 const api = axios.create({
-     baseURL: 'http://localhost:8000/api',
-     withCredentials: true,
-     withXSRFToken: true,
-     headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-     },
+  baseURL: 'http://localhost:8000/api',
+  withCredentials: true,
+  withXSRFToken: true,
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
 });
-
+// TODO: Delete the refreshToken
 export const AUTH_SESSION_EXPIRED_EVENT = 'auth:session-expired';
 let isRefreshing = false;
 let failedQueue = [];
 let hasEmittedSessionExpired = false;
 
 const processQueue = (error) => {
-     failedQueue.forEach(({ resolve, reject }) =>
-     error ? reject(error) : resolve());
-     failedQueue = [];
+  failedQueue.forEach(({ resolve, reject }) =>
+    error ? reject(error) : resolve());
+  failedQueue = [];
 };
 
 const notifySessionExpired = () => {
-     if (hasEmittedSessionExpired) return;
+  if (hasEmittedSessionExpired) return;
 
-     hasEmittedSessionExpired = true;
-     window.dispatchEvent(new CustomEvent(AUTH_SESSION_EXPIRED_EVENT));
+  hasEmittedSessionExpired = true;
+  window.dispatchEvent(new CustomEvent(AUTH_SESSION_EXPIRED_EVENT));
 };
 
 export const ensureCsrfCookie = () =>
-     axios.get('http://localhost:8000/sanctum/csrf-cookie', {
-          withCredentials: true,
-          withXSRFToken: true,
-          headers: {
-               Accept: 'application/json',
-          },
-     });
+  axios.get('http://localhost:8000/sanctum/csrf-cookie', {
+    withCredentials: true,
+    withXSRFToken: true,
+    headers: {
+      Accept: 'application/json',
+    },
+  });
 
 api.interceptors.request.use((config) => config);
 
 api.interceptors.response.use(
-     (response) => response,
-     async (error) => {
-          const originalRequest = error.config;
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
 
-          if (originalRequest?.url === '/auth/refresh') {
-               notifySessionExpired();
-               return Promise.reject(error);
-          }
+    if ('/auth/login'.includes(originalRequest?.url)) {
+      return Promise.reject(error);
+    }
 
-          if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
-               if (isRefreshing) {
-                    return new Promise((resolve, reject) => {
-                         failedQueue.push({ resolve, reject });
-                    }).then(() => api(originalRequest));
-               }
+    if (originalRequest?.url === '/auth/refresh') {
+      notifySessionExpired();
+      return Promise.reject(error);
+    }
 
-               originalRequest._retry = true;
-               isRefreshing = true;
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        }).then(() => api(originalRequest));
+      }
 
-               try {
-                    await api.post('/auth/refresh');
+      originalRequest._retry = true;
+      isRefreshing = true;
 
-                    hasEmittedSessionExpired = false;
-                    processQueue(null);
+      try {
+        await api.post('/auth/refresh');
 
-                    return api(originalRequest);
-               } catch (refreshError) {
-                    processQueue(refreshError);
-                    notifySessionExpired();
-                    return Promise.reject(refreshError);
-               } finally {
-                    isRefreshing = false;
-               }
-          }
+        hasEmittedSessionExpired = false;
+        processQueue(null);
 
-          return Promise.reject(error);
-     }
+        return api(originalRequest);
+      } catch (refreshError) {
+        processQueue(refreshError);
+        notifySessionExpired();
+        return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
+      }
+    }
+
+    return Promise.reject(error);
+  }
 );
 export default api;
