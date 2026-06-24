@@ -7,15 +7,14 @@
       </v-btn>
     </div>
 
-    <div class="entity-shell page-shell">
+    <div class="editor-shell page-shell">
       <main class="article-content">
         <div class="editor-cover" :style="{ backgroundColor: selectedColour }">
           <div class="cover-actions">
-
-            <v-dialog v-model="colorDialog">
+            <v-btn size="small" @click="openColorDialog">Bewerk</v-btn>
+            <v-dialog v-model="colorDialog" :scrim="false" class="color-modal">
               <v-color-picker v-model="selectedColour" mode="hex" show-watches></v-color-picker>
             </v-dialog>
-            <v-btn size="small" @click="openColorDialog">Bewerk</v-btn>
           </div>
         </div>
 
@@ -96,7 +95,7 @@
           </div>
         </section>
 
-        <v-dialog v-model="imagePreviewDialog" max-width="1140" class="attacchment-preview-dialog">
+        <v-dialog v-model="imagePreviewDialog" max-width="1140" class="attachment-preview-dialog">
           <img v-if="selectedImageUrl" :src="selectedImageUrl" :alt="selectedImageName"
             class="attachment-preview-image">
         </v-dialog>
@@ -332,8 +331,7 @@ function clearUploadProgress(files) {
 }
 
 function openColorDialog() {
-
-  backgroundColor.value(selectedColour);
+  colorDialog.value = true
 }
 
 function hydrateArticle(article) {

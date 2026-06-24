@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Http\Requests\CategoryRequest;
 class CategoryController extends Controller
 {
-  
+
 use AuthorizesRequests;
   public function index() {
   $categories = Category::visibleTo(auth('sanctum')->user())->with(['workspace', 'projects.articles.tags'])
@@ -26,9 +26,9 @@ use AuthorizesRequests;
     }
 
   public function show(Category $category) {
-  $this->authorize('view', $category);  
+  $this->authorize('view', $category);
     return new CategoryResource($category->load('workspace', 'projects.articles.tags'));
-  
+
   }
 
   public function update(CategoryUpdateRequest $request, Category $category) {

@@ -882,14 +882,9 @@ body {
 }
 
 .editor-shell {
-background: #eeeeee38;
 border-radius: var(--radius-xl);
-}
-
-.editor-shell:hover {
-background: #eeeeee8a;
-transition:
- background 0.20s ease;
+background-color: var(--color-bg-page);
+max-width: 1800px;
 }
 
 .article-grid {
@@ -1342,6 +1337,7 @@ transition:
   color: rgba(255, 255, 255, 0.6);
 }
 
+
 .hero-title {
   margin: 0;
   color: var(--color-white);
@@ -1750,11 +1746,10 @@ transition:
 
 
 .editor-cover {
-  height: 220px;
+  height: 300px;
   border-radius: 26px;
   margin-bottom: 20px;
   position: relative;
- /* background: linear-gradient(135deg, rgba(220, 47, 255, 0.95), rgba(87, 121, 255, 0.9)); */
 }
 
 .article-cover {
@@ -2187,6 +2182,7 @@ transition:
   .detail-meta-grid {
     grid-template-columns: 1fr;
   }
+
   .entity-shell {
     /* DEBUG LATER INCASE OTHER PAGES GOT AFFECTED */
     padding: 0px 18px 56px;

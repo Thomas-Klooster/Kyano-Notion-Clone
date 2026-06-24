@@ -8,7 +8,7 @@ class ArticlePolicy
 {
     public function before(User $user): ?bool {
         return $user->role === 'admin' ? true : null;
-        
+
     }
 
     private function workspaceMember(User $user, Article $article): ?\Illuminate\Database\Eloquent\Model {

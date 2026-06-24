@@ -3,7 +3,6 @@
 namespace App\Policies;
 use App\Models\User;
 use App\Models\Project;
-use App\Models\Workspace;
 
 class ProjectPolicy
 {
