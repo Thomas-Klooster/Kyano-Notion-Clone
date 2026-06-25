@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\RateLimiter;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -28,7 +28,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required|string',
         ];
     }
 
@@ -55,11 +55,8 @@ class LoginRequest extends FormRequest
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
         throw ValidationException::withMessages([
-            'email' => trans('auth.throttle', [
-                'seconds' => $seconds,
-                'minutes' => ceil($seconds / 60),
-            ]),
-        ]);
+            'email' => "Te veel pogingen. Probeer in {$seconds} seconden weer opnieuw",
+        ])->status(429);
     }
 
     public function throttleKey(): string
@@ -69,10 +66,9 @@ class LoginRequest extends FormRequest
 
     public function messages(): array
     {
-        return [
+            return [
             'email.required' => 'Je email invullen is verplicht!',
             'password.required' => 'Een wachtwoord is verplicht.',
-            'throttle' => 'Te veel pogingen, probeer het later opnieuw.',
         ];
     }
 }

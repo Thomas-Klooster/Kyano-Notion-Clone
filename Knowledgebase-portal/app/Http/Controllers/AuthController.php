@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
 use App\Mail\OtpMail;
 use Illuminate\Support\Facades\Cookie;
-
+use Illuminate\Support\Facades\RateLimiter;
 class AuthController extends Controller
 {
     private const ACCESS_TOKEN_COOKIE = 'accessToken';
@@ -135,10 +135,11 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-
+        $request->ensureIsNotRateLimited();
         $user = User::where('email', $request->email)->first();
 
         if (! $user || ! Hash::check($request->password, $user->password)) {
+            RateLimiter::hit($request->throttleKey());
             return response()->json([
                 'message' => 'Ongeldige inloggegevens.',
             ], 401);

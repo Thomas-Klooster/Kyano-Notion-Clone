@@ -38,12 +38,12 @@
                 @keydown.enter="onSubmit" />
             </div>
 
-            <div class="auth-remember-row">
+            <!--            <div class="auth-remember-row">
               <label class="auth-checkbox-label">
                 <v-checkbox v-model="remember" density="compact" hide-details class="auth-checkbox" />
                 <span>Onthoud mij</span>
               </label>
-            </div>
+            </div> -->
 
             <v-alert v-if="errorMessage" type="error" variant="tonal" density="comfortable" closable class="auth-alert"
               @click:close="errorMessage = ''">
@@ -86,7 +86,7 @@ const loading = ref(false);
 const email = ref("");
 const password = ref("");
 const passwordField = ref(null)
-const remember = ref(true);
+// const remember = ref(true);
 const showPassword = ref(false);
 const errorMessage = ref("");
 const router = useRouter();
@@ -113,8 +113,11 @@ const onSubmit = async () => {
     auth.setUser(user);
     router.push({ name: 'Dashboard' });
   } catch (err) {
-    errorMessage.value = err.response?.data?.message
-    // errorMessage.value = 'Ongeldige inloggegevens.';
+    if (err.response?.data?.errors?.email) {
+      errorMessage.value = err.response.data.errors.email[0]
+    } else {
+      errorMessage.value = err.response?.data?.message || 'Er is een fout opgetreden'
+    }
   } finally {
     loading.value = false;
   }

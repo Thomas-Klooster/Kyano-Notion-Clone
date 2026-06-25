@@ -9,7 +9,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
-// TODO: Delete the refreshToken
+
 export const AUTH_SESSION_EXPIRED_EVENT = 'auth:session-expired';
 let isRefreshing = false;
 let failedQueue = [];
