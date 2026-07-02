@@ -58,13 +58,7 @@ async function handleLogout() {
   <v-app>
     <div v-if="drawer" class="sidebar-overlay" @click="drawer = false" />
 
-    <v-navigation-drawer
-      v-model="drawer"
-      temporary
-      :width="260"
-      color="#fbfbfa"
-      class="app-sidebar"
-    >
+    <v-navigation-drawer v-model="drawer" temporary :width="260" color="#fbfbfa" class="app-sidebar">
 
       <div class="sidebar-brand">
         <div class="sidebar-brand-icon">
@@ -97,17 +91,15 @@ async function handleLogout() {
             <div class="sidebar-profile-info">
               <div class="sidebar-profile-name">{{ auth.user?.name }}</div>
               <div class="sidebar-profile-role">
-                <span class="sidebar-role-badge" :class="auth.isAdmin ? 'sidebar-role-badge--admin' : 'sidebar-role-badge--customer'">
+                <span class="sidebar-role-badge"
+                  :class="auth.isAdmin ? 'sidebar-role-badge--admin' : 'sidebar-role-badge--customer'">
                   {{ auth.isAdmin ? 'Admin' : 'klant' }}
                 </span>
               </div>
             </div>
           </div>
           <div class="sidebar-profile-email">{{ auth.user?.email }}</div>
-          <router-link
-            to="/profile"
-            class="sidebar-account-link"
-            active-class="sidebar-account-link--active"
+          <router-link to="/profile" class="sidebar-account-link" active-class="sidebar-account-link--active"
             @click="drawer = false">
 
             <v-icon size="14">mdi-account-circle-outline</v-icon>
@@ -124,7 +116,8 @@ async function handleLogout() {
         <div class="sidebar-nav-section">
           <div class="sidebar-section-kicker">Navigatie</div>
           <nav class="sidebar-nav">
-            <router-link to="/dashboard" class="sidebar-nav-item" active-class="sidebar-nav-item--active" exact @click="drawer = false">
+            <router-link to="/dashboard" class="sidebar-nav-item" active-class="sidebar-nav-item--active" exact
+              @click="drawer = false">
               <div class="sidebar-nav-icon"><v-icon size="16">mdi-home-outline</v-icon></div>
               <span>Home</span>
             </router-link>
@@ -136,14 +129,14 @@ async function handleLogout() {
           <div class="sidebar-nav-section">
             <div class="sidebar-section-kicker">Beheer</div>
             <nav class="sidebar-nav">
-              <router-link to="/admin" class="sidebar-nav-item sidebar-nav-item--admin" active-class="sidebar-nav-item--active" @click="drawer = false">
+              <router-link to="/admin" class="sidebar-nav-item sidebar-nav-item--admin"
+                active-class="sidebar-nav-item--active" @click="drawer = false">
                 <div class="sidebar-nav-icon"><v-icon size="16">mdi-shield-crown-outline</v-icon></div>
                 <span>Admin omgeving</span>
               </router-link>
             </nav>
           </div>
         </template>
-
       </div>
     </v-navigation-drawer>
 

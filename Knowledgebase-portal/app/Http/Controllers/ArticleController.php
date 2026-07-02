@@ -35,7 +35,7 @@ class ArticleController extends Controller
     }
 
     public function index() {
-     $this->authorize('viewAny', Article::class);        
+     $this->authorize('viewAny', Article::class);
      $articles = Article::visibleTo(auth('sanctum')->user())
      ->where('status', 'Gepubliceerd')->latest()->get();
      return ArticleResource::collection($articles);
@@ -84,6 +84,14 @@ public function show(Article $article)
 
     public function deleteAttachment(Article $article, Attachment $attachment) {
         $this->authorize('delete', $article);
+
+        abort_if($attachment->article_id !== $article->id, 404);
+
+        if ($article->article_cover === "attachment:{$attachment->id}") {
+            $article->update(['article_cover' => '#24a1c7']);
+        }
+
+        Storage::disk('public')->delete($attachment->path);
         $attachment->delete();
         return response()->json(['delete' => true]);
     }
@@ -102,7 +110,7 @@ public function show(Article $article)
     abort_if($article->visibility !== 'public', 403);
 
     return new ArticleResource($article->load(['project', 'tags', 'category', 'attachments']));
-  
+
   }
 
     public function search(Project $project, Request $request) {
@@ -114,7 +122,7 @@ public function show(Article $article)
      $articles = Article::visibleTo(auth('sanctum')->user())
      ->with(['project', 'category', 'attachments'])
     ->where('project_id', $project->id)
-      ->where('status', 'Gepubliceerd') 
+      ->where('status', 'Gepubliceerd')
         ->where(function ($q) use ($keyword) {
             $q->where('title', 'like', "%{$keyword}%")
               ->orWhere('content', 'like', "%{$keyword}%")
@@ -190,7 +198,7 @@ public function show(Article $article)
 
         return response()->json(['deleted' => true]);
     }
-    
+
     public function AdminIndex(Request $request)
     {
         $query = Article::visibleTo(auth('sanctum')->user())

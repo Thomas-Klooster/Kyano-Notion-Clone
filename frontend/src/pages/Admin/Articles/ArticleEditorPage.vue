@@ -7,14 +7,53 @@
       </v-btn>
     </div>
 
-    <div class="editor-shell page-shell">
+    <div class="entity-shell page-shell">
       <main class="article-content">
-        <div class="editor-cover" :style="{ backgroundColor: selectedColour }">
+        <div class="editor-cover" :class="{ 'editor-cover--image': isCoverImage }" :style="editorCoverStyle">
           <div class="cover-actions">
-            <v-btn size="small" @click="openColorDialog">Bewerk</v-btn>
-            <v-dialog v-model="colorDialog" :scrim="false" class="color-modal">
-              <v-color-picker v-model="selectedColour" mode="hex" show-watches></v-color-picker>
-            </v-dialog>
+            <v-menu v-model="colorMenu" :close-on-content-click="false" location="bottom start">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" size="small" prepend-icon="mdi-palette-outline">
+                  Kleur
+                </v-btn>
+              </template>
+              <v-color-picker v-model="selectedColour" :swatches="swatches" show-swatches mode="hex"
+                @update:model-value="selectColourCover"></v-color-picker>
+            </v-menu>
+
+            <v-menu location="bottom start" :disabled="!coverAttachmentOptions.length">
+              <template #activator="{ props }">
+                <v-btn v-bind="props" size="small" prepend-icon="mdi-image-outline"
+                  :disabled="!coverAttachmentOptions.length">
+                  Bijlage
+                </v-btn>
+              </template>
+
+              <v-list density="compact" class="cover-attachment-menu">
+                <v-list-item v-for="attachment in coverAttachmentOptions" :key="attachment.id"
+                  @click="selectAttachmentCover(attachment)">
+                  <template #prepend>
+                    <v-avatar rounded="sm" size="38">
+                      <v-img :src="getAttachmentUrl(attachment)" :alt="getAttachmentName(attachment)" cover />
+                    </v-avatar>
+                  </template>
+                  <v-list-item-title>{{ getAttachmentName(attachment) }}</v-list-item-title>
+                  <template #append>
+                    <v-icon v-if="isAttachmentCover(attachment.id)" color="primary" size="18">mdi-check</v-icon>
+                  </template>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+
+            <v-btn size="small" prepend-icon="mdi-upload-outline">
+              Uploaden
+            </v-btn>
+
+
+            <v-btn v-if="isCoverImage" icon size="small" variant="text" aria-label="Gebruik kleur als cover"
+              @click="selectColourCover(selectedColour)">
+              <v-icon style="color: darkred;" size="16">mdi-close</v-icon>
+            </v-btn>
           </div>
         </div>
 
@@ -43,8 +82,14 @@
               <div v-if="imagePreviews.length" class="image-preview-grid">
                 <div v-for="preview in imagePreviews" :key="preview.key" class="image-preview-card">
                   <div class="delete-preview-box">
+                    <v-btn v-if="preview.attachmentId" icon size="18" variant="text"
+                      :color="isAttachmentCover(preview.attachmentId) ? 'primary' : undefined" :aria-label="isAttachmentCover(preview.attachmentId) ? 'Kleur Gelecteerd' :
+                        'Gebruik als cover'" @click.stop="selectAttachmentCoverById(preview.attachmentId)">
+                      <v-icon size="16">{{ isAttachmentCover(preview.attachmentId) ?
+                        'mdi-image-check-outline' : 'mdi-image-plus-outline' }}</v-icon>
+                    </v-btn>
                     <v-btn icon size="18" variant="text" color="error" class="delete-preview-button"
-                      @click="removePreview(preview)">
+                      @click.stop="removePreview(preview)">
                       <v-icon size="16">mdi-window-close</v-icon>
                     </v-btn>
                   </div>
@@ -77,7 +122,7 @@
                   </div>
                   <div class="attachment-actions u-flex-center u-gap-8">
                     <span class="attachment-size">{{ formatSize(attachment.size) }}</span>
-                    <v-btn icon size="18" variant="text" color="error" @click="removeAttachment(attachment.id)">
+                    <v-btn icon size="18" variant="text" color="error" @click.stop="removeAttachment(attachment.id)">
                       <v-icon size="16">mdi-window-close</v-icon>
                     </v-btn>
                   </div>
@@ -110,23 +155,25 @@
           </div>
 
           <div class="editor-actions-right">
-            <div class="status-pill" :class="status === 'Gepubliceerd' ? 'is-published' : 'is-draft'">
+            <div class="status-pill" style="width: 200px;"
+              :class="status === 'Gepubliceerd' ? 'is-published' : 'is-draft'">
               <span class="status-pill-dot"></span>
               {{ statusLabel }}
             </div>
 
 
             <v-btn v-if="status !== 'Gepubliceerd'" color="primary" rounded="lg" class="action-btn action-btn-primary"
-              :loading="saving" :disabled="loading || uploadingAttachments" @click="saveArticle('Gepubliceerd')">
+              style="width: 200px;" :loading="saving" :disabled="loading || uploadingAttachments"
+              @click="saveArticle('Gepubliceerd')">
               Publiceren
             </v-btn>
 
-            <v-btn v-else rounded="lg" class="action-btn action-btn-danger" :loading="saving"
+            <v-btn v-else rounded="lg" class="action-btn action-btn-danger" style="width: 200px;" :loading="saving"
               :disabled="loading || uploadingAttachments" @click="saveArticle('Concept')">
               Depubliceren
             </v-btn>
 
-            <v-btn variant="tonal" rounded="lg" class="action-btn action-btn-secondary" :loading="saving"
+            <v-btn variant="tonal" rounded="lg" class="save-article-btn" :loading="saving"
               :disabled="loading || uploadingAttachments" @click="saveArticle()">
               Opslaan
             </v-btn>
@@ -151,6 +198,8 @@ import TipTap from '@/components/TipTap.vue'
 import api from '@/api/api'
 import { getArticle, updateArticle, uploadArticleAttachments, deleteAttachment } from '@/services/articleService'
 
+const DEFAULT_COVER_COLOUR = '#24a1c7'
+const COVER_ATTACHMENT_PREFIX = 'attachment:'
 const route = useRoute()
 
 const articleSlug = ref('')
@@ -174,9 +223,11 @@ const timerColor = ref('success')
 const imagePreviewDialog = ref(false)
 const selectedImage = ref(null)
 const selectedImageUrl = computed(() => selectedImage.value ? getAttachmentUrl(selectedImage.value) : '')
-const selectedColour = ref('#24a1c7')
+const selectedImageName = computed(() => selectedImage.value ? getAttachmentName(selectedImage.value) : '')
+const selectedColour = ref(DEFAULT_COVER_COLOUR)
+const articleCover = ref(DEFAULT_COVER_COLOUR)
+const colorMenu = ref(false)
 const model = ref([])
-const colorDialog = ref(false)
 const uploads = ref({})
 const selectedImagePreviews = ref([])
 const previewRoute = computed(() => (
@@ -187,6 +238,13 @@ const previewRoute = computed(() => (
     }
     : null
 ))
+
+const swatches = [
+  ['#24a1c7', '#1b7e9a', '#0fc0fc'],
+  ['#5d8aa8', '#9966cc', '#ffbf00'],
+  ['#ff9966', '#8e2311', '#f4c2c2'],
+  ['#ff0038', '#ffef00', '#b2ffff'],
+]
 
 const statusLabel = computed(() => status.value === 'Gepubliceerd' ? 'Gepubliceerd' : 'Concept')
 const saveIndicatorLabel = computed(() => {
@@ -199,6 +257,7 @@ const savedImagePreviews = computed(() => (
     .filter(isImageAttachment)
     .map((attachment) => ({
       key: `attachment-${attachment.id}`,
+      attachmentId: attachment.id,
       name: attachment.name || attachment.original_name || 'Bijlage',
       size: attachment.size,
       url: getAttachmentUrl(attachment),
@@ -209,6 +268,36 @@ const imagePreviews = computed(() => [
   ...selectedImagePreviews.value,
   ...savedImagePreviews.value,
 ])
+
+const coverAttachmentOptions = computed(() => attachments.value.filter(isImageAttachment))
+const activeCoverAttachment = computed(() => {
+  const attachmentId = getCoverAttachmentId(articleCover.value)
+
+  if (!attachmentId) return null
+
+
+  return coverAttachmentOptions.value.find((attachment) => attachment.id === attachmentId) ?? null
+})
+const isCoverImage = computed(() => Boolean(activeCoverAttachment.value))
+const editorCoverStyle = computed(() => {
+  const coverAttachment = activeCoverAttachment.value
+
+  if (coverAttachment) {
+    const coverUrl = getAttachmentUrl(coverAttachment)
+
+    if (coverUrl) {
+      return {
+        backgroundColor: selectedColour.value,
+        backgroundImage: `url("${coverUrl}")`,
+      }
+    }
+  }
+
+  return {
+    backgroundColor: selectedColour.value,
+    backgroundImage: 'none',
+  }
+})
 
 watch(
   () => route.query.slug,
@@ -242,8 +331,78 @@ function fileUploadKey(file) {
   return `${file.name}-${file.size}-${file.lastModified}`
 }
 
+
+function isHexColour(value) {
+  return typeof value === 'string' && /^#[0-9A-F]{6}$/i.test(value)
+}
+
+function normalizeColourInput(value) {
+  if (isHexColour(value)) return value
+
+  if (value && typeof value === 'object' && isHexColour(value.hex)) {
+    return value.hex
+  }
+
+  return ''
+}
+
+function attachmentCoverValue(attachmentId) {
+  return `${COVER_ATTACHMENT_PREFIX}${attachmentId}`
+}
+
+
+function getCoverAttachmentId(value) {
+  const match = String(value ?? '').match(/^attachment:(\d+)$/)
+  return match ? Number(match[1]) : null
+}
+
+function normalizeCoverValue(value) {
+  const colour = normalizeColourInput(value)
+  if (colour) return colour
+
+  const attachmentId = getCoverAttachmentId(value)
+  if (attachmentId) return attachmentCoverValue(attachmentId)
+
+  return DEFAULT_COVER_COLOUR
+}
+
+function isAttachmentCover(attachmentId) {
+  return articleCover.value === attachmentCoverValue(attachmentId)
+}
+
+function selectColourCover(colour) {
+  const nextColour = normalizeColourInput(colour) || DEFAULT_COVER_COLOUR
+
+  selectedColour.value = nextColour
+  articleCover.value = nextColour
+}
+
+function selectAttachmentCover(attachment) {
+  if (!attachment || !isImageAttachment(attachment)) return
+
+  articleCover.value = attachmentCoverValue(attachment.id)
+}
+
+function selectAttachmentCoverById(attachmentId) {
+  const attachment = attachments.value.find((item) => item.id === attachmentId)
+  selectAttachmentCover(attachment)
+}
+
+
+function getArticleCoverForSave() {
+  if (activeCoverAttachment.value) {
+    return attachmentCoverValue(activeCoverAttachment.value.id)
+  }
+
+  return normalizeColourInput(selectedColour.value) || DEFAULT_COVER_COLOUR
+}
+
 function isImageFile(file) {
   return file instanceof File && file.type.startsWith('image/')
+}
+
+function getAttachmentName(attachment) {
+  return attachment.name || attachment.original_name || 'Bijlage'
 }
 
 function isImageAttachment(attachment) {
@@ -330,11 +489,9 @@ function clearUploadProgress(files) {
   uploads.value = nextUploads
 }
 
-function openColorDialog() {
-  colorDialog.value = true
-}
 
 function hydrateArticle(article) {
+  const nextCover = normalizeCoverValue(article.article_cover)
   articleSlug.value = article.slug ?? articleSlug.value
   title.value = article.title ?? ''
   summary.value = article.summary ?? ''
@@ -344,6 +501,8 @@ function hydrateArticle(article) {
   projectName.value = article.project?.name ?? 'Knowledgebase Portal'
   updatedLabel.value = article.updated_at ?? 'Zojuist bijgewerkt'
   attachments.value = article.attachments ?? []
+  articleCover.value = nextCover
+  selectedColour.value = normalizeColourInput(nextCover) || DEFAULT_COVER_COLOUR
 }
 
 async function loadArticle(slug) {
@@ -395,9 +554,14 @@ async function uploadSelectedAttachments(files) {
 }
 
 async function removeAttachment(attachmentId) {
+  const wasCoverAttachment = isAttachmentCover(attachmentId)
+
   try {
     await deleteAttachment(articleSlug.value, attachmentId)
     attachments.value = attachments.value.filter(a => a.id !== attachmentId)
+    if (wasCoverAttachment) {
+      articleCover.value = normalizeColourInput(selectedColour.value) || DEFAULT_COVER_COLOUR
+    }
   } catch (err) {
     error.value = err.response?.data?.message ?? 'Kon de bijlage niet verwijderen.'
   }
@@ -443,6 +607,7 @@ async function saveArticle(nextStatus = status.value) {
       content: content.value,
       status: nextStatus,
       visibility: visibility.value,
+      article_cover: getArticleCoverForSave(),
     })
     snackbarMessage.value = 'Wijzigingen zijn opgeslagen!'
     snackbarColor.value = '#24a1c7'

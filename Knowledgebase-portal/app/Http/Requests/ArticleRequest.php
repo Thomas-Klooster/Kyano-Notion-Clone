@@ -22,6 +22,7 @@ class ArticleRequest extends FormRequest
             'category_id' => 'required|exists:categories,id',
             'workspace_id' => 'required|exists:workspaces,id',
             'visibility' => 'required|in:public,private',
+            'article_cover' => 'nullable|string',
             'status' => 'required|in:Concept,Gepubliceerd,',
             'slug' => 'nullable|unique:articles,slug',
             'tags' => ['nullable', 'array'],
@@ -37,7 +38,7 @@ class ArticleRequest extends FormRequest
      */
     public function authorize(): bool
 {
-    
+
       $articleId = $this->input('article_id');
 
       if (!$articleId)
@@ -49,7 +50,7 @@ class ArticleRequest extends FormRequest
       return in_array(auth('sanctum')->user()->role, ['admin', 'owner'])
          || $article->user_id === auth()->id();
 }
-     
+
     protected function prepareForValidation(): void
 {
     if ($this->hasFile('attachments')) {
@@ -64,7 +65,7 @@ class ArticleRequest extends FormRequest
     return [
         'title.required' => 'Het invullen van een titel is verplicht.',
         'project_id.nullable' => 'Voeg een project toe! (niet verplicht)',
-        'category_id.required' => 'Voeg een categorie erbij.', 
+        'category_id.required' => 'Voeg een categorie erbij.',
         'workspace_id.required' => 'Een workspace is verplicht om een project aan te maken.',
         'visibility.required' => 'Ongeldige zichtbaarheid keuze.',
         'status.required' => 'Ongeldige status keuze.',

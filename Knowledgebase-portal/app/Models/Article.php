@@ -21,6 +21,7 @@ class Article extends Model
         'content',
         'summary',
         'status',
+        'article_cover',
         'slug',
         'project_id',
         'category_id',
@@ -97,7 +98,6 @@ public function scopeVisibleTo($query, $user) {
         protected static function boot(): void
     {
         parent::boot();
-        
 
         static::creating(function ($article) {
             if (empty($article->slug)) {

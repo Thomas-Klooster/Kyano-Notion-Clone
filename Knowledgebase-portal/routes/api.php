@@ -34,11 +34,10 @@ Route::middleware('auth:sanctum')->group(function () {
         ]);
 
         $user->update($data);
-
         return response()->json($user->fresh());
     });
-    Route::post('/change-password', [AuthController::class, 'resetPassword']);
 
+    Route::post('/change-password', [AuthController::class, 'resetPassword']);
     Route::get('/workspaces', [WorkspaceController::class, 'index']);
     Route::get('/workspaces/{workspace}', [WorkspaceController::class, 'show']);
     Route::get('projects', [ProjectsController::class, 'myProjects']);

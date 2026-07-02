@@ -17,10 +17,11 @@ class ArticleResource extends JsonResource
     return [
         'id' => $this->id,
         'title' => $this->title,
-        'content' => $this->content, 
+        'content' => $this->content,
         'summary' => $this->summary,
         'status' => $this->status,
         'visibility' => $this->visibility,
+        'article_cover' => $this->article_cover ?? '#24a1c7',
         'slug' => $this->slug,
         'created_at' => $this->created_at->locale("nl")->diffForHumans(),
         'updated_at' => $this->updated_at->locale("nl")->diffForHumans(),
