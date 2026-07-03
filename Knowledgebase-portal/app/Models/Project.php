@@ -28,7 +28,7 @@ class Project extends Model
     public function user(): BelongsTo {
         return $this->belongsTo(User::class);
     }
-    
+
     public function users() {
         return $this->belongsToMany(User::class);
     }
@@ -37,24 +37,26 @@ class Project extends Model
         return $this->belongsToMany(User::class, 'user_workspace')
         ->withPivot('role')->withTimestamps();
     }
-    
+
     public function category(): BelongsTo {
         return $this->belongsTo(Category::class);
     }
-   
+
     public function articles() {
         return $this->hasMany(Article::class);
     }
-    
+
     public function workspace(): BelongsTo {
         return $this->belongsTo(Workspace::class);
     }
 
     public function scopeVisibleTo($query, $user) {
     if ($user->role === 'admin') return $query;
-    return $query->whereHas('workspace.members', function ($q) use ($user) {
-        $q->where('user_id', $user->id);
-    })->where('user_id', $user->id);
+    return $query->where(function ($q) use ($user) {
+        $q->where('user_id', $user->id)
+          ->orWhereHas('users', fn ($q2) => $q2->where('user_id', $user->id))
+          ->orWhereHas('workspace.members', fn ($q2) => $q2->where('user_id', $user->id));
+    });
 }
 
     protected static function boot(): void

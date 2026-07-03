@@ -26,7 +26,8 @@
             </div>
             <div class="admin-stat-card__text">
               <div class="admin-stat-card__value">{{ counts.workspaces }}</div>
-              <div class="admin-stat-card__label">{{ filteredWorkspaces.length === 1 ? 'Workspace' : 'Workspaces' }}</div>
+              <div class="admin-stat-card__label">{{ filteredWorkspaces.length === 1 ? 'Workspace' : 'Workspaces' }}
+              </div>
             </div>
           </div>
           <div class="admin-stat-card__bg-shape" aria-hidden="true" />
@@ -174,7 +175,7 @@
                       @click.stop="toggleWorkspace(workspace.id)">
                       <v-icon size="18">{{ isExpanded(expandedWorkspaces, workspace.id) ? 'mdi-chevron-up' :
                         'mdi-chevron-down'
-                        }}</v-icon>
+                      }}</v-icon>
                     </v-btn>
                   </div>
                 </div>
@@ -671,6 +672,7 @@
                   :title="opt.label" />
               </v-list>
             </v-menu>
+
             <div class="search-field studio-search-field studio-toolbar-search">
               <v-icon size="18">mdi-magnify</v-icon>
               <input v-model="reviewSearch" type="text" placeholder="Zoek op artikel, klant of feedback..." />
@@ -849,7 +851,8 @@
                   </div>
 
                   <p class="detail-description review-feedback-text mb-0">
-                    {{ activeArticleReview.hasFeedbackText ? activeArticleReview.feedbackText : 'Geen extra feedback ingevuld.' }}
+                    {{ activeArticleReview.hasFeedbackText ? activeArticleReview.feedbackText :
+                      'Geen extra feedback ingevuld.' }}
                   </p>
                 </div>
               </article>
@@ -900,8 +903,8 @@
               item-title="label" item-value="value" label="Workspace" variant="solo-filled" flat hide-details
               class="notion-soft-input mb-4" />
             <v-select v-if="dialogType === 'project'" v-model="draft.customerAccess" :items="customerOnlyOptions"
-            item-title="title" item-value="value" label="Klanten met toegang" multiple chips closable-chips
-            variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
+              item-title="title" item-value="value" label="Klanten met toegang" multiple chips closable-chips
+              variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
             <v-select v-if="dialogType === 'project'" :rules="CategoryRules" v-model="draft.categoryId"
               :items="categorySelectOptions" item-title="label" item-value="value" label="Categorie"
               variant="solo-filled" flat hide-details="auto" class="notion-soft-input mb-4" />
@@ -923,7 +926,7 @@
                   </v-chip>
                 </v-chip-group>
               </div>
-                <div class="article-chip-picker mb-4">
+              <div class="article-chip-picker mb-4">
                 <div class="article-chip-picker__label">Status</div>
                 <v-chip-group v-model="draft.status" selected-class="article-choice-chip--selected" mandatory>
                   <v-chip v-for="option in articleStatusOptions" :key="option.value" :value="option.value"
@@ -954,8 +957,10 @@
         <div class="delete-modal-body">
           <h3 class="delete-modal-title">{{ workspaceDeleteTarget.name || workspaceDeleteTarget.title }} verwijderen?
           </h3>
-          <p class="delete-modal-content">Weet je zeker dat je {{ workspaceDeleteTarget.name || workspaceDeleteTarget.title }}
-          wilt verwijderen?</p>
+          <p class="delete-modal-content">Weet je zeker dat je {{ workspaceDeleteTarget.name ||
+            workspaceDeleteTarget.title
+            }}
+            wilt verwijderen?</p>
           <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>
 
@@ -1014,7 +1019,8 @@
         <div class="dialog-head">
           <div>
             <div class="section-kicker">{{ customerDialogMode === 'create' ? 'Nieuwe klant' : 'Klant bewerken' }}</div>
-            <h3 class="dialog-title">{{ customerDialogMode === 'create' ? 'Nieuwe klant aanmaken' : 'Klantgegevens aanpassen' }}</h3>
+            <h3 class="dialog-title">{{ customerDialogMode ===
+              'create' ? 'Nieuwe klant aanmaken' : 'Klantgegevens aanpassen' }}</h3>
           </div>
         </div>
         <div class="dialog-body">
@@ -1045,11 +1051,10 @@
           </v-form>
         </div>
 
-            <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable
-            class="auth-alert mx-6"
-            @click:close="error = ''">
-            {{ error }}
-          </v-alert>
+        <v-alert v-if="error" type="error" variant="tonal" density="comfortable" closable class="auth-alert mx-6"
+          @click:close="error = ''">
+          {{ error }}
+        </v-alert>
 
         <div class="dialog-actions u-gap-12 mt-5">
           <v-btn variant="text" @click="customerEditorOpen = false">Annuleren</v-btn>
@@ -1092,7 +1097,9 @@
 
         <div class="delete-modal-body">
           <h3 class="delete-modal-title">Feedback verwijderen?</h3>
-          <p class="delete-modal-content">Weet je zeker dat je de feedback voor {{ reviewDeleteTarget?.articleTitle }} wilt verwijderen?</p>
+          <p class="delete-modal-content">Weet je zeker dat je de feedback voor {{ reviewDeleteTarget?.articleTitle }}
+            wilt
+            verwijderen?</p>
           <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>
 
@@ -1365,6 +1372,7 @@ function normalizeProject(project) {
     slug: safeText(project.slug),
     description: safeText(project.description),
     status: safeText(project.status, 'Concept'),
+    customerAccess: Array.isArray(project.customer_ids) ? project.customer_ids : [],
     articles: extractCollection(project.articles).map(normalizeArticle),
   }
 }
@@ -1664,7 +1672,7 @@ function toggleWorkspaceCustomerAccessFromRow(event, row) {
 
 const workspaceSelectOptions = computed(() =>
   workspaceData.value.map((workspace) => ({
-    label: `${workspace.name}`,
+    label: `${workspace.name} · ${workspace.customer}`,
     value: workspace.id,
   })),
 )
@@ -2083,9 +2091,9 @@ function selectEntity(type, id) {
   if (type === 'workspace') {
     if (!isExpanded(expandedWorkspaces, id)) expandedWorkspaces.value = [...expandedWorkspaces.value, id]
     selectedWorkspaceId.value = id
+    draft.workspaceId = id
     selectedCategoryId.value = null
     selectedProjectId.value = null
-    draft.workspaceId = id
     selectedArticleId.value = null
   }
 
@@ -2096,8 +2104,8 @@ function selectEntity(type, id) {
     if (!isExpanded(expandedCategories, id)) expandedCategories.value = [...expandedCategories.value, id]
     selectedWorkspaceId.value = result.workspace.id
     selectedCategoryId.value = id
-    selectedProjectId.value = null
     draft.categoryId = id
+    selectedProjectId.value = null
     selectedArticleId.value = null
   }
 
@@ -2123,8 +2131,8 @@ function selectEntity(type, id) {
     selectedWorkspaceId.value = result.workspace.id
     selectedCategoryId.value = result.category.id
     selectedProjectId.value = result.project.id
-    draft.articleId = id
     selectedArticleId.value = id
+    draft.article = id
   }
 
   // Switch to content tab when navigating from customer workspaces link
@@ -2255,6 +2263,7 @@ function openEditDialog(type, id) {
     draft.slug = entity.slug
     draft.name = entity.name
     draft.summary = entity.description ?? ''
+    draft.customerAccess = entity.customerAccess ?? []
     draft.categoryId = result?.category.id ?? null
     draft.status = entity.status
   }
@@ -2329,7 +2338,6 @@ async function saveDraft() {
       }
       if (dialogMode.value === 'create') {
         const response = await postWorkspace(payload)
-        await reloadWorkspaces()
         draft.id = response.id
         draft.customerAccess = response.customer_ids ?? []
       } else {
@@ -2361,10 +2369,12 @@ async function saveDraft() {
         category_id: draft.categoryId,
         workspace_id: draft.workspaceId,
         user_id: draft.userId,
+        customer_ids: draft.customerAccess ?? [],
       }
       if (dialogMode.value === 'create') {
         const response = await storeProject(payload)
         draft.id = response.id
+        draft.customerAccess = response.customer_ids ?? []
       } else {
         await updateProject(draft.slug, payload)
         await reloadWorkspaces()
@@ -2403,7 +2413,7 @@ async function saveDraft() {
 
 function createEntity() {
   if (dialogType.value === 'workspace') {
-    const newWorkspace = { id: draft.id, name: draft.name, customerAccess: draft.customerAccess, description: draft.summary, categories: [] }
+    const newWorkspace = { id: draft.id, name: draft.name, customer: draft.customer, description: draft.summary, categories: [] }
     workspaceData.value.unshift(newWorkspace)
     selectEntity('workspace', newWorkspace.id)
     return

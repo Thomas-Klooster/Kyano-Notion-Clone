@@ -18,7 +18,7 @@ class ProjectsRequest extends FormRequest
 
         $project = \App\Models\Project::find($projectId);
         if (!$project) return false;
-        
+
         return auth('sanctum')->user()->role === 'admin' ||
         $project->user_id === auth()->id();
     }
@@ -36,6 +36,10 @@ class ProjectsRequest extends FormRequest
             'slug' => 'nullable|unique:projects,slug',
             'category_id' => 'required|exists:categories,id',
             'article_id' => 'nullable|exists:articles,id',
+            'customer_ids' => ['sometimes', 'array'],
+            'customer_ids.*' => ['integer', 'exists:users,id'],
+            'customerAccess' => ['sometimes', 'array'],
+            'customerAccess.*' => ['integer', 'exists:users,id'],
             'workspace_id' => 'required|exists:workspaces,id'
         ];
     }
@@ -45,7 +49,7 @@ class ProjectsRequest extends FormRequest
         return [
             'name.required' => 'Het invullen van jouw projectnaam is verplicht.',
             'category_id.required' => 'Een categorie is verplicht om een project aan te maken.',
-            'workspace_id.required' => 'Een workspace is verplicht om een project aan te maken.'            
+            'workspace_id.required' => 'Een workspace is verplicht om een project aan te maken.'
             ];
     }
 }

@@ -21,6 +21,8 @@ class ProjectResource extends JsonResource
             'created_at' => $this->created_at->locale("nl")->diffForHumans(),
             'updated_at' => $this->updated_at->locale("nl")->diffForHumans(),
             'articles' => ArticleResource::collection($this->whenLoaded('articles')),
+            'customerAccess' => $this->whenLoaded('users', fn () => $this->users->pluck('id')),
+            'customer_ids' => $this->whenLoaded('users', fn () => $this->users->pluck('id')),
             'category' => $this->category->name,
             'category_slug' => $this->category->slug,
             'workspace' => $this->workspace->name,

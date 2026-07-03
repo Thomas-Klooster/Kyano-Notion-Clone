@@ -18,13 +18,13 @@ class ProjectPolicy
     return $workspace->members()->where('user_id', $user->id)->first();
 }
 
+
     public function view(User $user, Project $project): bool {
-    if ($this->workspaceMember($user, $project) === null) {
-        return false;
+    if ($project->user_id === $user->id) return true;
+    if ($project->users()->where('user_id', $user->id)->exists()) return true;
+    return $this->workspaceMember($user, $project) !== null;
     }
 
-    return $project->user_id === $user->id;
-    }
 
     public function create(User $user, Project $project): bool {
     $member = $this->workspaceMember($user, $project);

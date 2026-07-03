@@ -15,18 +15,48 @@ class ProjectsController extends Controller
 
     public function index()
     {
-        $projects = Project::with(['category', 'workspace', 'articles.tags', ])
+        $projects = Project::with(['category', 'workspace', 'articles.tags', 'users' ])
         ->visibleTo(auth('sanctum')->user())->get();
         return ProjectResource::collection($projects);
     }
+
+
     public function store(ProjectsRequest $request, Project $project)
-    {
-        $this->authorize('create', Project::class);
-        $data = $request->validated();
-        $data['user_id'] = auth()->id();
-        $project = Project::create($data);
-        return (new ProjectResource($project))->response()->setStatusCode(201);
+{
+    $this->authorize('create', Project::class);
+    $data = $request->validated();
+    $data['user_id'] = auth()->id();
+
+    $customerIds = $data['customer_ids'] ?? [];
+    unset($data['customer_ids'], $data['customerAccess']);
+
+    $project = Project::create($data);
+    $project->users()->sync($customerIds);
+
+    return (new ProjectResource(
+        $project->load(['category', 'workspace', 'articles.tags', 'users'])
+    ))->response()->setStatusCode(201);
+}
+
+public function update(ProjectsUpdateRequest $request, Project $project)
+{
+    $this->authorize('update', $project);
+    $data = $request->validated();
+
+    $customerIds = $data['customer_ids'] ?? null;
+    unset($data['customer_ids'], $data['customerAccess']);
+
+    $project->update($data);
+
+    if ($customerIds !== null) {
+        $project->users()->sync($customerIds);
     }
+
+    return new ProjectResource(
+        $project->load(['category', 'articles.tags', 'workspace', 'users'])
+    );
+}
+
     public function show(Project $project)
     {
         $this->authorize('view', $project);
@@ -35,16 +65,6 @@ class ProjectsController extends Controller
         );
     }
 
-    public function update(ProjectsUpdateRequest $request, Project $project)
-    {
-        $this->authorize('update', $project);
-
-        $project->update($request->validated());
-
-        return new ProjectResource(
-            $project->load(['category', 'articles.tags', 'workspace'])
-        );
-    }
     public function destroy(Project $project)
     {
         $this->authorize('delete', $project);
@@ -54,7 +74,7 @@ class ProjectsController extends Controller
     }
     public function AdminIndex(Request $request)
     {
-        $query = Project::with(['category', 'articles.tags', 'workspace']);
+        $query = Project::with(['category', 'articles.tags', 'workspace', 'users']);
         if ($request->user_id) {
             $query->where('user_id', $request->user_id);
         };
@@ -64,7 +84,7 @@ class ProjectsController extends Controller
 
     public function myProjects()
     {
-        $projects = Project::with(['category', 'articles.tags', 'workspace'])
+        $projects = Project::with(['category', 'articles.tags', 'workspace', 'users'])
         ->visibleTo(auth('sanctum')->user())->get();
         return ProjectResource::collection($projects);
     }
