@@ -290,13 +290,13 @@
               </div>
               <div class="detail-grid">
                 <article class="detail-card card card-rounded-xl"
-                  :class="{ 'detail-card-full': selectedEntityType === 'workspace' }">
+                  :class="{ 'detail-card-full': selectedEntityType === 'workspace' || selectedEntityType === 'project' }">
                   <div class="detail-card-head">
                     <h4 class="panel-title">
-                      {{ selectedEntityType === 'workspace' ? 'Toegang klanten' : 'Eigenschappen' }}
+                      {{ selectedEntityType === 'workspace' || selectedEntityType === 'project' ? 'Toegang klanten' :
+                        'Eigenschappen' }}
                     </h4>
                   </div>
-
                   <div v-if="loading" class="empty-state">
                     <v-icon size="30">mdi-alert-outline</v-icon>
                     <p>{{ error }}</p>
@@ -306,11 +306,13 @@
                     <v-icon size="30">mdi-alert-circle-outline</v-icon>
                     <p>{{ OverviewError }}</p>
                   </div>
-
-                  <template v-else-if="selectedEntityType === 'workspace'">
+                  <template v-else-if="selectedEntityType === 'workspace' || selectedEntityType === 'project'">
                     <div class="workspace-access-card">
                       <div class="workspace-access-header">
                         <div class="workspace-access-header-copy">
+                          <span class="meta-value" v-if="selectedEntityType === 'project'">
+                            Categorie: {{ selectedParentLabel }}
+                          </span>
                           <span class="meta-value">
                             {{ selectedEntity.customerAccess?.length || 0 }} van {{ customerOnlyRecords.length }}
                             klanten hebben toegang
@@ -330,11 +332,11 @@
                             {{ snackbarMessage }}
                           </v-snackbar>
                           <v-btn variant="text" size="small"
-                            @click="updateWorkspaceCustomerAccess(selectedEntity.id, customerOnlyRecords.map(c => c.id))">
+                            @click="updateWorkspaceCustomerAccess(selectedEntityType, selectedEntity.id, customerOnlyRecords.map(c => c.id))">
                             Alles selecteren
                           </v-btn>
                           <v-btn variant="text" size="small" color="red"
-                            @click="updateWorkspaceCustomerAccess(selectedEntity.id, [])">
+                            @click="updateWorkspaceCustomerAccess(selectedEntityType, selectedEntity.id, [])">
                             Alles wissen
                           </v-btn>
                         </div>
@@ -347,7 +349,7 @@
                             <div class="workspace-access-check" @click.stop>
                               <v-checkbox-btn :model-value="(selectedEntity.customerAccess || []).includes(item.id)"
                                 @update:model-value="
-                                  toggleWorkspaceCustomerAccess(selectedEntity.id, item.id, $event)
+                                  toggleWorkspaceCustomerAccess(selectedEntityType, selectedEntity.id, item.id, $event)
                                   " />
                             </div>
                           </template>
@@ -893,18 +895,12 @@
             <v-textarea v-if="dialogType === 'project'" :model-value="draft.description"
               @update:model-value="updateDraftContentField" variant="solo-filled" label="Project beschrijving" flat
               hide-details rows="4" class="notion-soft-input mb-4" />
-            <!-- <v-select v-if="dialogType === 'workspace'" v-model="draft.customerAccess" :items="customerOnlyOptions"
-              item-title="title" item-value="value" label="Klanten met toegang" multiple chips closable-chips
-              variant="solo-filled" flat hide-details class="notion-soft-input mb-4" /> -->
             <v-select v-if="dialogType === 'article'" :model-value="draft.workspaceId" :items="workspaceSelectOptions"
               item-title="label" item-value="value" label="Workspace" variant="solo-filled" flat hide-details
               class="notion-soft-input mb-4" />
             <v-select v-if="dialogType === 'category'" v-model="draft.workspaceId" :items="workspaceSelectOptions"
               item-title="label" item-value="value" label="Workspace" variant="solo-filled" flat hide-details
               class="notion-soft-input mb-4" />
-            <v-select v-if="dialogType === 'project'" v-model="draft.customerAccess" :items="customerOnlyOptions"
-              item-title="title" item-value="value" label="Klanten met toegang" multiple chips closable-chips
-              variant="solo-filled" flat hide-details class="notion-soft-input mb-4" />
             <v-select v-if="dialogType === 'project'" :rules="CategoryRules" v-model="draft.categoryId"
               :items="categorySelectOptions" item-title="label" item-value="value" label="Categorie"
               variant="solo-filled" flat hide-details="auto" class="notion-soft-input mb-4" />
@@ -1291,7 +1287,11 @@ async function reloadWorkspaces() {
   const workspacesResponse = await getAdminWorkspaces()
   workspaceData.value = extractCollection(workspacesResponse).map(normalizeWorkspace)
 
-  if (selectedWorkspaceId.value) {
+  if (selectedWorkspaceId.value === 'project' && selectedProjectId.value) {
+    selectEntity('project', selectedProjectId.value)
+  } else if (selectedEntityType.value === 'category' && selectedCategoryId.value) {
+    selectEntity('category', selectedCategoryId.value)
+  } else if (selectedWorkspaceId.value) {
     selectEntity('workspace', selectedWorkspaceId.value)
   }
 }
@@ -1647,27 +1647,32 @@ async function loadReviewRecords(workspaces) {
     })
 }
 
-function toggleWorkspaceCustomerAccess(workspaceId, customerId, enabled) {
-  const workspace = workspaceData.value.find((item) => item.id === workspaceId)
-  if (!workspace) return
-  const current = workspace.customerAccess || []
-  workspace.customerAccess = enabled
+
+function toggleWorkspaceCustomerAccess(entityType, entityId, customerId, enabled) {
+  const entity = entityType === 'project'
+    ? findProject(entityId)?.project
+    : workspaceData.value.find((item) => item.id === entityId)
+  if (!entity) return
+  const current = entity.customerAccess || []
+  entity.customerAccess = enabled
     ? current.includes(customerId) ? current : [...current, customerId]
     : current.filter((id) => id !== customerId)
 }
+
 function toggleWorkspaceCustomerAccessFromRow(event, row) {
   const customer = row?.item?.raw ?? row?.item
-  const workspace = selectedEntity.value
+  const entity = selectedEntity.value
+  if (!entity || !customer) return
+  const currentlySelected = (entity.customerAccess || []).includes(customer.id)
+  toggleWorkspaceCustomerAccess(selectedEntityType.value, entity.id, customer.id, !currentlySelected)
+}
 
-  if (!workspace || !customer) return
-
-  const currentlySelected = (workspace.customerAccess || []).includes(customer.id)
-
-  toggleWorkspaceCustomerAccess(
-    workspace.id,
-    customer.id,
-    !currentlySelected
-  )
+function updateWorkspaceCustomerAccess(entityType, entityId, customers) {
+  const entity = entityType === 'project'
+    ? findProject(entityId)?.project
+    : workspaceData.value.find((item) => item.id === entityId)
+  if (!entity) return
+  entity.customerAccess = customers || []
 }
 
 const workspaceSelectOptions = computed(() =>
@@ -1941,12 +1946,12 @@ const childSectionTitle = computed(() => {
   return 'Dit artikel heeft geen onderliggende items'
 })
 
-function updateWorkspaceCustomerAccess(workspaceId, customers) {
-  const workspace = workspaceData.value.find((item) => item.id === workspaceId)
-  if (!workspace) return
-  workspace.customerAccess = customers || []
-}
-
+// function updateWorkspaceCustomerAccess(workspaceId, customers) {
+//   const workspace = workspaceData.value.find((item) => item.id === workspaceId)
+//   if (!workspace) return
+//   workspace.customerAccess = customers || []
+// }
+//
 function formatWorkspaceCustomers(workspace) {
   if (!workspace?.customerAccess?.length) return 'Geen klanten'
   if (workspace.customerAccess.length === 1) {
@@ -2263,9 +2268,10 @@ function openEditDialog(type, id) {
     draft.slug = entity.slug
     draft.name = entity.name
     draft.summary = entity.description ?? ''
-    draft.customerAccess = entity.customerAccess ?? []
+    draft.workspaceId = result?.workspace.id ?? null
     draft.categoryId = result?.category.id ?? null
     draft.status = entity.status
+    draft.customerAccess = entity.customerAccess ?? []
   }
 
   if (type === 'article') {
@@ -2293,7 +2299,11 @@ async function saveWorkspaceMembers() {
       name: selectedEntity.value.name,
       customer_ids: selectedEntity.value.customerAccess ?? [],
     }
-    await updateWorkspace(selectedEntity.value.slug, payload)
+    if (selectedEntityType.value === 'project') {
+      await updateProject(selectedEntity.value.slug, payload)
+    } else {
+      await updateWorkspace(selectedEntity.value.slug, payload)
+    }
     await reloadWorkspaces()
 
     snackbarMessage.value = 'Wijzigingen zijn opgeslagen!'
@@ -2302,7 +2312,6 @@ async function saveWorkspaceMembers() {
     snackbar.value = true
   } catch (err) {
     error.value = err.response?.data?.message ?? 'Kon de leden niet opslaan.'
-
     snackbarMessage.value = error.value
     snackbarColor.value = 'error'
     snackbar.value = true

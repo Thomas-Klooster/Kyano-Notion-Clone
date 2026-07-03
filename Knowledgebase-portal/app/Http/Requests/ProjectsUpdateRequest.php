@@ -24,7 +24,7 @@ class ProjectsUpdateRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|required|string',
-            'description' => 'sometimes|required|string',
+            'description' => 'sometimes|nullable|string',
             'slug' => ['sometimes', 'required', Rule::unique('projects', 'slug')->ignore($this->route('project'))],
             'customer_ids' => ['sometimes', 'array'],
             'customer_ids.*' => ['integer', 'exists:users,id'],

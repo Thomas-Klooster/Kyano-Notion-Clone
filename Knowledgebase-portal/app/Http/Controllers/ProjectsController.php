@@ -61,7 +61,7 @@ public function update(ProjectsUpdateRequest $request, Project $project)
     {
         $this->authorize('view', $project);
         return new ProjectResource(
-            $project->load(['category', 'articles.tags', 'workspace'])
+            $project->load(['category', 'articles.tags', 'workspace', 'users'])
         );
     }
 
