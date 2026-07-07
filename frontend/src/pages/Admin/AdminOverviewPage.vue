@@ -2348,12 +2348,14 @@ async function saveDraft() {
 
     if (dialogType.value === 'category') {
       const payload = {
+        id: draft.id,
         name: draft.name,
         workspace_id: draft.workspaceId,
       }
       if (dialogMode.value === 'create') {
         const response = await storeCategory(payload)
-        draft.id = response.id
+        draft.id = response.id,
+          draft.slug = response.slug
       } else {
         await UpdateCategory(draft.slug, payload)
         await reloadWorkspaces()
@@ -2362,6 +2364,7 @@ async function saveDraft() {
 
     if (dialogType.value === 'project') {
       const payload = {
+        id: draft.id,
         name: draft.name,
         description: draft.description,
         article_id: draft.articleId,
@@ -2372,7 +2375,8 @@ async function saveDraft() {
       }
       if (dialogMode.value === 'create') {
         const response = await storeProject(payload)
-        draft.id = response.id
+        draft.id = response.id,
+          draft.slug = response.slug
         draft.customerAccess = response.customer_ids ?? []
       } else {
         await updateProject(draft.slug, payload)
@@ -2381,6 +2385,7 @@ async function saveDraft() {
     } if (dialogType.value === 'article') {
       resolveArticleDraftContext()
       const payload = {
+        id: draft.id,
         title: draft.title,
         summary: draft.summary,
         status: draft.status,
@@ -2421,7 +2426,7 @@ function createEntity() {
   if (dialogType.value === 'category') {
     const workspace = findWorkspace(draft.workspaceId)
     if (!workspace) return
-    const newCategory = { id: categoryId.value++, name: draft.name, description: draft.summary, projects: [] }
+    const newCategory = { id: draft.id ?? categoryId.value++, name: draft.name, slug: draft.slug, description: draft.summary, projects: [] }
     workspace.categories.unshift(newCategory)
     selectEntity('category', newCategory.id)
     return
@@ -2430,7 +2435,7 @@ function createEntity() {
   if (dialogType.value === 'project') {
     const result = findCategory(draft.categoryId)
     if (!result) return
-    const newProject = { id: projectId.value++, name: draft.name, description: draft.summary, status: draft.status || 'Concept', articles: [] }
+    const newProject = { id: draft.id ?? projectId.value++, name: draft.name, slug: draft.slug, description: draft.summary, status: draft.status || 'Concept', articles: [] }
     result.category.projects.unshift(newProject)
     selectEntity('project', newProject.id)
     return

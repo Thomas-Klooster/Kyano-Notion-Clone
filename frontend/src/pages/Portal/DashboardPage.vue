@@ -58,11 +58,15 @@
                 <div class="tree-info">
                   <div class="tree-name">{{ workspace.name }}</div>
                   <div class="tree-meta">
-                    <span>{{ workspace.categories.length }} categorieën</span>
+                    <span>{{ workspace.categories.length === 1 ? '1 categorie' : `${workspace.categories.length}
+                      categorieën`}}
+                    </span>
                     <span class="dot">•</span>
-                    <span>{{ countProjects(workspace) }} projecten</span>
+                    <span>{{ countProjects(workspace) === 1 ? '1 project' : `${countProjects(workspace)} projecten`
+                      }}</span>
                     <span class="dot">•</span>
-                    <span>{{ countArticles(workspace) }} artikelen</span>
+                    <span>{{ countArticles(workspace) === 1 ? '1 artikel' : `${countArticles(workspace)} :
+                      artikelen`}}</span>
                   </div>
                 </div>
               </router-link>
