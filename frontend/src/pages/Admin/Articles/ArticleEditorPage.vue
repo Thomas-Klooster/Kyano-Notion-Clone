@@ -44,11 +44,11 @@
                 </v-list-item>
               </v-list>
             </v-menu>
-
-            <v-btn size="small" prepend-icon="mdi-upload-outline">
+            <input ref="coverFileInput" type="file" accept="image/*" class="d-none" @change="onCoverFileSelected" />
+            <v-btn size="small" prepend-icon="mdi-upload-outline" :loading="uploadingCover"
+              @click="coverFileInput.click()">
               Uploaden
             </v-btn>
-
 
             <v-btn v-if="isCoverImage" icon size="small" variant="text" aria-label="Gebruik kleur als cover"
               @click="selectColourCover(selectedColour)">
@@ -106,8 +106,8 @@
                 <span>Bijlagen uploaden...</span>
               </div>
 
-              <div v-if="attachments.length" class="saved-attachments">
-                <div v-for="attachment in attachments" :key="attachment.id"
+              <div v-if="displayAttachments.length" class="saved-attachments">
+                <div v-for="attachment in displayAttachments" :key="attachment.id"
                   :type="isImageAttachment(attachment) ? 'button' : undefined"
                   :class="{ clickable: isImageAttachment(attachment) }"
                   @click="isImageAttachment(attachment) ? openImagePreview(attachment) : null" class="attachment-row">
@@ -193,7 +193,7 @@ import { VFileUpload } from 'vuetify/labs/VFileUpload'
 import { VColorPicker } from 'vuetify/components'
 import TipTap from '@/components/TipTap.vue'
 import api from '@/api/api'
-import { getArticle, updateArticle, uploadArticleAttachments, deleteAttachment } from '@/services/articleService'
+import { getArticle, updateArticle, uploadArticleCover, uploadArticleAttachments, deleteAttachment } from '@/services/articleService'
 
 const DEFAULT_COVER_COLOUR = '#24a1c7'
 const COVER_ATTACHMENT_PREFIX = 'attachment:'
@@ -226,6 +226,8 @@ const articleCover = ref(DEFAULT_COVER_COLOUR)
 const colorMenu = ref(false)
 const model = ref([])
 const uploads = ref({})
+const coverFileInput = ref(null)
+const uploadingCover = ref(false)
 const selectedImagePreviews = ref([])
 const previewRoute = computed(() => (
   articleSlug.value
@@ -250,7 +252,7 @@ const saveIndicatorLabel = computed(() => {
   return saveMessage.value
 })
 const savedImagePreviews = computed(() => (
-  attachments.value
+  displayAttachments.value
     .filter(isImageAttachment)
     .map((attachment) => ({
       key: `attachment-${attachment.id}`,
@@ -265,7 +267,7 @@ const imagePreviews = computed(() => [
   ...selectedImagePreviews.value,
   ...savedImagePreviews.value,
 ])
-
+const displayAttachments = computed(() => attachments.value.filter(a => a.purpose !== 'cover'))
 const coverAttachmentOptions = computed(() => attachments.value.filter(isImageAttachment))
 const activeCoverAttachment = computed(() => {
   const attachmentId = getCoverAttachmentId(articleCover.value)
@@ -383,6 +385,23 @@ function selectAttachmentCover(attachment) {
 function selectAttachmentCoverById(attachmentId) {
   const attachment = attachments.value.find((item) => item.id === attachmentId)
   selectAttachmentCover(attachment)
+}
+
+
+async function onCoverFileSelected(event) {
+  const file = event.target.files?.[0]
+  if (!file || !articleSlug.value) return
+  uploadingCover.value = true
+  error.value = ''
+  try {
+    const article = await uploadArticleCover(articleSlug.value, file)
+    hydrateArticle(article)
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon de cover niet uploaden.'
+  } finally {
+    uploadingCover.value = false
+    event.target.value = ''
+  }
 }
 
 

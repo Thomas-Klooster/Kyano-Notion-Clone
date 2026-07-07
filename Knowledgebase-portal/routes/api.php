@@ -51,6 +51,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('categories/{category}', [CategoryController::class, 'show']);
     Route::get('/workspace/invite/accept', [WorkspaceController::class, 'acceptInvite'])
         ->name('workspace.invite.accept');
+    Route::get('/articles/{article}/attachment/{attachment}', function (Request $request, Article $article, Attachment $attachment) {
+    abort_if($attachment->article_id !== $article->id, 404);
+    if ($article->visibility !== 'public' || $article->status !== 'Gepubliceerd') {
+        abort_unless($request->user('sanctum'), 403);
+    }
+
+    $filePath = Storage::disk('public')->path($attachment->path);
+    abort_if(!file_exists($filePath), 404);
+
+    return response()->file($filePath, [
+        'Content-Type' => $attachment->mime,
+        'Content-Disposition' => 'inline',
+    ]);
+})->name('attachment.show');
 });
 
 
@@ -71,6 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/articles/{article}/attachments', [ArticleController::class, 'storeAttachments']);
         Route::delete('/articles/{article}/attachments/{attachment}', [ArticleController::class, 'deleteAttachment']);
         Route::get('/feedbacks', [ArticleController::class, 'adminAllFeedbacks']);
+        Route::post('/articles/{article}/cover', [ArticleController::class, 'uploadCover']);
         Route::get('/articles/{article}/feedbacks', [ArticleController::class, 'adminFeedbacks']);
         Route::patch('/feedbacks/{feedback}/read', [ArticleController::class, 'markFeedbackAsRead']);
         Route::delete('/feedbacks/{feedback}', [ArticleController::class, 'destroyFeedback']);

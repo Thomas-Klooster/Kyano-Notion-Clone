@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 
 class Attachment extends Model
-{   
+{
     use HasFactory;
 
     protected $fillable = [
@@ -16,6 +16,7 @@ class Attachment extends Model
             'mime',
             'original_name',
             'size',
+            'purpose',
         ];
 
 

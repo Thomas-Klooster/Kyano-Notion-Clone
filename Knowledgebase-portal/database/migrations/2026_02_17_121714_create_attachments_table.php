@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('article_id')->constrained()->cascadeOnDelete();
             $table->string('path');
             $table->string('mime');
+            $table->string('purpose')->default('attachment')->after('mime');
             $table->string('original_name');
             $table->unsignedBigInteger('size');
             $table->timestamps();

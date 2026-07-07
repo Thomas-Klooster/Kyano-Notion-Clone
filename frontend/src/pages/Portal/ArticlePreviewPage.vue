@@ -58,7 +58,7 @@
               <div class="sidebar-label">Tags</div>
               <div v-if="articleTags.length" class="tag-grid flex-wrap">
                 <span v-for="tag in articleTags" :key="tag" class="article-pill u-inline-flex u-items-center">{{ tag
-                }}</span>
+                  }}</span>
               </div>
               <span v-else class="article-pill u-inline-flex u-items-center">Geen tags</span>
             </div>
@@ -154,7 +154,7 @@
                   :download="getAttachmentName(attachment)">
                   <span class="resource-icon">
                     <v-icon size="18">{{ isPdfAttachment(attachment) ? 'mdi-file-pdf-box' : 'mdi-download-outline'
-                    }}</v-icon>
+                      }}</v-icon>
                   </span>
                   <span class="resource-copy">
                     <span class="resource-title">{{ getAttachmentName(attachment) }}</span>
@@ -219,17 +219,21 @@ const error = ref(false)
 const loading = ref(false)
 const project = computed(() => article.value?.project ?? null)
 const articleTags = computed(() => Array.isArray(article.value?.tags) ? article.value.tags : [])
-const articleAttachments = computed(() => Array.isArray(article.value?.attachments) ? article.value.attachments : [])
+const articleAttachments = computed(() =>
+  (article.value?.attachments ?? []).filter(a => a.purpose !== 'cover')
+)
+
 const imageAttachments = computed(() => articleAttachments.value.filter(isImageAttachment))
-const downloadableAttachments = computed(() => articleAttachments.value.filter((attachment) => !isImageAttachment(attachment)))
-const articleCoverValue = computed(() => normalizeCoverValue(article.value?.article_cover))
+
+
 const activeCoverAttachment = computed(() => {
   const attachmentId = getCoverAttachmentId(articleCoverValue.value)
-
   if (!attachmentId) return null
-
-  return imageAttachments.value.find((attachment) => attachment.id === attachmentId) ?? null
+  return (article.value?.attachments ?? []).find((attachment) => attachment.id === attachmentId) ?? null
 })
+
+const downloadableAttachments = computed(() => articleAttachments.value.filter((attachment) => !isImageAttachment(attachment)))
+const articleCoverValue = computed(() => normalizeCoverValue(article.value?.article_cover))
 const isCoverImage = computed(() => Boolean(activeCoverAttachment.value))
 const articleCoverStyle = computed(() => {
   const coverAttachment = activeCoverAttachment.value

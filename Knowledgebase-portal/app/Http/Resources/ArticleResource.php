@@ -40,10 +40,10 @@ class ArticleResource extends JsonResource
                     'original_name' => $attachment->original_name,
                     'name' => $attachment->original_name,
                     'size' => $attachment->size,
+                    'purpose' => $attachment->purpose,
                 ];
             })->values();
         }),
-
     ];
     }
 }

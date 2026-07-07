@@ -19,7 +19,7 @@ class ArticleController extends Controller
 
     use AuthorizesRequests;
 
-    private function storeAttachmentsForArticle(Article $article, array $files): void
+    private function storeAttachmentsForArticle(Article $article, array $files, string $purpose = 'attachment'): void
     {
         foreach ($files as $file) {
             $path = Storage::disk('public')->put('attachments', $file);
@@ -30,9 +30,25 @@ class ArticleController extends Controller
                 'mime' => $file->getMimeType(),
                 'original_name' => $file->getClientOriginalName(),
                 'size' => $file->getSize(),
+                'purpose' => $purpose,
             ]);
         }
     }
+
+
+    public function uploadCover(Request $request, Article $article)
+    {
+        $this->authorize('update', $article);
+        $data = $request->validate([
+         'cover' => ['required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+        ]);
+
+        $this->storeAttachmentsForArticle($article, [$data['cover']], 'cover');
+        $coverAttachment = $article->attachments()->where('purpose', 'cover')->latest()->first();
+        $article->update(['article_cover' => "attachment:{$coverAttachment->id}"]);
+        return new ArticleResource($article->load(['attachments', 'tags']));
+    }
+
 
     public function index() {
      $this->authorize('viewAny', Article::class);
