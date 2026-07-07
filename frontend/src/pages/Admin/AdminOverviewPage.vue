@@ -96,8 +96,6 @@
         class="entity-card card card-elevated card-rounded-2xl studio-card">
 
         <div class="studio-toolbar">
-          <v-select v-model="selectedCustomer" :items="customerOptions" item-title="title" item-value="value"
-            variant="solo-filled" density="comfortable" flat hide-details class="studio-toolbar-select" />
           <v-select v-model="selectedKind" :items="kindOptions" variant="solo-filled" density="comfortable" flat
             hide-details class="studio-toolbar-select" />
           <div class="search-field studio-search-field studio-toolbar-search">
@@ -175,7 +173,7 @@
                       @click.stop="toggleWorkspace(workspace.id)">
                       <v-icon size="18">{{ isExpanded(expandedWorkspaces, workspace.id) ? 'mdi-chevron-up' :
                         'mdi-chevron-down'
-                        }}</v-icon>
+                      }}</v-icon>
                     </v-btn>
                   </div>
                 </div>
@@ -952,7 +950,7 @@
           </h3>
           <p class="delete-modal-content">Weet je zeker dat je {{ workspaceDeleteTarget.name ||
             workspaceDeleteTarget.title
-          }}
+            }}
             wilt verwijderen?</p>
           <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>
@@ -1299,10 +1297,6 @@ const customerOnlyOptions = computed(() =>
     value: customer.id,
   })),
 )
-const customerOptions = computed(() => [
-  { title: 'Alle klanten', value: null },
-  ...customerOnlyOptions.value,
-])
 const kindOptions = ['Alles', 'Workspaces', 'Categorieën', 'Projecten', 'Artikelen']
 const customerRoleOptions = ['admin', 'customer']
 const articleStatusOptions = [
@@ -1943,12 +1937,6 @@ const childSectionTitle = computed(() => {
   return 'Dit artikel heeft geen onderliggende items'
 })
 
-// function updateWorkspaceCustomerAccess(workspaceId, customers) {
-//   const workspace = workspaceData.value.find((item) => item.id === workspaceId)
-//   if (!workspace) return
-//   workspace.customerAccess = customers || []
-// }
-//
 function formatWorkspaceCustomers(workspace) {
   if (!workspace?.customerAccess?.length) return 'Geen klanten'
   if (workspace.customerAccess.length === 1) {
@@ -2299,6 +2287,10 @@ async function saveWorkspaceMembers() {
     if (selectedEntityType.value === 'project') {
       await updateProject(selectedEntity.value.slug, payload)
     } else {
+      console.log("selectedEntity:", selectedEntity.value)
+      console.log("selectedEntityType:", selectedEntityType.value)
+      console.log("slug:", selectedEntity.value?.slug)
+      console.log("id:", selectedEntity.value?.id)
       await updateWorkspace(selectedEntity.value.slug, payload)
     }
     await reloadWorkspaces()
@@ -2345,6 +2337,7 @@ async function saveDraft() {
       if (dialogMode.value === 'create') {
         const response = await postWorkspace(payload)
         draft.id = response.id
+        draft.slug = response.slug
         draft.customerAccess = response.customer_ids ?? []
       } else {
         await updateWorkspace(draft.slug, payload)
@@ -2419,7 +2412,7 @@ async function saveDraft() {
 
 function createEntity() {
   if (dialogType.value === 'workspace') {
-    const newWorkspace = { id: draft.id, name: draft.name, customer: draft.customer, description: draft.summary, categories: [] }
+    const newWorkspace = { id: draft.id, slug: draft.slug, name: draft.name, customer: draft.customer, description: draft.summary, categories: [] }
     workspaceData.value.unshift(newWorkspace)
     selectEntity('workspace', newWorkspace.id)
     return
@@ -2757,7 +2750,6 @@ async function saveCustomerDraft() {
     const user = customerDialogMode.value === 'create'
       ? await postUser(payload)
       : await updateUser(customerDraft.id, payload)
-
     upsertCustomerRecord(user)
     customerEditorOpen.value = false
   } catch (err) {
