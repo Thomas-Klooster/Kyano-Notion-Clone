@@ -175,7 +175,7 @@
                       @click.stop="toggleWorkspace(workspace.id)">
                       <v-icon size="18">{{ isExpanded(expandedWorkspaces, workspace.id) ? 'mdi-chevron-up' :
                         'mdi-chevron-down'
-                      }}</v-icon>
+                        }}</v-icon>
                     </v-btn>
                   </div>
                 </div>
@@ -311,8 +311,9 @@
                       <div class="workspace-access-header">
                         <div class="workspace-access-header-copy">
                           <span class="meta-value" v-if="selectedEntityType === 'project'">
-                            Categorie: {{ selectedParentLabel }}
+                            {{ selectedParentLabel }}
                           </span>
+
                           <span class="meta-value">
                             {{ selectedEntity.customerAccess?.length || 0 }} van {{ customerOnlyRecords.length }}
                             klanten hebben toegang
@@ -386,10 +387,6 @@
                   </template>
 
                   <div v-else class="detail-meta-grid">
-                    <div class="meta-item">
-                      <span class="meta-label">Klant</span>
-                      <span class="meta-value">{{ selectedEntityCustomer }}</span>
-                    </div>
                     <div class="meta-item" v-if="selectedEntityType !== 'workspace'">
                       <span class="meta-label">Bovenliggend item</span>
                       <span class="meta-value">{{ selectedParentLabel }}</span>
@@ -955,7 +952,7 @@
           </h3>
           <p class="delete-modal-content">Weet je zeker dat je {{ workspaceDeleteTarget.name ||
             workspaceDeleteTarget.title
-            }}
+          }}
             wilt verwijderen?</p>
           <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>

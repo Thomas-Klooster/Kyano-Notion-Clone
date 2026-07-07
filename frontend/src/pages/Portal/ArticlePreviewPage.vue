@@ -58,7 +58,7 @@
               <div class="sidebar-label">Tags</div>
               <div v-if="articleTags.length" class="tag-grid flex-wrap">
                 <span v-for="tag in articleTags" :key="tag" class="article-pill u-inline-flex u-items-center">{{ tag
-                  }}</span>
+                }}</span>
               </div>
               <span v-else class="article-pill u-inline-flex u-items-center">Geen tags</span>
             </div>
@@ -154,7 +154,7 @@
                   :download="getAttachmentName(attachment)">
                   <span class="resource-icon">
                     <v-icon size="18">{{ isPdfAttachment(attachment) ? 'mdi-file-pdf-box' : 'mdi-download-outline'
-                      }}</v-icon>
+                    }}</v-icon>
                   </span>
                   <span class="resource-copy">
                     <span class="resource-title">{{ getAttachmentName(attachment) }}</span>
@@ -344,7 +344,6 @@ function positionLinkPreview(event, link) {
   const sourceRect = link.getBoundingClientRect()
   const pointerX = 'clientX' in event ? event.clientX : sourceRect.left
   const pointerY = 'clientY' in event ? event.clientY : sourceRect.bottom
-
   const preferredX = pointerX + 14
   const preferredY = pointerY + 18
   const fallbackY = sourceRect.top - tooltipHeight - 12
@@ -394,7 +393,7 @@ function getYouTubeVideoId(url) {
 
 
 function isHexColour(value) {
-  return typeof value === 'string' && /^#[0-9-F]{6}$/i.test(value)
+  return typeof value === 'string' && /^#[0-9A-F]{6}$/i.test(value)
 }
 
 function normalizeColourInput(value) {

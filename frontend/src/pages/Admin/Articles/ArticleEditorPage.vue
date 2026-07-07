@@ -145,7 +145,6 @@
             class="attachment-preview-image">
         </v-dialog>
 
-
         <div class="editor-actions">
           <div class="editor-actions-left">
             <div class="save-indicator">
@@ -160,7 +159,6 @@
               <span class="status-pill-dot"></span>
               {{ statusLabel }}
             </div>
-
 
             <v-btn v-if="status !== 'Gepubliceerd'" color="primary" rounded="lg" class="action-btn action-btn-primary"
               style="width: 200px;" :loading="saving" :disabled="loading || uploadingAttachments"
@@ -181,7 +179,6 @@
               :timeout="3000" location="top start">
               {{ snackbarMessage }}
             </v-snackbar>
-
           </div>
         </div>
       </main>
