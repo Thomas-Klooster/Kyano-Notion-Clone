@@ -63,9 +63,9 @@
                     </span>
                     <span class="dot">•</span>
                     <span>{{ countProjects(workspace) === 1 ? '1 project' : `${countProjects(workspace)} projecten`
-                      }}</span>
+                    }}</span>
                     <span class="dot">•</span>
-                    <span>{{ countArticles(workspace) === 1 ? '1 artikel' : `${countArticles(workspace)} :
+                    <span>{{ countArticles(workspace) === 1 ? '1 artikel' : `${countArticles(workspace)}
                       artikelen`}}</span>
                   </div>
                 </div>
@@ -145,7 +145,7 @@
                               <span>{{ formatArticleTags(article) }}</span>
                               <span v-if="article.updated_at" class="dot">•</span>
                               <span v-if="article.updated_at">{{ article.updated_at
-                              }}</span>
+                                }}</span>
                             </div>
                           </div>
                         </div>

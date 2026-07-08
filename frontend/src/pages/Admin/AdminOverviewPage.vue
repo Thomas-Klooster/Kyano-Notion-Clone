@@ -173,7 +173,7 @@
                       @click.stop="toggleWorkspace(workspace.id)">
                       <v-icon size="18">{{ isExpanded(expandedWorkspaces, workspace.id) ? 'mdi-chevron-up' :
                         'mdi-chevron-down'
-                      }}</v-icon>
+                        }}</v-icon>
                     </v-btn>
                   </div>
                 </div>
@@ -394,6 +394,11 @@
                       <span class="meta-label">Laatst gewijzigd</span>
                       <span class="meta-value">{{ selectedEntity.updated_at }}</span>
                     </div>
+
+                    <div class="meta-item" v-if="selectedEntityType === 'article'">
+                      <span class="meta-label">Status</span>
+                      <span class="meta-value">{{ selectedEntity.status }}</span>
+                    </div>
                   </div>
                 </article>
                 <article v-if="showsSummaryCard" class="detail-card card card-rounded-xl">
@@ -427,8 +432,6 @@
                         <div class="entity-name">{{ child.name || child.title }}</div>
                         <div class="entity-meta">
                           <span>{{ labelForType(child.type) }}</span>
-                          <span v-if="child.status" class="dot">•</span>
-                          <span v-if="child.status">{{ child.status }}</span>
                           <span v-if="child.updated_at" class="dot">•</span>
                           <span v-if="child.updated_at">{{ child.updated_at }}</span>
                         </div>
@@ -950,7 +953,7 @@
           </h3>
           <p class="delete-modal-content">Weet je zeker dat je {{ workspaceDeleteTarget.name ||
             workspaceDeleteTarget.title
-            }}
+          }}
             wilt verwijderen?</p>
           <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
         </div>
@@ -1003,7 +1006,26 @@
       </v-card>
     </v-dialog>
 
-
+    <v-dialog v-model="articleDeleteOpen" max-width="396">
+      <v-card class="delete-modal" v-if="articleDeleteTarget">
+        <div class="delete-modal-head">
+          <span class="delete-modal-icon" aria-hidden="true">
+            <v-icon size="30">mdi-alert-circle-outline</v-icon>
+          </span>
+        </div>
+        <div class="delete-modal-body">
+          <h3 class="delete-modal-title">{{ articleDeleteTarget.title }} verwijderen?</h3>
+          <p class="delete-modal-content">Weet je zeker dat je {{ articleDeleteTarget.title }} wilt
+            verwijderen?</p>
+          <p class="delete-modal-content">Dit kan niet ongedaan worden gemaakt.</p>
+        </div>
+        <div class="delete-modal-footer">
+          <button class="delete-modal-btn delete-modal-btn--secundary"
+            @click="articleDeleteOpen = false">Annuleren</button>
+          <button class="delete-modal-btn delete-modal-btn--warning" @click="confirmArticleDelete">Verwijderen</button>
+        </div>
+      </v-card>
+    </v-dialog>
 
     <v-dialog v-model="customerEditorOpen" max-width="680">
       <v-card class="dialog-card card card-rounded-xl" rounded="xl">
@@ -1109,7 +1131,7 @@
 import { onMounted, computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { storeCategory, UpdateCategory, DeleteCategory } from '@/services/categoryService'
-import { postArticle, updateArticle, deleteFeedback, getFeedbacks, markFeedbackAsRead } from '@/services/articleService'
+import { postArticle, updateArticle, deleteArticle, deleteFeedback, getFeedbacks, markFeedbackAsRead } from '@/services/articleService'
 import { getAdminWorkspaces, postWorkspace, updateWorkspace, deleteWorkspace } from '@/services/workspaceService'
 import { storeProject, updateProject, deleteProject } from '@/services/projectService'
 import { deleteUser, getAdminUsers, postUser, updateUser } from '@/services/userService'
@@ -1147,6 +1169,8 @@ const customerDeleteOpen = ref(false)
 const categoryDeleteOpen = ref(false)
 const categoryDeleteId = ref(null)
 const projectDeleteId = ref(null)
+const articleDeleteId = ref(null)
+const articleDeleteOpen = ref(false)
 const projectDeleteOpen = ref(false)
 const reviewDeleteOpen = ref(false)
 const customerDialogMode = ref('create')
@@ -1363,7 +1387,11 @@ function normalizeProject(project) {
     slug: safeText(project.slug),
     description: safeText(project.description),
     status: safeText(project.status, 'Concept'),
-    customerAccess: Array.isArray(project.customer_ids) ? project.customer_ids : [],
+    customerAccess: Array.isArray(project.customer_ids)
+      ? project.customer_ids
+      : Array.isArray(project.customers)
+        ? project.customers.map(c => c.id)
+        : [],
     articles: extractCollection(project.articles).map(normalizeArticle),
   }
 }
@@ -1668,7 +1696,7 @@ function updateWorkspaceCustomerAccess(entityType, entityId, customers) {
 
 const workspaceSelectOptions = computed(() =>
   workspaceData.value.map((workspace) => ({
-    label: `${workspace.name} · ${workspace.customer}`,
+    label: `${workspace.name}`,
     value: workspace.id,
   })),
 )
@@ -1794,6 +1822,24 @@ const projectDeleteTarget = computed(() => {
 }
 )
 
+
+
+const articleDeleteTarget = computed(() => {
+  for (const workspace of workspaceData.value) {
+    for (const category of workspace.categories) {
+      for (const project of category.projects) {
+        const article = project.articles.find(
+          a => a.id === articleDeleteId.value
+        )
+
+        if (article) return article
+      }
+    }
+  }
+
+  return null
+})
+
 const customerDeleteTarget = computed(() =>
   customersData.value.find((customer) => customer.id === customerDeleteId.value) ?? null
 )
@@ -1897,7 +1943,7 @@ const selectedEntityDescription = computed(() => {
     workspace: 'Workspace-overzicht met gekoppelde categorieën, projecten en artikelen.',
     category: 'Categorie waarin gerelateerde projecten en artikelen samenkomen.',
     project: 'Project met gekoppelde kennisartikelen en publicatiestatus.',
-    article: 'Artikel binnen een project, met status, slug en laatste wijziging.',
+    article: 'Artikel binnen een project, met status en laatste wijziging.',
   }
   return descriptions[selectedEntityType.value]
 })
@@ -1907,13 +1953,13 @@ const defaultEntityDescription = computed(() => {
   return 'Nog geen aanvullende beschrijving ingevuld voor dit item.'
 })
 
-const selectedEntityCustomer = computed(() => {
-  if (selectedEntityType.value === 'workspace') return selectedEntity.value?.customer ?? '-'
-  if (selectedEntityType.value === 'category') return findCategory(selectedCategoryId.value)?.workspace.customer ?? '-'
-  if (selectedEntityType.value === 'project') return findProject(selectedProjectId.value)?.workspace.customer ?? '-'
-  if (selectedEntityType.value === 'article') return findArticle(selectedArticleId.value)?.workspace.customer ?? '-'
-  return '-'
-})
+// const selectedEntityCustomer = computed(() => {
+//   if (selectedEntityType.value === 'workspace') return selectedEntity.value?.customer ?? '-'
+//   if (selectedEntityType.value === 'category') return findCategory(selectedCategoryId.value)?.workspace.customer ?? '-'
+//   if (selectedEntityType.value === 'project') return findProject(selectedProjectId.value)?.workspace.customer ?? '-'
+//   if (selectedEntityType.value === 'article') return findArticle(selectedArticleId.value)?.workspace.customer ?? '-'
+//   return '-'
+// })
 
 const selectedParentLabel = computed(() => {
   if (selectedEntityType.value === 'category') return findCategory(selectedCategoryId.value)?.workspace.name ?? '-'
@@ -2287,10 +2333,6 @@ async function saveWorkspaceMembers() {
     if (selectedEntityType.value === 'project') {
       await updateProject(selectedEntity.value.slug, payload)
     } else {
-      console.log("selectedEntity:", selectedEntity.value)
-      console.log("selectedEntityType:", selectedEntityType.value)
-      console.log("slug:", selectedEntity.value?.slug)
-      console.log("id:", selectedEntity.value?.id)
       await updateWorkspace(selectedEntity.value.slug, payload)
     }
     await reloadWorkspaces()
@@ -2414,7 +2456,6 @@ async function saveDraft() {
   }
 }
 
-
 function createEntity() {
   if (dialogType.value === 'workspace') {
     const newWorkspace = { id: draft.id, slug: draft.slug, name: draft.name, customer: draft.customer, description: draft.summary, categories: [] }
@@ -2537,6 +2578,9 @@ function openDeleteDialog(type, id) {
   } else if (type === 'project') {
     projectDeleteId.value = id
     projectDeleteOpen.value = true
+  } else if (type === 'article') {
+    articleDeleteId.value = id
+    articleDeleteOpen.value = true
   }
 }
 
@@ -2613,6 +2657,36 @@ async function confirmProjectDelete() {
     projectDeleteId.value = null
   }
 }
+
+async function confirmArticleDelete() {
+  const target = articleDeleteTarget.value
+  if (!target) return
+
+  error.value = ''
+
+  try {
+    await deleteArticle(target.slug)
+
+    for (const workspace of workspaceData.value) {
+      for (const category of workspace.categories) {
+        for (const project of category.projects) {
+          project.articles = project.articles.filter(
+            a => a.id !== target.id
+          )
+        }
+      }
+    }
+
+    syncLocalCounters()
+  } catch (err) {
+    error.value = err.response?.data?.message ?? 'Kon artikel niet verwijderen.'
+  } finally {
+    articleDeleteOpen.value = false
+    articleDeleteId.value = null
+  }
+}
+
+
 
 function resetCustomerDraft() {
   customerDraft.id = null

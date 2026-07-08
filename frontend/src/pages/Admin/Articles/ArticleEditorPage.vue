@@ -146,13 +146,6 @@
         </v-dialog>
 
         <div class="editor-actions">
-          <div class="editor-actions-left">
-            <div class="save-indicator">
-              <span class="save-indicator-dot"></span>
-              <span>{{ saveIndicatorLabel }}</span>
-            </div>
-          </div>
-
           <div class="editor-actions-right">
             <div class="status-pill" style="width: 200px;"
               :class="status === 'Gepubliceerd' ? 'is-published' : 'is-draft'">

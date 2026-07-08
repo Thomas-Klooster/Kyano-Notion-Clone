@@ -2080,7 +2080,7 @@ body {
   right: 0px;
   left: 0px;
   align-items: center;
-  justify-content: space-between;
+  justify-content: end;
   gap: 16px;
   padding-top: 18px;
   margin-top: 16px;
